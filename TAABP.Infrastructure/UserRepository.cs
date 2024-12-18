@@ -1,4 +1,5 @@
-﻿using TAABP.Application.RepositoryInterfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using TAABP.Application.RepositoryInterfaces;
 using TAABP.Core;
 
 namespace TAABP.Infrastructure
@@ -16,6 +17,11 @@ namespace TAABP.Infrastructure
         {
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> CheckEmailAsync(string email)
+        {
+            return await _context.Users.AnyAsync(u => u.Email == email);
         }
     }
 }
