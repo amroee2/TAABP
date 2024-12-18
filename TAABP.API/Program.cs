@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'CarRentalSystemDbContextConnection' not found.");
 
 builder.Services.AddDbContext<TAABPDbContext>(options => options.UseSqlServer(connectionString));
-builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<TAABPDbContext>();
 
