@@ -25,7 +25,7 @@ namespace TAABP.Application.Services
             var emailExists = await _userRepository.CheckEmailAsync(registerDto.Email);
             if (emailExists)
             {
-                throw new EmailAlreadyExistsException(registerDto.Email);
+                throw new EmailAlreadyExistsException("Email Already Exists");
             }
             var hashedPassword = _passwordHasher.HashPassword(registerDto.Password);
 
