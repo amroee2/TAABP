@@ -7,7 +7,7 @@ namespace TAABP.Application.Validators
     {
         public RegisterDtoValidator()
         {
-            RuleFor(x => x.Username)
+            RuleFor(x => x.UserName)
                 .NotEmpty()
                 .WithMessage("Username is required")
                 .MinimumLength(5)
