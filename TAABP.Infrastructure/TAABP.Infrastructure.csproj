@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TAABP.Application\TAABP.Application.csproj" />
     <ProjectReference Include="..\TAABP.Core\TAABP.Core.csproj" />
   </ItemGroup>
 
