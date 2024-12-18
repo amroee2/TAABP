@@ -1,4 +1,5 @@
 ﻿using TAABP.Application.DTOs;
+using TAABP.Application.Exceptions;
 using TAABP.Application.PasswordHashing;
 using TAABP.Application.Profile;
 using TAABP.Application.RepositoryInterfaces;
@@ -21,10 +22,14 @@ namespace TAABP.Application.Services
 
         public async Task CreateUserAsync(RegisterDto registerDto)
         {
+            var emailExists = await _userRepository.CheckEmailAsync(registerDto.Email);
+            if (emailExists)
+            {
+                throw new EmailAlreadyExistsException(registerDto.Email);
+            }
             var hashedPassword = _passwordHasher.HashPassword(registerDto.Password);
 
             var user = _userMapper.RegisterDtoToUser(registerDto);
-
             user.PasswordHash = hashedPassword;
 
             await _userRepository.CreateUserAsync(user);
