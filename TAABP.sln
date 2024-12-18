@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TAABP.Core", "TAABP.Core\TA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TAABP.Infrastructure", "TAABP.Infrastructure\TAABP.Infrastructure.csproj", "{A09688C3-529D-4645-9C2E-7240CE1339C3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TAABP.Application", "TAABP.Application\TAABP.Application.csproj", "{888ADB23-C7C5-4603-A390-B9E2808A1DF8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{A09688C3-529D-4645-9C2E-7240CE1339C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A09688C3-529D-4645-9C2E-7240CE1339C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A09688C3-529D-4645-9C2E-7240CE1339C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{888ADB23-C7C5-4603-A390-B9E2808A1DF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{888ADB23-C7C5-4603-A390-B9E2808A1DF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{888ADB23-C7C5-4603-A390-B9E2808A1DF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{888ADB23-C7C5-4603-A390-B9E2808A1DF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
