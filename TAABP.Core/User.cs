@@ -15,7 +15,6 @@ namespace TAABP.Core
         [StringLength(30)]
         public string LastName { get; set; }
 
-        [Required(ErrorMessage = "Please enter your address")]
         [Display(Name = "Address")]
         [StringLength(100)]
         public string? Address { get; set; }
