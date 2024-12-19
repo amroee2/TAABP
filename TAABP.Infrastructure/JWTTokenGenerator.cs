@@ -6,68 +6,66 @@ using TAABP.Application.TokenGenerators;
 
 namespace TAABP.Infrastructure
 {
-    public class JWTTokenGenerator
+    public class JWTTokenGenerator : ITokenGenerator
     {
-        public class JwtTokenGenerator : ITokenGenerator
+
+        private readonly IConfiguration _configuration;
+
+        public JWTTokenGenerator(IConfiguration configuration)
         {
+            this._configuration = configuration;
+        }
+        public string GenerateToken(string email)
+        {
+            var securityKey = new SymmetricSecurityKey(Convert.FromBase64String(_configuration["Authentication:SecretForKey"]));
 
-            public IConfiguration _configuration;
+            var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
 
-            public JwtTokenGenerator(IConfiguration configuration)
+            var claims = new List<Claim>();
+            claims.Add(new Claim("given email", email));
+
+            var jwtSecurityToken = new JwtSecurityToken(
+                _configuration["Authentication:Issuer"],
+                _configuration["Authentication:Audience"],
+                claims,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddDays(1),
+                signingCredentials
+            );
+            var tokenHandler = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+
+            return tokenHandler;
+        }
+
+        public bool ValidateToken(string token)
+        {
+            var securityKey = new SymmetricSecurityKey(Convert.FromBase64String(_configuration["Authentication:SecretForKey"]));
+
+            var tokenValidationParameters = new TokenValidationParameters
             {
-                this._configuration = configuration;
-            }
-            public string GenerateToken(string username, string password)
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = _configuration["Authentication:Issuer"],
+                ValidAudience = _configuration["Authentication:Audience"],
+                IssuerSigningKey = securityKey
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            try
             {
-                var securityKey = new SymmetricSecurityKey(Convert.FromBase64String(_configuration["Authentication:SecretForKey"]));
-
-                var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
-
-                var claims = new List<Claim>();
-                claims.Add(new Claim("given name", username));
-
-                var jwtSecurityToken = new JwtSecurityToken(
-                    _configuration["Authentication:Issuer"],
-                    _configuration["Authentication:Audience"],
-                    claims,
-                    DateTime.UtcNow,
-                    DateTime.UtcNow.AddDays(1),
-                    signingCredentials
-                );
-                var tokenHandler = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
-
-                return tokenHandler;
+                tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
             }
-
-            public bool ValidateToken(string token)
+            catch (Exception ex)
             {
-                var securityKey = new SymmetricSecurityKey(Convert.FromBase64String(_configuration["Authentication:SecretForKey"]));
-
-                var tokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = _configuration["Authentication:Issuer"],
-                    ValidAudience = _configuration["Authentication:Audience"],
-                    IssuerSigningKey = securityKey
-                };
-
-                var tokenHandler = new JwtSecurityTokenHandler();
-
-                try
-                {
-                    tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Token validation failed: {ex.Message}");
-                    return false;
-                }
-
-                return true;
+                Console.WriteLine($"Token validation failed: {ex.Message}");
+                return false;
             }
+
+            return true;
+
         }
     }
 }
