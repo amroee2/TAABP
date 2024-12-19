@@ -6,5 +6,6 @@ namespace TAABP.Application.RepositoryInterfaces
     {
         public Task CreateUserAsync(User user);
         public Task<bool> CheckEmailAsync(string email);
+        public Task<User> GetUserByEmailAsync(string email);
     }
 }

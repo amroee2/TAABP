@@ -23,5 +23,10 @@ namespace TAABP.Infrastructure
         {
             return await _context.Users.AnyAsync(u => u.Email == email);
         }
+
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            return await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email);
+        }
     }
 }
