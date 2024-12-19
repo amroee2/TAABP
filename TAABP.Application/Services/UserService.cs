@@ -4,6 +4,7 @@ using TAABP.Application.PasswordHashing;
 using TAABP.Application.Profile;
 using TAABP.Application.RepositoryInterfaces;
 using TAABP.Application.ServiceInterfaces;
+using TAABP.Application.TokenGenerators;
 using TAABP.Core;
 
 namespace TAABP.Application.Services
@@ -13,11 +14,13 @@ namespace TAABP.Application.Services
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IUserMapper _userMapper;
-        public UserService(IUserRepository userRepository, IPasswordHasher passwordHasher, IUserMapper userMapper)
+        private readonly ITokenGenerator _tokenGenerator;
+        public UserService(IUserRepository userRepository, IPasswordHasher passwordHasher, IUserMapper userMapper, ITokenGenerator tokenGenerator)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
             _userMapper = userMapper;
+            _tokenGenerator = tokenGenerator;
         }
 
         public async Task CreateUserAsync(RegisterDto registerDto)
@@ -33,6 +36,21 @@ namespace TAABP.Application.Services
             user.PasswordHash = hashedPassword;
 
             await _userRepository.CreateUserAsync(user);
+        }
+
+        public async Task<string> LoginAsync(LoginDto loginDto)
+        {
+            var user = await _userRepository.GetUserByEmailAsync(loginDto.Email);
+            if (user == null)
+            {
+                throw new InvalidLoginException("Invalid Email or Password");
+            }
+            var passwordValid = _passwordHasher.VerifyPassword(loginDto.Password, user.PasswordHash);
+            if (!passwordValid)
+            {
+                throw new InvalidLoginException("Invalid Email or Password");
+            }
+            return _tokenGenerator.GenerateToken(loginDto.Email);
         }
     }
 }

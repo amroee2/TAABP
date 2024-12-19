@@ -6,5 +6,6 @@ namespace TAABP.Application.ServiceInterfaces
     public interface IUserService
     {
         public Task CreateUserAsync(RegisterDto registerDto);
+        public Task<string> LoginAsync(LoginDto loginDto);
     }
 }
