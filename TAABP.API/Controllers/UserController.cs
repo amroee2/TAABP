@@ -33,5 +33,23 @@ namespace TAABP.API.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred." });
             }
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginAsync(LoginDto loginDto)
+        {
+            try
+            {
+                var token = await _userService.LoginAsync(loginDto);
+                return Ok(new { token });
+            }
+            catch (InvalidLoginException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred." });
+            }
+        }
     }
 }
