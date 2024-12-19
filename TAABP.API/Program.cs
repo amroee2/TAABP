@@ -11,6 +11,7 @@ using TAABP.Application.RepositoryInterfaces;
 using FluentValidation.AspNetCore;
 using FluentValidation;
 using Microsoft.IdentityModel.Tokens;
+using TAABP.Application.TokenGenerators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasherService>();
 builder.Services.AddScoped<IUserMapper, UserMapper>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITokenGenerator, JWTTokenGenerator>();
 var externalAssembly = AppDomain.CurrentDomain.Load("TAABP.Application");
 builder.Services.AddFluentValidationAutoValidation()
                 .AddValidatorsFromAssembly(externalAssembly);
