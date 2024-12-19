@@ -10,6 +10,7 @@ using TAABP.Application.Profile;
 using TAABP.Application.RepositoryInterfaces;
 using FluentValidation.AspNetCore;
 using FluentValidation;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +32,22 @@ builder.Services.AddScoped<IUserMapper, UserMapper>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 var externalAssembly = AppDomain.CurrentDomain.Load("TAABP.Application");
 builder.Services.AddFluentValidationAutoValidation()
-                .AddValidatorsFromAssembly(externalAssembly); 
+                .AddValidatorsFromAssembly(externalAssembly);
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidAudience = builder.Configuration["Authentication:Audience"],
+            ValidIssuer = builder.Configuration["Authentication:Issuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Convert.FromBase64String(builder.Configuration["Authentication:SecretForKey"]))
+        };
+    });
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
