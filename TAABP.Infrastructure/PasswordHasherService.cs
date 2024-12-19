@@ -16,5 +16,11 @@ namespace TAABP.Infrastructure
         {
             return _passwordHasher.HashPassword(new IdentityUser(), password);
         }
+
+        public bool VerifyPassword(string password, string passwordHash)
+        {
+            var result = _passwordHasher.VerifyHashedPassword(new IdentityUser(), passwordHash, password);
+            return result == PasswordVerificationResult.Success;
+        }
     }
 }
