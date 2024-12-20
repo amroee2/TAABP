@@ -10,5 +10,6 @@ namespace TAABP.Application.RepositoryInterfaces
         public Task<User> GetUserByIdAsync(string id);
         public Task<List<User>> GetUsersAsync();
         public Task DeleteUserAsync(User user);
+        public Task UpdateUserAsync(User user);
     }
 }
