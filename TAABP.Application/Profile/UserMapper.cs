@@ -8,5 +8,6 @@ namespace TAABP.Application.Profile
     public partial class UserMapper : IUserMapper
     {
         public partial User RegisterDtoToUser(RegisterDto registerDto);
+        public partial UserDto UserToUserDto(User user);
     }
 }

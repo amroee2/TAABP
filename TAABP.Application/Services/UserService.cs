@@ -77,27 +77,13 @@ namespace TAABP.Application.Services
             {
                 throw new EntityNotFoundException("User Not Found");
             }
-            return new UserDto
-            {
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Address = user.Address,
-                PhoneNumber = user.PhoneNumber
-            };
+            return _userMapper.UserToUserDto(user);
         }
 
         public async Task<List<UserDto>> GetUsersAsync()
         {
             var users = await _userRepository.GetUsersAsync();
-            return users.Select(user => new UserDto
-            {
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Address = user.Address,
-                PhoneNumber = user.PhoneNumber
-            }).ToList();
+            return users.Select(user => _userMapper.UserToUserDto(user)).ToList();
         }
 
         public async Task DeleteUserAsync(string id)
