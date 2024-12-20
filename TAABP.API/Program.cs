@@ -12,6 +12,7 @@ using FluentValidation.AspNetCore;
 using FluentValidation;
 using Microsoft.IdentityModel.Tokens;
 using TAABP.Application.TokenGenerators;
+using TAABP.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -2,7 +2,7 @@
 using TAABP.Application.RepositoryInterfaces;
 using TAABP.Core;
 
-namespace TAABP.Infrastructure
+namespace TAABP.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
