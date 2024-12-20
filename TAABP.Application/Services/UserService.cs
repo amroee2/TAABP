@@ -99,5 +99,15 @@ namespace TAABP.Application.Services
                 PhoneNumber = user.PhoneNumber
             }).ToList();
         }
+
+        public async Task DeleteUserAsync(string id)
+        {
+            var user = await _userRepository.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                throw new EntityNotFoundException("User Not Found");
+            }
+            await _userRepository.DeleteUserAsync(user);
+        }
     }
 }
