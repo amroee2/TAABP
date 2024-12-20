@@ -1,4 +1,5 @@
-﻿using TAABP.Application.DTOs;
+﻿using Microsoft.AspNetCore.Identity;
+using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
 using TAABP.Application.PasswordHashing;
 using TAABP.Application.Profile;
@@ -15,12 +16,15 @@ namespace TAABP.Application.Services
         private readonly IPasswordHasher _passwordHasher;
         private readonly IUserMapper _userMapper;
         private readonly ITokenGenerator _tokenGenerator;
-        public UserService(IUserRepository userRepository, IPasswordHasher passwordHasher, IUserMapper userMapper, ITokenGenerator tokenGenerator)
+        private readonly SignInManager<User> _signInManager;
+        public UserService(IUserRepository userRepository, IPasswordHasher passwordHasher,
+            IUserMapper userMapper, ITokenGenerator tokenGenerator, SignInManager<User> signInManager)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
             _userMapper = userMapper;
             _tokenGenerator = tokenGenerator;
+            _signInManager = signInManager;
         }
 
         public async Task CreateUserAsync(RegisterDto registerDto)
@@ -40,17 +44,15 @@ namespace TAABP.Application.Services
 
         public async Task<string> LoginAsync(LoginDto loginDto)
         {
-            var user = await _userRepository.GetUserByEmailAsync(loginDto.Email);
-            if (user == null)
+            var result = await _signInManager.PasswordSignInAsync(loginDto.Email, loginDto.Password, true, lockoutOnFailure: false);
+
+            if (!result.Succeeded)
             {
-                throw new InvalidLoginException("Invalid Email or Password");
+                throw new InvalidLoginException("Invalid Email or Password.");
             }
-            var passwordValid = _passwordHasher.VerifyPassword(loginDto.Password, user.PasswordHash);
-            if (!passwordValid)
-            {
-                throw new InvalidLoginException("Invalid Email or Password");
-            }
+
             return _tokenGenerator.GenerateToken(loginDto.Email);
         }
+
     }
 }
