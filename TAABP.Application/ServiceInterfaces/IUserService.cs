@@ -7,5 +7,7 @@ namespace TAABP.Application.ServiceInterfaces
     {
         public Task CreateUserAsync(RegisterDto registerDto);
         public Task<string> LoginAsync(LoginDto loginDto);
+        public Task<UserDto> GetUserByIdAsync(string id);
+        public Task<List<UserDto>> GetUsersAsync();
     }
 }
