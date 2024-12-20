@@ -38,5 +38,11 @@ namespace TAABP.Infrastructure.Repositories
         {
             return await _context.Users.AsNoTracking().ToListAsync();
         }
+
+        public async Task DeleteUserAsync(User user)
+        {
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+        }
     }
 }
