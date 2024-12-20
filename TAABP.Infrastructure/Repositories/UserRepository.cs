@@ -28,5 +28,15 @@ namespace TAABP.Infrastructure.Repositories
         {
             return await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email);
         }
+
+        public async Task<User> GetUserByIdAsync(string id)
+        {
+            return await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
+        }
+
+        public async Task<List<User>> GetUsersAsync()
+        {
+            return await _context.Users.AsNoTracking().ToListAsync();
+        }
     }
 }
