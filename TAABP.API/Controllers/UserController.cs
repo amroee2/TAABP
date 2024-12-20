@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
+using TAABP.Application.Profile;
 using TAABP.Application.ServiceInterfaces;
 
 namespace TAABP.API.Controllers
@@ -11,9 +13,11 @@ namespace TAABP.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        private readonly IUserMapper _userMapper;
+        public UserController(IUserService userService, IUserMapper userMapper)
         {
             _userService = userService;
+            _userMapper = userMapper;
         }
 
         [HttpGet("{id}")]
@@ -81,6 +85,32 @@ namespace TAABP.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message =ex.Message});
+            }
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchUserAsync(string id, JsonPatchDocument<UserDto> patchDoc)
+        {
+            try
+            {
+                var user = await _userService.GetUserByIdAsync(id);
+                patchDoc.ApplyTo(user, (error) => ModelState.AddModelError(error.AffectedObject.ToString(), error.ErrorMessage));
+
+                if (!TryValidateModel(user))
+                {
+                    return ValidationProblem(ModelState);
+                }
+
+                await _userService.UpdateUserAsync(id, user);
+                return NoContent();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
             }
         }
     }

@@ -1,19 +1,17 @@
-using TAABP.Infrastructure;
-using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using TAABP.Core;
-using Microsoft.Extensions.DependencyInjection;
-using TAABP.Application.Services;
-using TAABP.Application.ServiceInterfaces;
-using TAABP.Application.PasswordHashing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using TAABP.Application.Profile;
 using TAABP.Application.RepositoryInterfaces;
-using FluentValidation.AspNetCore;
-using FluentValidation;
-using Microsoft.IdentityModel.Tokens;
+using TAABP.Application.ServiceInterfaces;
+using TAABP.Application.Services;
 using TAABP.Application.TokenGenerators;
+using TAABP.Core;
+using TAABP.Infrastructure;
 using TAABP.Infrastructure.Repositories;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,8 +23,10 @@ builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirme
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<TAABPDbContext>();
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers()
+    .AddNewtonsoftJson();
+
+    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUserService, UserService>();
