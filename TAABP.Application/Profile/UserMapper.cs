@@ -9,5 +9,6 @@ namespace TAABP.Application.Profile
     {
         public partial User RegisterDtoToUser(RegisterDto registerDto);
         public partial UserDto UserToUserDto(User user);
+        public partial User UserDtoToUser(UserDto userDto);
     }
 }

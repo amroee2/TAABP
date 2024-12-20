@@ -7,5 +7,6 @@ namespace TAABP.Application.Profile
     {
         User RegisterDtoToUser(RegisterDto registerDto);
         UserDto UserToUserDto(User user);
+        User UserDtoToUser(UserDto userDto);
     }
 }
