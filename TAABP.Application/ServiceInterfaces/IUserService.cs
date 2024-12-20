@@ -10,5 +10,6 @@ namespace TAABP.Application.ServiceInterfaces
         public Task<UserDto> GetUserByIdAsync(string id);
         public Task<List<UserDto>> GetUsersAsync();
         public Task DeleteUserAsync(string id);
+        public Task UpdateUserAsync(string Id, UserDto userDto);
     }
 }

@@ -95,5 +95,17 @@ namespace TAABP.Application.Services
             }
             await _userRepository.DeleteUserAsync(user);
         }
+
+        public async Task UpdateUserAsync(string id, UserDto userDto)
+        {
+            var user = await _userRepository.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                throw new EntityNotFoundException("User Not Found");
+            }
+            _userMapper.UserDtoToUser(userDto, user);
+            user.Id = id;
+            await _userRepository.UpdateUserAsync(user);
+        }
     }
 }
