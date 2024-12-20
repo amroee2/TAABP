@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
 using TAABP.Application.ServiceInterfaces;
 
@@ -62,6 +63,24 @@ namespace TAABP.API.Controllers
             catch (Exception)
             {
                 return StatusCode(500, new { message = "An unexpected error occurred." });
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUserAsync(string id, [FromBody] UserDto userDto)
+        {
+            try
+            {
+                await _userService.UpdateUserAsync(id, userDto);
+                return NoContent();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message =ex.Message});
             }
         }
     }
