@@ -8,6 +8,7 @@ namespace TAABP.Application.Profile.HotelMapping
     public partial class HotelMapper : IHotelMapper
     {
         public partial Hotel HotelDtoToUser(HotelDto hotelDto);
+        public partial HotelDto HotelToHotelDto(Hotel hotel);
 
     }
 }
