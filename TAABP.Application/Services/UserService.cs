@@ -39,9 +39,9 @@ namespace TAABP.Application.Services
 
             var user = _userMapper.RegisterDtoToUser(registerDto);
             user.UserName = registerDto.Email;
-            var result = await _userManager.CreateAsync(user, registerDto.Password);
+            var isCreated = await _userRepository.CreateUserAsync(user, registerDto.Password);
 
-            if (!result.Succeeded)
+            if (!isCreated)
             {
                 throw new EntityCreationException("User Creation Failed");
             }
@@ -54,20 +54,13 @@ namespace TAABP.Application.Services
             {
                 throw new InvalidLoginException("Invalid Email or Password");
             }
-            try
-            {
-                var signInResult = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password,  lockoutOnFailure: false);
-                if (!signInResult.Succeeded)
-                {
-                    throw new InvalidLoginException($"Invalid Email or Password");
-                }
-                return _tokenGenerator.GenerateToken(user.Email);
 
-            }
-            catch (Exception ex)
+            var signInResult = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, lockoutOnFailure: false);
+            if (!signInResult.Succeeded)
             {
-                throw new Exception();
-            };
+                throw new InvalidLoginException($"Invalid Email or Password");
+            }
+            return _tokenGenerator.GenerateToken(user.Email);
         }
 
         public async Task<UserDto> GetUserByIdAsync(string id)

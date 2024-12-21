@@ -4,7 +4,7 @@ namespace TAABP.Application.RepositoryInterfaces
 {
     public interface IUserRepository
     {
-        public Task CreateUserAsync(User user);
+        public Task<bool> CreateUserAsync(User user, string password);
         public Task<bool> CheckEmailAsync(string email);
         public Task<User> GetUserByEmailAsync(string email);
         public Task<User> GetUserByIdAsync(string id);
