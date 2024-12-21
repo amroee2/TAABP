@@ -18,7 +18,7 @@ namespace TAABP.Infrastructure
 
             modelBuilder.Entity<Hotel>(entity =>
             {
-                entity.ToTable(t => t.HasCheckConstraint("CK_Hotels_Rating", "Rating >= 0 AND Rating <= 10"));
+                entity.ToTable(t => t.HasCheckConstraint("CK_Hotels_Rating", "Rating >= 0 AND Rating <= 5"));
             });
 
             modelBuilder.Entity<Hotel>(entity =>
