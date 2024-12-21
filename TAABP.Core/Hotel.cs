@@ -41,5 +41,11 @@ namespace TAABP.Core
         public DateTime? UpdatedAt { get; set; }
         public string? CreatedBy { get; set; }
         public string? UpdatedBy { get; set; }
+        public List<HotelImage> HotelImages { get; set; }
+
+        public Hotel()
+        {
+            HotelImages = new List<HotelImage>();
+        }
     }
 }
