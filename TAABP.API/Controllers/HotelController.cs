@@ -49,7 +49,7 @@ namespace TAABP.API.Controllers
             try
             {
                 await _hotelService.DeleteHotelAsync(id);
-                return Ok();
+                return NoContent();
             }
             catch (EntityNotFoundException ex)
             {
