@@ -78,5 +78,21 @@ namespace TAABP.Application.Services
             hotelImage.HotelId = Id;
             await _hotelRepository.AddNewImageAsync(hotelImage);
         }
+
+        public async Task<HotelImageDto> GetHotelImage(int hotelId, int imageId)
+        {
+            var hotelImage = await _hotelRepository.GetHotelImage(hotelId, imageId);
+            if (hotelImage == null)
+            {
+                throw new EntityNotFoundException($"Hotel Image with id {imageId} not found");
+            }
+            return _hotelMapper.HotelImageToHotelImageDto(hotelImage);
+        }
+
+        public async Task<List<HotelImageDto>> GetHotelImages(int hotelId)
+        {
+            var hotelImages = await _hotelRepository.GetHotelImages(hotelId);
+            return hotelImages.Select(hotelImage => _hotelMapper.HotelImageToHotelImageDto(hotelImage)).ToList();
+        }
     }
 }
