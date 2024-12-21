@@ -17,11 +17,11 @@ namespace TAABP.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNewImageAsync(int id, HotelImageDto hotelImageDto)
+        public async Task<IActionResult> AddNewImageAsync(int id, string image)
         {
             try
             {
-                await _hotelService.AddNewImageAsync(id, hotelImageDto);
+                await _hotelService.AddNewImageAsync(id, image);
             }
             catch (EntityNotFoundException ex)
             {

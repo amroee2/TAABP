@@ -9,7 +9,5 @@ namespace TAABP.Application.Profile.HotelMapping
     {
         public partial HotelDto HotelToHotelDto(Hotel hotel);
         public partial Hotel HotelDtoToHotel(HotelDto hotelDto);
-        public partial HotelImage HotelImagedDtoToHotelImage(HotelImageDto hotelImage);
-        public partial HotelImageDto HotelImageToHotelImageDto(HotelImage hotelImage);
     }
 }

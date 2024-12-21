@@ -47,12 +47,12 @@ namespace TAABP.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<HotelImage> GetHotelImage(int hotelId, int imageId)
+        public async Task<HotelImage> GetHotelImageAsync(int hotelId, int imageId)
         {
             return await _context.HotelImages.AsNoTracking().FirstOrDefaultAsync(h => h.HotelId == hotelId && h.HotelImageId == imageId);
         }
 
-        public async Task<List<HotelImage>> GetHotelImages(int hotelId)
+        public async Task<List<HotelImage>> GetHotelImagesAsync(int hotelId)
         {
             return await _context.HotelImages.AsNoTracking().Where(h => h.HotelId == hotelId).ToListAsync();
         }
