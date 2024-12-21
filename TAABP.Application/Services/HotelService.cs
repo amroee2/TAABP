@@ -21,7 +21,7 @@ namespace TAABP.Application.Services
 
         public async Task CreateHotelAsync(HotelDto hotelDto)
         {
-            var hotel = _hotelMapper.HotelDtoToUser(hotelDto);
+            var hotel = _hotelMapper.HotelDtoToHotel(hotelDto);
             hotel.CreatedAt = DateTime.Now;
             hotel.CreatedBy = "System";
             await _hotelRepository.CreateHotelAsync(hotel);
@@ -60,7 +60,7 @@ namespace TAABP.Application.Services
             {
                 throw new EntityNotFoundException($"Hotel with id {Id} not found");
             }
-            hotel = _hotelMapper.HotelDtoToUser(hotelDto);
+            hotel = _hotelMapper.HotelDtoToHotel(hotelDto);
             hotel.HotelId = Id;
             hotel.UpdatedAt = DateTime.Now;
             hotel.UpdatedBy = "System";

@@ -5,7 +5,7 @@ namespace TAABP.Application.Profile.HotelMapping
 {
     public interface IHotelMapper
     {
-        Hotel HotelDtoToUser(HotelDto hotelDto);
+        Hotel HotelDtoToHotel(HotelDto hotelDto);
         HotelDto HotelToHotelDto(Hotel hotel);
     }
 }
