@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
-using TAABP.Application.Profile;
+using TAABP.Application.Profile.UserMapping;
 using TAABP.Application.ServiceInterfaces;
 
 namespace TAABP.API.Controllers

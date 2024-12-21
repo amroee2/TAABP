@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TAABP.Application.Profile;
+using TAABP.Application.Profile.UserMapping;
 using TAABP.Application.RepositoryInterfaces;
 using TAABP.Application.ServiceInterfaces;
 using TAABP.Application.Services;

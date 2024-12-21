@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
-using TAABP.Application.Profile;
+using TAABP.Application.Profile.UserMapping;
 using TAABP.Application.RepositoryInterfaces;
 using TAABP.Application.ServiceInterfaces;
 using TAABP.Application.TokenGenerators;
