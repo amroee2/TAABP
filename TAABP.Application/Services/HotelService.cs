@@ -1,0 +1,29 @@
+﻿using Microsoft.AspNetCore.Identity;
+using TAABP.Application.DTOs;
+using TAABP.Application.Profile.HotelMapping;
+using TAABP.Application.RepositoryInterfaces;
+using TAABP.Application.ServiceInterfaces;
+using TAABP.Core;
+
+namespace TAABP.Application.Services
+{
+    public class HotelService : IHotelService
+    {
+        private readonly IHotelRepository _hotelRepository;
+        private readonly IHotelMapper _hotelMapper;
+        public HotelService(IHotelRepository hotelRepository, IHotelMapper hotelMapper)
+        {
+            _hotelRepository = hotelRepository;
+            _hotelMapper = hotelMapper;
+
+        }
+
+        public async Task CreateHotelAsync(HotelDto hotelDto)
+        {
+            var hotel = _hotelMapper.HotelDtoToUser(hotelDto);
+            hotel.CreatedAt = DateTime.Now;
+            hotel.CreatedBy = "System";
+            await _hotelRepository.CreateHotelAsync(hotel);
+        }
+    }
+}
