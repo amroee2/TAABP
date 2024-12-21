@@ -8,5 +8,6 @@ namespace TAABP.Application.Profile.HotelMapping
         Hotel HotelDtoToHotel(HotelDto hotelDto);
         HotelDto HotelToHotelDto(Hotel hotel);
         HotelImage HotelImagedDtoToHotelImage(HotelImageDto hotelImage);
+        HotelImageDto HotelImageToHotelImageDto(HotelImage hotelImage);
     }
 }
