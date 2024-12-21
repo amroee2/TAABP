@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
 using TAABP.Application.ServiceInterfaces;
+using TAABP.Application.Services;
+using TAABP.Core;
 
 namespace TAABP.API.Controllers
 {
@@ -68,6 +71,30 @@ namespace TAABP.API.Controllers
             catch (EntityNotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchHotelAsync(int id, JsonPatchDocument<HotelDto> patchDoc)
+        {
+            try
+            {
+                var hotel = await _hotelService.GetHotelAsync(id);
+                patchDoc.ApplyTo(hotel, (error) => ModelState.AddModelError(error.AffectedObject.ToString(), error.ErrorMessage));
+                if (!TryValidateModel(hotel))
+                {
+                    return ValidationProblem(ModelState);
+                }
+                await _hotelService.UpdateHotelAsync(id, hotel);
+                return NoContent();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
             }
         }
     }
