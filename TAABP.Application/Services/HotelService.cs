@@ -66,5 +66,17 @@ namespace TAABP.Application.Services
             hotel.UpdatedBy = "System";
             await _hotelRepository.UpdateHotelAsync(hotel);
         }
+
+        public async Task AddNewImageAsync(int Id, HotelImageDto hotelImageDto)
+        {
+            var hotel = await _hotelRepository.GetHotelAsync(Id);
+            if (hotel == null)
+            {
+                throw new EntityNotFoundException($"Hotel with id {Id} not found");
+            }
+            var hotelImage = _hotelMapper.HotelImagedDtoToHotelImage(hotelImageDto);
+            hotelImage.HotelId = Id;
+            await _hotelRepository.AddNewImageAsync(hotelImage);
+        }
     }
 }

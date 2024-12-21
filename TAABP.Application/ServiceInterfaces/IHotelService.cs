@@ -9,5 +9,6 @@ namespace TAABP.Application.ServiceInterfaces
         Task<List<HotelDto>> GetHotelsAsync();
         Task DeleteHotelAsync(int id);
         Task UpdateHotelAsync(int Id, HotelDto hotelDto);
+        Task AddNewImageAsync(int Id, HotelImageDto hotelImageDto);
     }
 }
