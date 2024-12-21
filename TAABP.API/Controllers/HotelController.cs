@@ -42,5 +42,19 @@ namespace TAABP.API.Controllers
             var hotels = await _hotelService.GetHotelsAsync();
             return Ok(hotels);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteHotelAsync(int id)
+        {
+            try
+            {
+                await _hotelService.DeleteHotelAsync(id);
+                return Ok();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
     }
 }
