@@ -10,7 +10,7 @@ namespace TAABP.Infrastructure
         {
         }
 
-        DbSet<Hotel> Hotels { get; set; }
+        public DbSet<Hotel> Hotels { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
