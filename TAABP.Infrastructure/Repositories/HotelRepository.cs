@@ -28,5 +28,11 @@ namespace TAABP.Infrastructure.Repositories
         {
             return await _context.Hotels.AsNoTracking().ToListAsync();
         }
+
+        public async Task DeleteHotelAsync(Hotel hotel)
+        {
+            _context.Hotels.Remove(hotel);
+            await _context.SaveChangesAsync();
+        }
     }
 }
