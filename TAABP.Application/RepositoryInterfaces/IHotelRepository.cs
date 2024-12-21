@@ -8,5 +8,6 @@ namespace TAABP.Application.RepositoryInterfaces
         Task<Hotel> GetHotelAsync(int id);
         Task<List<Hotel>> GetHotelsAsync();
         Task DeleteHotelAsync(Hotel hotel);
+        Task UpdateHotelAsync(Hotel hotel);
     }
 }
