@@ -42,5 +42,15 @@ namespace TAABP.Application.Services
             var hotels = await _hotelRepository.GetHotelsAsync();
             return hotels.Select(hotel => _hotelMapper.HotelToHotelDto(hotel)).ToList();
         }
+
+        public async Task DeleteHotelAsync(int id)
+        {
+            var hotel = await _hotelRepository.GetHotelAsync(id);
+            if (hotel == null)
+            {
+                throw new EntityNotFoundException($"Hotel with id {id} not found");
+            }
+            await _hotelRepository.DeleteHotelAsync(hotel);
+        }
     }
 }
