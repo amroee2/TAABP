@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TAABP.Application.DTOs;
+using TAABP.Application.Exceptions;
 using TAABP.Application.ServiceInterfaces;
 
 namespace TAABP.API.Controllers
@@ -21,6 +20,27 @@ namespace TAABP.API.Controllers
         {
             await _hotelService.CreateHotelAsync(hotelDto);
             return Ok();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetHotelAsync(int id)
+        {
+            try
+            {
+                var hotel = await _hotelService.GetHotelAsync(id);
+                return Ok(hotel);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetHotelsAsync()
+        {
+            var hotels = await _hotelService.GetHotelsAsync();
+            return Ok(hotels);
         }
     }
 }
