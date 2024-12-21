@@ -56,5 +56,19 @@ namespace TAABP.API.Controllers
                 return NotFound(ex.Message);
             }
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateHotelAsync(int id, HotelDto hotelDto)
+        {
+            try
+            {
+                await _hotelService.UpdateHotelAsync(id, hotelDto);
+                return NoContent();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
     }
 }
