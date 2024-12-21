@@ -1,4 +1,5 @@
-﻿using TAABP.Application.RepositoryInterfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using TAABP.Application.RepositoryInterfaces;
 using TAABP.Core;
 
 namespace TAABP.Infrastructure.Repositories
@@ -16,6 +17,16 @@ namespace TAABP.Infrastructure.Repositories
         {
             await _context.Hotels.AddAsync(hotel);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<Hotel> GetHotelAsync(int id)
+        {
+            return await _context.Hotels.AsNoTracking().FirstOrDefaultAsync(h => h.HotelId == id);
+        }
+
+        public async Task<List<Hotel>> GetHotelsAsync()
+        {
+            return await _context.Hotels.AsNoTracking().ToListAsync();
         }
     }
 }
