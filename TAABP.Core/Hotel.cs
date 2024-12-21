@@ -37,9 +37,9 @@ namespace TAABP.Core
         [Required(ErrorMessage = "Please enter the hotel number of rooms")]
         [Display(Name = "Number of Rooms")]
         public int NumberOfRooms { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public string CreatedBy { get; set; }
-        public string UpdatedBy { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public string? CreatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
     }
 }
