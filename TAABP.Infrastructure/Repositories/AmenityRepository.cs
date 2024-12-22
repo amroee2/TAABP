@@ -15,14 +15,14 @@ namespace TAABP.Infrastructure.Repositories
 
         public async Task<List<Amenity>> GetHotelAmenitiesAsync(int hotelId)
         {
-            return await _context.Amenities
+            return await _context.Amenities.AsNoTracking()
                 .Where(a => a.HotelId == hotelId)
                 .ToListAsync();
         }
 
         public async Task<Amenity> GetAmenityAsync(int amenityId)
         {
-            return await _context.Amenities
+            return await _context.Amenities.AsNoTracking()
                 .FirstOrDefaultAsync(a => a.AmenityId == amenityId);
         }
 
