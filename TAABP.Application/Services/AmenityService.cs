@@ -53,9 +53,14 @@ namespace TAABP.Application.Services
         public async Task UpdateAmenityAsync(AmenityDto amenity)
         {
             var hotel = await _hotelRepository.GetHotelAsync(amenity.HotelId);
+            var targetAmenity = await _amenityRepository.GetAmenityAsync(amenity.AmenityId);
             if (hotel == null)
             {
                 throw new EntityNotFoundException("Hotel not found");
+            }
+            if (targetAmenity == null)
+            {
+                throw new EntityNotFoundException("Amenity not found");
             }
             await _amenityRepository.UpdateAmenityAsync(_amenityMapper.AmenityDtoToAmenity(amenity));
         }
@@ -63,9 +68,14 @@ namespace TAABP.Application.Services
         public async Task DeleteAmenityAsync(AmenityDto amenity)
         {
             var hotel = await _hotelRepository.GetHotelAsync(amenity.HotelId);
+            var targetAmenity = await _amenityRepository.GetAmenityAsync(amenity.AmenityId);
             if (hotel == null)
             {
                 throw new EntityNotFoundException("Hotel not found");
+            }
+            if (targetAmenity == null)
+            {
+                throw new EntityNotFoundException("Amenity not found");
             }
             await _amenityRepository.DeleteAmenityAsync(_amenityMapper.AmenityDtoToAmenity(amenity));
         }
