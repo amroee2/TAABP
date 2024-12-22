@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
 using TAABP.Application.Profile.HotelMapping;
@@ -106,6 +107,17 @@ namespace TAABP.Application.Services
                 throw new EntityNotFoundException($"Hotel Image with id {imageId} not found");
             }
             await _hotelRepository.DeleteHotelImageAsync(hotelImage);
+        }
+
+        public async Task UpdateHotelImageAsync(int hotelId, int imageId, string imageUrl)
+        {
+            var hotelImage = await _hotelRepository.GetHotelImageAsync(hotelId, imageId);
+            if (hotelImage == null)
+            {
+                throw new EntityNotFoundException($"Hotel Image with id {imageId} not found");
+            }
+            hotelImage.ImageUrl = imageUrl;
+            await _hotelRepository.UpdateHotelImageAsync(hotelImage);
         }
     }
 }
