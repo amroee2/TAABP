@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using TAABP.Application.RepositoryInterfaces;
 using TAABP.Core;
 
@@ -7,16 +8,17 @@ namespace TAABP.Infrastructure.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly TAABPDbContext _context;
-
-        public UserRepository(TAABPDbContext context)
+        private readonly UserManager<User> _userManager;
+        public UserRepository(TAABPDbContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
-        public async Task CreateUserAsync(User user)
+        public async Task<bool> CreateUserAsync(User user, string password)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            var result = await _userManager.CreateAsync(user, password);
+            return result.Succeeded;
         }
 
         public async Task<bool> CheckEmailAsync(string email)

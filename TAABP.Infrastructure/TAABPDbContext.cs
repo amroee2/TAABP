@@ -10,5 +10,23 @@ namespace TAABP.Infrastructure
         {
         }
 
+        public DbSet<Hotel> Hotels { get; set; }
+        public DbSet<HotelImage> HotelImages { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Hotel>(entity =>
+            {
+                entity.ToTable(t => t.HasCheckConstraint("CK_Hotels_Rating", "Rating >= 0 AND Rating <= 5"));
+            });
+
+            modelBuilder.Entity<Hotel>(entity =>
+            {
+                entity.ToTable(t =>
+                    t.HasCheckConstraint("CK_Hotel_NumberOfRooms_Positive", "[NumberOfRooms] > 0"));
+            });
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using TAABP.Application.DTOs;
 using TAABP.Core;
 
-namespace TAABP.Application.Profile
+namespace TAABP.Application.Profile.UserMapping
 {
     public interface IUserMapper
     {

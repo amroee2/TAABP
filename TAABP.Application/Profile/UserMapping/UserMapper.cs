@@ -1,5 +1,6 @@
 ﻿using Riok.Mapperly.Abstractions;
 using TAABP.Application.DTOs;
+using TAABP.Application.Profile.UserMapping;
 using TAABP.Core;
 
 namespace TAABP.Application.Profile
