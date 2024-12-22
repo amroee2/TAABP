@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TAABP.Application.Profile;
+using TAABP.Application.Profile.AmenityMapping;
 using TAABP.Application.Profile.HotelMapping;
 using TAABP.Application.Profile.UserMapping;
 using TAABP.Application.RepositoryInterfaces;
@@ -38,6 +39,9 @@ builder.Services.AddScoped<ITokenGenerator, JWTTokenGenerator>();
 builder.Services.AddScoped<IHotelService, HotelService>();
 builder.Services.AddScoped<IHotelMapper, HotelMapper>();
 builder.Services.AddScoped<IHotelRepository, HotelRepository>();
+builder.Services.AddScoped<IAmenityService, AmenityService>();
+builder.Services.AddScoped<IAmenityMapper, AmenityMapper>();
+builder.Services.AddScoped<IAmenityRepository, AmenityRepository>();
 builder.Services.AddIdentityCore<User>(options =>
 {
     options.Password.RequireDigit = true;
