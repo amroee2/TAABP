@@ -13,5 +13,6 @@ namespace TAABP.Application.RepositoryInterfaces
         Task<HotelImage> GetHotelImageAsync(int hotelId, int imageId);
         Task<List<HotelImage>> GetHotelImagesAsync(int hotelId);
         Task DeleteHotelImageAsync(HotelImage hotelImage);
+        Task UpdateHotelImageAsync(HotelImage hotelImage);
     }
 }

@@ -62,5 +62,11 @@ namespace TAABP.Infrastructure.Repositories
             _context.HotelImages.Remove(hotelImage);
             await _context.SaveChangesAsync();
         }
+
+        public async Task UpdateHotelImageAsync(HotelImage hotelImage)
+        {
+            _context.HotelImages.Update(hotelImage);
+            await _context.SaveChangesAsync();
+        }
     }
 }
