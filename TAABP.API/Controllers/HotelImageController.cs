@@ -17,7 +17,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNewImageAsync(int id, string image)
+        public async Task<IActionResult> AddNewImageAsync(int id, [FromBody] string image)
         {
             try
             {
@@ -57,6 +57,20 @@ namespace TAABP.API.Controllers
             try
             {
                 await _hotelService.DeleteHotelImageAsync(id, imageId);
+                return NoContent();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpPut("{imageId}")]
+        public async Task<IActionResult> UpdateHotelImage(int id, int imageId, string imageUrl)
+        {
+            try
+            {
+                await _hotelService.UpdateHotelImageAsync(id, imageId, imageUrl);
                 return NoContent();
             }
             catch (EntityNotFoundException ex)
