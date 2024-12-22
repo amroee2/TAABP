@@ -56,5 +56,11 @@ namespace TAABP.Infrastructure.Repositories
         {
             return await _context.HotelImages.AsNoTracking().Where(h => h.HotelId == hotelId).ToListAsync();
         }
+
+        public async Task DeleteHotelImageAsync(HotelImage hotelImage)
+        {
+            _context.HotelImages.Remove(hotelImage);
+            await _context.SaveChangesAsync();
+        }
     }
 }
