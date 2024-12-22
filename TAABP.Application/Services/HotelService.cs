@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using TAABP.Application.DTOs;
+﻿using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
 using TAABP.Application.Profile.HotelMapping;
 using TAABP.Application.RepositoryInterfaces;
@@ -68,40 +66,38 @@ namespace TAABP.Application.Services
             await _hotelRepository.UpdateHotelAsync(hotel);
         }
 
-        public async Task AddNewImageAsync(int Id, string Image)
+        public async Task AddNewImageAsync(int Id, HotelImageDto hotelImageDto)
         {
             var hotel = await _hotelRepository.GetHotelAsync(Id);
             if (hotel == null)
             {
                 throw new EntityNotFoundException($"Hotel with id {Id} not found");
             }
-            HotelImage hotelImage = new HotelImage
-            {
-                HotelId = Id,
-                ImageUrl = Image
-            };
+            var hotelImage = new HotelImage();
+            _hotelMapper.HotelImageDtoToHotelImage(hotelImageDto, hotelImage);
+            hotelImage.HotelId = Id;
             await _hotelRepository.AddNewImageAsync(hotelImage);
         }
 
-        public async Task<string> GetHotelImage(int hotelId, int imageId)
+        public async Task<HotelImageDto> GetHotelImageAsync(int imageId)
         {
-            var hotelImage = await _hotelRepository.GetHotelImageAsync(hotelId, imageId);
+            var hotelImage = await _hotelRepository.GetHotelImageAsync(imageId);
             if (hotelImage == null)
             {
                 throw new EntityNotFoundException($"Hotel Image with id {imageId} not found");
             }
-            return hotelImage.ImageUrl;
+            return _hotelMapper.HotelImageToHotelImageDto(hotelImage);
         }
 
-        public async Task<List<string>> GetHotelImages(int hotelId)
+        public async Task<List<HotelImageDto>> GetHotelImagesAsync(int hotelId)
         {
             var hotelImages = await _hotelRepository.GetHotelImagesAsync(hotelId);
-            return hotelImages.Select(hotelImage => hotelImage.ImageUrl).ToList();
+            return hotelImages.Select(hotelImage => _hotelMapper.HotelImageToHotelImageDto(hotelImage)).ToList();
         }
 
-        public async Task DeleteHotelImageAsync(int hotelId, int imageId)
+        public async Task DeleteHotelImageAsync(int imageId)
         {
-            var hotelImage = await _hotelRepository.GetHotelImageAsync(hotelId, imageId);
+            var hotelImage = await _hotelRepository.GetHotelImageAsync(imageId);
             if (hotelImage == null)
             {
                 throw new EntityNotFoundException($"Hotel Image with id {imageId} not found");
@@ -109,14 +105,14 @@ namespace TAABP.Application.Services
             await _hotelRepository.DeleteHotelImageAsync(hotelImage);
         }
 
-        public async Task UpdateHotelImageAsync(int hotelId, int imageId, string imageUrl)
+        public async Task UpdateHotelImageAsync(int imageId, HotelImageDto imageUrl)
         {
-            var hotelImage = await _hotelRepository.GetHotelImageAsync(hotelId, imageId);
+            var hotelImage = await _hotelRepository.GetHotelImageAsync(imageId);
             if (hotelImage == null)
             {
                 throw new EntityNotFoundException($"Hotel Image with id {imageId} not found");
             }
-            hotelImage.ImageUrl = imageUrl;
+            _hotelMapper.HotelImageDtoToHotelImage(imageUrl, hotelImage);
             await _hotelRepository.UpdateHotelImageAsync(hotelImage);
         }
     }

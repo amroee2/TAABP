@@ -17,7 +17,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNewImageAsync(int id, [FromBody] string image)
+        public async Task<IActionResult> AddNewImageAsync(int id, HotelImageDto image)
         {
             try
             {
@@ -31,11 +31,11 @@ namespace TAABP.API.Controllers
         }
 
         [HttpGet("{imageId}")]
-        public async Task<IActionResult> GetHotelImage(int id, int imageId)
+        public async Task<IActionResult> GetHotelImage(int imageId)
         {
             try
             {
-                var hotelImage = await _hotelService.GetHotelImage(id, imageId);
+                var hotelImage = await _hotelService.GetHotelImageAsync(imageId);
                 return Ok(hotelImage);
             }
             catch (EntityNotFoundException ex)
@@ -47,16 +47,16 @@ namespace TAABP.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetHotelImages(int id)
         {
-            var hotelImages = await _hotelService.GetHotelImages(id);
+            var hotelImages = await _hotelService.GetHotelImagesAsync(id);
             return Ok(hotelImages);
         }
 
         [HttpDelete("{imageId}")]
-        public async Task<IActionResult> DeleteHotelImage(int id, int imageId)
+        public async Task<IActionResult> DeleteHotelImage( int imageId)
         {
             try
             {
-                await _hotelService.DeleteHotelImageAsync(id, imageId);
+                await _hotelService.DeleteHotelImageAsync(imageId);
                 return NoContent();
             }
             catch (EntityNotFoundException ex)
@@ -66,11 +66,11 @@ namespace TAABP.API.Controllers
         }
 
         [HttpPut("{imageId}")]
-        public async Task<IActionResult> UpdateHotelImage(int id, int imageId, string imageUrl)
+        public async Task<IActionResult> UpdateHotelImage(int imageId, HotelImageDto imageUrl)
         {
             try
             {
-                await _hotelService.UpdateHotelImageAsync(id, imageId, imageUrl);
+                await _hotelService.UpdateHotelImageAsync(imageId, imageUrl);
                 return NoContent();
             }
             catch (EntityNotFoundException ex)
