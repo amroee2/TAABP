@@ -18,9 +18,9 @@ namespace TAABP.Infrastructure.Repositories
             return await _context.Rooms.AsNoTracking().FirstOrDefaultAsync(r => r.RoomId == id);
         }
 
-        public async Task<List<Room>> GetRoomsAsync()
+        public async Task<List<Room>> GetRoomsAsync(int hotelId)
         {
-            return await _context.Rooms.AsNoTracking().ToListAsync();
+            return await _context.Rooms.AsNoTracking().Where(r => r.HotelId == hotelId).ToListAsync();
         }
 
         public async Task CreateRoomAsync(Room room)
