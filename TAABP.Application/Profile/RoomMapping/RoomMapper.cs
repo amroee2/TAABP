@@ -9,5 +9,7 @@ namespace TAABP.Application.Profile.RoomMapping
     {
         public partial Room RoomDtoToRoom(RoomDto roomDto);
         public partial RoomDto RoomToRoomDto(Room room);
+        public partial RoomImage RoomImageDtoToRoomImage(RoomImageDto roomImageDto);
+        public partial RoomImageDto RoomImageToRoomImageDto(RoomImage roomImage);
     }
 }

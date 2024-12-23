@@ -7,5 +7,7 @@ namespace TAABP.Application.Profile.RoomMapping
     {
         Room RoomDtoToRoom(RoomDto roomDto);
         RoomDto RoomToRoomDto(Room room);
+        RoomImage RoomImageDtoToRoomImage(RoomImageDto roomImageDto);
+        RoomImageDto RoomImageToRoomImageDto(RoomImage roomImage);
     }
 }
