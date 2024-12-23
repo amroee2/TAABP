@@ -14,6 +14,7 @@ namespace TAABP.Infrastructure
         public DbSet<HotelImage> HotelImages { get; set; }
         public DbSet<Amenity> Amenities { get; set; }
         public DbSet<Room> Rooms { get; set; }
+        public DbSet<RoomImage> RoomImages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

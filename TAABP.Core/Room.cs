@@ -42,5 +42,10 @@ namespace TAABP.Core
         public string? UpdatedBy { get; set; }
         public int HotelId { get; set; }
         public Hotel Hotel { get; set; }
+        public List<RoomImage> RoomImages { get; set; }
+        public Room()
+        {
+            RoomImages = new List<RoomImage>();
+        }
     }
 }
