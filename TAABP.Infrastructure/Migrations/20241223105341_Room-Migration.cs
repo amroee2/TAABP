@@ -37,7 +37,7 @@ namespace TAABP.Infrastructure.Migrations
                     table.PrimaryKey("PK_Rooms", x => x.RoomId);
                     table.CheckConstraint("CK_Room_Adault_Capacity_Positive", "[AdultsCapacity] >= 0");
                     table.CheckConstraint("CK_Room_Children_Capacity_Positive", "[ChildrenCapacity] >= 0");
-                    table.CheckConstraint("CK_Room_Number_Positive", "[Number] > 0");
+                    table.CheckConstraint("CK_Room_Number_Positive", "[RoomNumber] > 0");
                     table.CheckConstraint("CK_Room_Price_Positive", "[PricePerNight] > 0");
                     table.ForeignKey(
                         name: "FK_Rooms_Hotels_HotelId",

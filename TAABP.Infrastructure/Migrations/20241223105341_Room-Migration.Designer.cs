@@ -12,7 +12,7 @@ using TAABP.Infrastructure;
 namespace TAABP.Infrastructure.Migrations
 {
     [DbContext(typeof(TAABPDbContext))]
-    [Migration("20241223094742_RoomMigration")]
+    [Migration("20241223105341_Room-Migration")]
     partial class RoomMigration
     {
         /// <inheritdoc />
@@ -343,7 +343,7 @@ namespace TAABP.Infrastructure.Migrations
 
                             t.HasCheckConstraint("CK_Room_Children_Capacity_Positive", "[ChildrenCapacity] >= 0");
 
-                            t.HasCheckConstraint("CK_Room_Number_Positive", "[Number] > 0");
+                            t.HasCheckConstraint("CK_Room_Number_Positive", "[RoomNumber] > 0");
 
                             t.HasCheckConstraint("CK_Room_Price_Positive", "[PricePerNight] > 0");
                         });
