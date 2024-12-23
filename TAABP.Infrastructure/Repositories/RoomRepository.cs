@@ -40,5 +40,27 @@ namespace TAABP.Infrastructure.Repositories
             _context.Rooms.Remove(room);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<RoomImage> GetRoomImageAsync(int roomImageId)
+        {
+            return await _context.RoomImages.AsNoTracking().FirstOrDefaultAsync(ri => ri.RoomImageId == roomImageId);
+        }
+
+        public async Task<List<RoomImage>> GetRoomImagesAsync(int roomId)
+        {
+            return await _context.RoomImages.AsNoTracking().Where(ri => ri.RoomId == roomId).ToListAsync();
+        }
+
+        public async Task CreateRoomImageAsync(RoomImage roomImage)
+        {
+            _context.RoomImages.Add(roomImage);
+            await _context.SaveChangesAsync();
+        }
+        
+        public async Task DeleteRoomImageAsync(RoomImage roomImage)
+        {
+            _context.RoomImages.Remove(roomImage);
+            await _context.SaveChangesAsync();
+        }
     }
 }
