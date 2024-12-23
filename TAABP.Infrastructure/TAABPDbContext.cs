@@ -12,7 +12,7 @@ namespace TAABP.Infrastructure
 
         public DbSet<Hotel> Hotels { get; set; }
         public DbSet<HotelImage> HotelImages { get; set; }
-
+        public DbSet<Amenity> Amenities { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
