@@ -13,7 +13,7 @@ namespace TAABP.Application.DTOs
         public int HotelId { get; set; }
         public double PricePerNight { get; set; }
         public bool IsAvailable { get; set; }
-        public int Number { get; set; }
+        public int RoomNumber { get; set; }
         public RoomType Type { get; set; }
     }
 }

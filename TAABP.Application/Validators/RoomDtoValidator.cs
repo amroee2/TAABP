@@ -31,7 +31,7 @@ namespace TAABP.Application.Validators
                 .WithMessage("Price per night must be greater than 0");
             RuleFor(x => x.IsAvailable)
                 .NotEmpty().WithMessage("Please enter the room status");
-            RuleFor(x => x.Number)
+            RuleFor(x => x.RoomNumber)
                 .NotEmpty().WithMessage("Please enter the room number")
                 .GreaterThan(0).WithMessage("Room number must be greater than 0");
             RuleFor(x => x.Type)
