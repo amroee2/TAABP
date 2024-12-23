@@ -79,5 +79,47 @@ namespace TAABP.Application.Services
             }
             await _roomRepository.DeleteRoomAsync(room);
         }
+
+        public async Task CreateRoomImageAsync(RoomImageDto roomImageDto)
+        {
+            var room = await _roomRepository.GetRoomByIdAsync(roomImageDto.RoomId);
+            if (room == null)
+            {
+                throw new EntityNotFoundException("Room not found");
+            }
+            var roomImage = _roomMapper.RoomImageDtoToRoomImage(roomImageDto);
+            await _roomRepository.CreateRoomImageAsync(roomImage);
+        }
+
+        public async Task DeleteRoomImageAsync(int id)
+        {
+            var roomImage = await _roomRepository.GetRoomImageAsync(id);
+            if (roomImage == null)
+            {
+                throw new EntityNotFoundException("Room image not found");
+            }
+            await _roomRepository.DeleteRoomImageAsync(roomImage);
+        }
+
+        public async Task<RoomImageDto> GetRoomImageAsync(int id)
+        {
+            var roomImage = await _roomRepository.GetRoomImageAsync(id);
+            if (roomImage == null)
+            {
+                throw new EntityNotFoundException("Room image not found");
+            }
+            return _roomMapper.RoomImageToRoomImageDto(roomImage);
+        }
+
+        public async Task <List<RoomImageDto>> GetRoomImagesAsync(int roomId)
+        {
+            var room = await _roomRepository.GetRoomByIdAsync(roomId);
+            if (room == null)
+            {
+                throw new EntityNotFoundException("Room not found");
+            }
+            var roomImages = await _roomRepository.GetRoomImagesAsync(roomId);
+            return roomImages.Select(ri => _roomMapper.RoomImageToRoomImageDto(ri)).ToList();
+        }
     }
 }
