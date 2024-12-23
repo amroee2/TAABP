@@ -32,7 +32,7 @@ namespace TAABP.Infrastructure
             modelBuilder.Entity<Room>(entity =>
             {
                 entity.ToTable(t =>
-                    t.HasCheckConstraint("CK_Room_Number_Positive", "[Number] > 0"));
+                    t.HasCheckConstraint("CK_Room_Number_Positive", "[RoomNumber] > 0"));
                 entity.ToTable(t =>
                     t.HasCheckConstraint("CK_Room_Adault_Capacity_Positive", "[AdultsCapacity] >= 0"));
                 entity.ToTable(t =>
