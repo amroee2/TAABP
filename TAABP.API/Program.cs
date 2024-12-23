@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using TAABP.Application.Profile;
 using TAABP.Application.Profile.AmenityMapping;
 using TAABP.Application.Profile.HotelMapping;
+using TAABP.Application.Profile.RoomMapping;
 using TAABP.Application.Profile.UserMapping;
 using TAABP.Application.RepositoryInterfaces;
 using TAABP.Application.ServiceInterfaces;
@@ -42,6 +43,9 @@ builder.Services.AddScoped<IHotelRepository, HotelRepository>();
 builder.Services.AddScoped<IAmenityService, AmenityService>();
 builder.Services.AddScoped<IAmenityMapper, AmenityMapper>();
 builder.Services.AddScoped<IAmenityRepository, AmenityRepository>();
+builder.Services.AddScoped<IRoomService, RoomService>();
+builder.Services.AddScoped<IRoomMapper, RoomMapper>();
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddIdentityCore<User>(options =>
 {
     options.Password.RequireDigit = true;
