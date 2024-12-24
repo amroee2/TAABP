@@ -16,6 +16,7 @@ namespace TAABP.Infrastructure
         public DbSet<Room> Rooms { get; set; }
         public DbSet<RoomImage> RoomImages { get; set; }
         public DbSet<FeaturedDeal> FeaturedDeals { get; set; }
+        public DbSet<City> Cities { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
