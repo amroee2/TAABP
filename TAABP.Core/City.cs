@@ -30,6 +30,10 @@ namespace TAABP.Core
         public int? NumberOfHotels { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "Number of visits must be greater than or equal to 0.")]
         public int? NumberOfVisits { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public string? CreatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
         public List<Hotel> Hotels { get; set; }
 
         public City()

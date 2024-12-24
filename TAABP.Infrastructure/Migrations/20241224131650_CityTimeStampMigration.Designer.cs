@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TAABP.Infrastructure;
 
@@ -11,9 +12,11 @@ using TAABP.Infrastructure;
 namespace TAABP.Infrastructure.Migrations
 {
     [DbContext(typeof(TAABPDbContext))]
-    partial class TAABPDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241224131650_CityTimeStampMigration")]
+    partial class CityTimeStampMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
