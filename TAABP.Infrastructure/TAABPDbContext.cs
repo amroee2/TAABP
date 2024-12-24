@@ -51,6 +51,14 @@ namespace TAABP.Infrastructure
                 entity.ToTable(t =>
                     t.HasCheckConstraint("CK_FeaturedDeal_Discount_Positive", "[Discount] >= 0"));
             });
+
+            modelBuilder.Entity<City>(entity =>
+            {
+                entity.ToTable(t =>
+                    t.HasCheckConstraint("CK_FeaturedDeal_NumberOfHotels_Positive", "[NumberOfHotels] >= 0"));
+                entity.ToTable(t =>
+                   t.HasCheckConstraint("CK_FeaturedDeal_NumberOfVists_Positive", "[NumberOfVisits] >= 0"));
+            });
         }
     }
 }
