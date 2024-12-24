@@ -1,8 +1,5 @@
-﻿using Riok.Mapperly.Abstractions;
-
-namespace TAABP.Application.DTOs
+﻿namespace TAABP.Application.DTOs
 {
-    [Mapper]
     public class FeatueredDealDto
     {
         public int FeaturedDealId { get; set; }
