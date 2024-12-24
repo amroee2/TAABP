@@ -15,12 +15,12 @@ namespace TAABP.Infrastructure.Repositories
 
         public async Task<List<City>> GetCitiesAsync()
         {
-            return await _context.Cities.ToListAsync();
+            return await _context.Cities.AsNoTracking().ToListAsync();
         }
 
         public async Task<City> GetCityByIdAsync(int id)
         {
-            return await _context.Cities.FindAsync(id);
+            return await _context.Cities.AsNoTracking().FirstOrDefaultAsync(c => c.CityId == id);
         }
 
         public async Task CreateCityAsync(City city)
