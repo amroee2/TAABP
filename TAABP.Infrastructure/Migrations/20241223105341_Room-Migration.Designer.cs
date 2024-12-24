@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TAABP.Infrastructure;
 
@@ -11,9 +12,11 @@ using TAABP.Infrastructure;
 namespace TAABP.Infrastructure.Migrations
 {
     [DbContext(typeof(TAABPDbContext))]
-    partial class TAABPDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241223105341_Room-Migration")]
+    partial class RoomMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -185,47 +188,6 @@ namespace TAABP.Infrastructure.Migrations
                     b.ToTable("Amenities");
                 });
 
-            modelBuilder.Entity("TAABP.Core.FeaturedDeal", b =>
-                {
-                    b.Property<int>("FeaturedDealId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FeaturedDealId"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Discount")
-                        .HasColumnType("float");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("FeaturedDealId");
-
-                    b.HasIndex("RoomId");
-
-                    b.ToTable("FeaturedDeals", t =>
-                        {
-                            t.HasCheckConstraint("CK_FeaturedDeal_Discount_Positive", "[Discount] >= 0");
-                        });
-                });
-
             modelBuilder.Entity("TAABP.Core.Hotel", b =>
                 {
                     b.Property<int>("HotelId")
@@ -387,28 +349,6 @@ namespace TAABP.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("TAABP.Core.RoomImage", b =>
-                {
-                    b.Property<int>("RoomImageId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomImageId"));
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int");
-
-                    b.HasKey("RoomImageId");
-
-                    b.HasIndex("RoomId");
-
-                    b.ToTable("RoomImages");
-                });
-
             modelBuilder.Entity("TAABP.Core.User", b =>
                 {
                     b.Property<string>("Id")
@@ -550,17 +490,6 @@ namespace TAABP.Infrastructure.Migrations
                     b.Navigation("Hotel");
                 });
 
-            modelBuilder.Entity("TAABP.Core.FeaturedDeal", b =>
-                {
-                    b.HasOne("TAABP.Core.Room", "Room")
-                        .WithMany("FeaturedDeals")
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Room");
-                });
-
             modelBuilder.Entity("TAABP.Core.HotelImage", b =>
                 {
                     b.HasOne("TAABP.Core.Hotel", "Hotel")
@@ -583,17 +512,6 @@ namespace TAABP.Infrastructure.Migrations
                     b.Navigation("Hotel");
                 });
 
-            modelBuilder.Entity("TAABP.Core.RoomImage", b =>
-                {
-                    b.HasOne("TAABP.Core.Room", "Room")
-                        .WithMany("RoomImages")
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Room");
-                });
-
             modelBuilder.Entity("TAABP.Core.Hotel", b =>
                 {
                     b.Navigation("Amenities");
@@ -601,13 +519,6 @@ namespace TAABP.Infrastructure.Migrations
                     b.Navigation("HotelImages");
 
                     b.Navigation("Rooms");
-                });
-
-            modelBuilder.Entity("TAABP.Core.Room", b =>
-                {
-                    b.Navigation("FeaturedDeals");
-
-                    b.Navigation("RoomImages");
                 });
 #pragma warning restore 612, 618
         }
