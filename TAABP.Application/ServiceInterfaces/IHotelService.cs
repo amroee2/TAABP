@@ -4,8 +4,8 @@ namespace TAABP.Application.ServiceInterfaces
 {
     public interface IHotelService
     {
-        Task CreateHotelAsync( HotelDto hotelDto);
-        Task<HotelDto> GetHotelAsync(int id);
+        Task<int> CreateHotelAsync(int cityId, HotelDto hotelDto);
+        Task<HotelDto> GetHotelByIdAsync(int id);
         Task<List<HotelDto>> GetHotelsAsync();
         Task DeleteHotelAsync(int id);
         Task UpdateHotelAsync(int Id, HotelDto hotelDto);

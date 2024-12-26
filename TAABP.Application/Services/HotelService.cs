@@ -11,22 +11,34 @@ namespace TAABP.Application.Services
     {
         private readonly IHotelRepository _hotelRepository;
         private readonly IHotelMapper _hotelMapper;
-        public HotelService(IHotelRepository hotelRepository, IHotelMapper hotelMapper)
+        private readonly IUserService _userService;
+        private readonly ICityRepository _cityRepository;
+        public HotelService(ICityRepository cityRepository, IHotelRepository hotelRepository, IHotelMapper hotelMapper, IUserService userService)
         {
             _hotelRepository = hotelRepository;
             _hotelMapper = hotelMapper;
+            _userService = userService;
+            _cityRepository = cityRepository;
 
         }
 
-        public async Task CreateHotelAsync(HotelDto hotelDto)
+        public async Task<int> CreateHotelAsync(int cityId, HotelDto hotelDto)
         {
-            var hotel = _hotelMapper.HotelDtoToHotel(hotelDto);
+            var city = await _cityRepository.GetCityByIdAsync(cityId);
+            if (city == null)
+            {
+                throw new EntityNotFoundException($"City with id {cityId} not found");
+            }
+            var hotel = new Hotel();
+            _hotelMapper.HotelDtoToHotel(hotelDto, hotel);
             hotel.CreatedAt = DateTime.Now;
-            hotel.CreatedBy = "System";
+            hotel.CreatedBy = await _userService.GetCurrentUsernameAsync();
+            hotel.CityId = cityId;
             await _hotelRepository.CreateHotelAsync(hotel);
+            return hotel.HotelId;
         }
 
-        public async Task<HotelDto> GetHotelAsync(int id)
+        public async Task<HotelDto> GetHotelByIdAsync(int id)
         {
             var hotel = await _hotelRepository.GetHotelByIdAsync(id);
             if (hotel == null)
@@ -52,18 +64,18 @@ namespace TAABP.Application.Services
             await _hotelRepository.DeleteHotelAsync(hotel);
         }
 
-        public async Task UpdateHotelAsync(int Id, HotelDto hotelDto)
+        public async Task UpdateHotelAsync(int cityId, HotelDto hotelDto)
         {
-            var hotel = await _hotelRepository.GetHotelByIdAsync(Id);
-            if (hotel == null)
+            var targetHotel = await _hotelRepository.GetHotelByIdAsync(hotelDto.HotelId);
+            if (targetHotel == null)
             {
-                throw new EntityNotFoundException($"Hotel with id {Id} not found");
+                throw new EntityNotFoundException($"Hotel with id {hotelDto.HotelId} not found");
             }
-            hotel = _hotelMapper.HotelDtoToHotel(hotelDto);
-            hotel.HotelId = Id;
-            hotel.UpdatedAt = DateTime.Now;
-            hotel.UpdatedBy = "System";
-            await _hotelRepository.UpdateHotelAsync(hotel);
+            _hotelMapper.HotelDtoToHotel(hotelDto, targetHotel);
+            targetHotel.UpdatedAt = DateTime.Now;
+            targetHotel.UpdatedBy = await _userService.GetCurrentUsernameAsync();
+            targetHotel.CityId = cityId;
+            await _hotelRepository.UpdateHotelAsync(targetHotel);
         }
 
         public async Task AddNewImageAsync(int Id, HotelImageDto hotelImageDto)
