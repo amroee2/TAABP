@@ -11,14 +11,19 @@ namespace TAABP.Application.Services
         private readonly IReservationMapper _reservationMapper;
         private readonly IRoomRepository _roomRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IHotelRepository _hotelRepository;
+        private readonly ICityRepository _cityRepository;
 
         public ReservationService(IReservationRepository reservationRepository, IReservationMapper reservationMapper, 
-            IRoomRepository roomRepository, IUserRepository userRepository)
+            IRoomRepository roomRepository, IUserRepository userRepository, IHotelRepository hotelRepository,
+            ICityRepository cityRepository)
         {
             _reservationRepository = reservationRepository;
             _reservationMapper = reservationMapper;
             _roomRepository = roomRepository;
             _userRepository = userRepository;
+            _hotelRepository = hotelRepository;
+            _cityRepository = cityRepository;
         }
 
         public async Task<ReservationDto> GetReservationByIdAsync(int id)
@@ -41,6 +46,11 @@ namespace TAABP.Application.Services
             {
                 throw new EntityNotFoundException("Room or user not found");
             }
+            room.IsAvailable = false;
+            var hotel = await _hotelRepository.GetHotelAsync(room.HotelId);
+            var city = await _cityRepository.GetCityByIdAsync(hotel.CityId);
+            hotel.NumberOfVisits++;
+            city.NumberOfVisits++;
             var reservation = _reservationMapper.ReservationDtoToReservation(reservationDto);
             var price = (reservation.EndDate - reservation.StartDate).Days * room.PricePerNight;
             reservation.Price = price;
@@ -54,6 +64,10 @@ namespace TAABP.Application.Services
             {
                 throw new EntityNotFoundException("Reservation not found");
             }
+            if (DateTime.Now >= targetReservation.StartDate.AddHours(-24) || DateTime.Now >= targetReservation.EndDate)
+            {
+                throw new InvalidOperationException("Reservations cannot be updated within 24 hours of the start date, during the stay, or after completion.");
+            }
             var reservation = _reservationMapper.ReservationDtoToReservation(reservationDto);
             await _reservationRepository.UpdateReservationAsync(reservation);
         }
@@ -65,6 +79,16 @@ namespace TAABP.Application.Services
             {
                 throw new EntityNotFoundException("Reservation not found");
             }
+            if (DateTime.Now >= targetReservation.StartDate.AddHours(-24) || DateTime.Now >= targetReservation.EndDate)
+            {
+                throw new InvalidOperationException("Reservations cannot be canceled within 24 hours of the start date, during the stay, or after completion.");
+            }
+            var room = await _roomRepository.GetRoomByIdAsync(targetReservation.RoomId);
+            room.IsAvailable = true;
+            var hotel = await _hotelRepository.GetHotelAsync(room.HotelId);
+            var city = await _cityRepository.GetCityByIdAsync(hotel.CityId);
+            hotel.NumberOfVisits--;
+            city.NumberOfVisits--;
             await _reservationRepository.DeleteReservationAsync(targetReservation);
         }
     }
