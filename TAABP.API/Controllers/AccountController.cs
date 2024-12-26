@@ -22,7 +22,7 @@ namespace TAABP.API.Controllers
             try
             {
                 await _userService.CreateUserAsync(registerDto);
-                return Ok(new { message = "User created successfully!" });
+                return Created();
             }
             catch (EmailAlreadyExistsException ex)
             {
@@ -30,7 +30,7 @@ namespace TAABP.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An unexpected error occurred." });
+                return StatusCode(500, new { message = ex.Message });
             }
         }
 
