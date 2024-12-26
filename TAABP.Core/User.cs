@@ -18,5 +18,12 @@ namespace TAABP.Core
         [Display(Name = "Address")]
         [StringLength(100)]
         public string? Address { get; set; }
+
+        public List<Reservation> Reservations { get; set; }
+
+        public User()
+        {
+            Reservations = new List<Reservation>();
+        }
     }
 }

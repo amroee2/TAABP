@@ -17,6 +17,7 @@ namespace TAABP.Infrastructure
         public DbSet<RoomImage> RoomImages { get; set; }
         public DbSet<FeaturedDeal> FeaturedDeals { get; set; }
         public DbSet<City> Cities { get; set; }
+        public DbSet<Reservation> Reservations { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -59,6 +60,12 @@ namespace TAABP.Infrastructure
                     t.HasCheckConstraint("CK_FeaturedDeal_NumberOfHotels_Positive", "[NumberOfHotels] >= 0"));
                 entity.ToTable(t =>
                    t.HasCheckConstraint("CK_FeaturedDeal_NumberOfVists_Positive", "[NumberOfVisits] >= 0"));
+            });
+
+            modelBuilder.Entity<Reservation>(entity =>
+            {
+                entity.ToTable(t =>
+                    t.HasCheckConstraint("CK_Reservation_Price_Positive", "[Price] > 0"));
             });
         }
     }
