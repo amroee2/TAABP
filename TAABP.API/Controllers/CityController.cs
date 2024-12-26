@@ -41,6 +41,10 @@ namespace TAABP.API.Controllers
             {
                 return NotFound(ex.Message);
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpPost]
@@ -77,6 +81,10 @@ namespace TAABP.API.Controllers
             {
                 return NotFound(ex.Message);
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
             return NoContent();
         }
 
@@ -90,6 +98,10 @@ namespace TAABP.API.Controllers
             catch (EntityNotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
             return NoContent();
         }
