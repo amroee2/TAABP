@@ -60,7 +60,7 @@ namespace TAABP.Application.Services
             {
                 throw new InvalidLoginException($"Invalid Email or Password");
             }
-            return _tokenGenerator.GenerateToken(user.Email);
+            return _tokenGenerator.GenerateToken(user.Id);
         }
 
         public async Task<UserDto> GetUserByIdAsync(string id)

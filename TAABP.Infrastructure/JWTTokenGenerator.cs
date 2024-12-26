@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using TAABP.Application.TokenGenerators;
+using TAABP.Core;
 
 namespace TAABP.Infrastructure
 {
@@ -15,15 +16,16 @@ namespace TAABP.Infrastructure
         {
             this._configuration = configuration;
         }
-        public string GenerateToken(string email)
+        public string GenerateToken(string id)
         {
             var securityKey = new SymmetricSecurityKey(Convert.FromBase64String(_configuration["Authentication:SecretForKey"]));
 
             var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
 
-            var claims = new List<Claim>();
-            claims.Add(new Claim("given email", email));
-
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, id),
+            };
             var jwtSecurityToken = new JwtSecurityToken(
                 _configuration["Authentication:Issuer"],
                 _configuration["Authentication:Audience"],

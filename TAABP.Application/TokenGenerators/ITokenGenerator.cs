@@ -2,7 +2,7 @@
 {
     public interface ITokenGenerator
     {
-        string GenerateToken(string email);
+        string GenerateToken(string id);
         bool ValidateToken(string token);
     }
 }
