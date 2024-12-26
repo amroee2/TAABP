@@ -19,7 +19,7 @@ namespace TAABP.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Hotel> GetHotelAsync(int id)
+        public async Task<Hotel> GetHotelByIdAsync(int id)
         {
             return await _context.Hotels.AsNoTracking().FirstOrDefaultAsync(h => h.HotelId == id);
         }

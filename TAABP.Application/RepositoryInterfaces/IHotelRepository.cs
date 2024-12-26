@@ -5,7 +5,7 @@ namespace TAABP.Application.RepositoryInterfaces
     public interface IHotelRepository
     {
         Task CreateHotelAsync(Hotel hotel);
-        Task<Hotel> GetHotelAsync(int id);
+        Task<Hotel> GetHotelByIdAsync(int id);
         Task<List<Hotel>> GetHotelsAsync();
         Task DeleteHotelAsync(Hotel hotel);
         Task UpdateHotelAsync(Hotel hotel);

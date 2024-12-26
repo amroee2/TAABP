@@ -30,7 +30,7 @@ namespace TAABP.Application.Services
 
         public async Task<List<RoomDto>> GetRoomsAsync(int hotelId)
         {
-            if (await _hotelRepository.GetHotelAsync(hotelId) == null)
+            if (await _hotelRepository.GetHotelByIdAsync(hotelId) == null)
             {
                 throw new EntityNotFoundException("Hotel not found");
             }
@@ -40,7 +40,7 @@ namespace TAABP.Application.Services
 
         public async Task CreateRoomAsync(RoomDto roomDto)
         {
-            var hotel = await _hotelRepository.GetHotelAsync(roomDto.HotelId);
+            var hotel = await _hotelRepository.GetHotelByIdAsync(roomDto.HotelId);
             if (hotel == null)
             {
                 throw new EntityNotFoundException("Hotel not found");
@@ -54,7 +54,7 @@ namespace TAABP.Application.Services
 
         public async Task UpdateRoomAsync(RoomDto roomDto)
         {
-            var hotel = await _hotelRepository.GetHotelAsync(roomDto.HotelId);
+            var hotel = await _hotelRepository.GetHotelByIdAsync(roomDto.HotelId);
             if (hotel == null)
             {
                 throw new EntityNotFoundException("Hotel not found");

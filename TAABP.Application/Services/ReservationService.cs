@@ -47,7 +47,7 @@ namespace TAABP.Application.Services
                 throw new EntityNotFoundException("Room or user not found");
             }
             room.IsAvailable = false;
-            var hotel = await _hotelRepository.GetHotelAsync(room.HotelId);
+            var hotel = await _hotelRepository.GetHotelByIdAsync(room.HotelId);
             var city = await _cityRepository.GetCityByIdAsync(hotel.CityId);
             hotel.NumberOfVisits++;
             city.NumberOfVisits++;
@@ -85,7 +85,7 @@ namespace TAABP.Application.Services
             }
             var room = await _roomRepository.GetRoomByIdAsync(targetReservation.RoomId);
             room.IsAvailable = true;
-            var hotel = await _hotelRepository.GetHotelAsync(room.HotelId);
+            var hotel = await _hotelRepository.GetHotelByIdAsync(room.HotelId);
             var city = await _cityRepository.GetCityByIdAsync(hotel.CityId);
             hotel.NumberOfVisits--;
             city.NumberOfVisits--;

@@ -21,7 +21,7 @@ namespace TAABP.Application.Services
 
         public async Task<List<AmenityDto>> GetHotelAmenitiesAsync(int hotelId)
         {
-            var hotel = await _hotelRepository.GetHotelAsync(hotelId);
+            var hotel = await _hotelRepository.GetHotelByIdAsync(hotelId);
             if (hotel == null)
             {
                 throw new EntityNotFoundException("Hotel not found");
@@ -42,7 +42,7 @@ namespace TAABP.Application.Services
 
         public async Task CreateAmenityAsync(AmenityDto amenity)
         {
-            var hotel = await _hotelRepository.GetHotelAsync(amenity.HotelId);
+            var hotel = await _hotelRepository.GetHotelByIdAsync(amenity.HotelId);
             if (hotel == null)
             {
                 throw new EntityNotFoundException("Hotel not found");
@@ -52,7 +52,7 @@ namespace TAABP.Application.Services
 
         public async Task UpdateAmenityAsync(AmenityDto amenity)
         {
-            var hotel = await _hotelRepository.GetHotelAsync(amenity.HotelId);
+            var hotel = await _hotelRepository.GetHotelByIdAsync(amenity.HotelId);
             var targetAmenity = await _amenityRepository.GetAmenityAsync(amenity.AmenityId);
             if (hotel == null)
             {
@@ -67,7 +67,7 @@ namespace TAABP.Application.Services
 
         public async Task DeleteAmenityAsync(AmenityDto amenity)
         {
-            var hotel = await _hotelRepository.GetHotelAsync(amenity.HotelId);
+            var hotel = await _hotelRepository.GetHotelByIdAsync(amenity.HotelId);
             var targetAmenity = await _amenityRepository.GetAmenityAsync(amenity.AmenityId);
             if (hotel == null)
             {

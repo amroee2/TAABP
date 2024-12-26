@@ -28,7 +28,7 @@ namespace TAABP.Application.Services
 
         public async Task<HotelDto> GetHotelAsync(int id)
         {
-            var hotel = await _hotelRepository.GetHotelAsync(id);
+            var hotel = await _hotelRepository.GetHotelByIdAsync(id);
             if (hotel == null)
             {
                 throw new EntityNotFoundException($"Hotel with id {id} not found");
@@ -44,7 +44,7 @@ namespace TAABP.Application.Services
 
         public async Task DeleteHotelAsync(int id)
         {
-            var hotel = await _hotelRepository.GetHotelAsync(id);
+            var hotel = await _hotelRepository.GetHotelByIdAsync(id);
             if (hotel == null)
             {
                 throw new EntityNotFoundException($"Hotel with id {id} not found");
@@ -54,7 +54,7 @@ namespace TAABP.Application.Services
 
         public async Task UpdateHotelAsync(int Id, HotelDto hotelDto)
         {
-            var hotel = await _hotelRepository.GetHotelAsync(Id);
+            var hotel = await _hotelRepository.GetHotelByIdAsync(Id);
             if (hotel == null)
             {
                 throw new EntityNotFoundException($"Hotel with id {Id} not found");
@@ -68,7 +68,7 @@ namespace TAABP.Application.Services
 
         public async Task AddNewImageAsync(int Id, HotelImageDto hotelImageDto)
         {
-            var hotel = await _hotelRepository.GetHotelAsync(Id);
+            var hotel = await _hotelRepository.GetHotelByIdAsync(Id);
             if (hotel == null)
             {
                 throw new EntityNotFoundException($"Hotel with id {Id} not found");
