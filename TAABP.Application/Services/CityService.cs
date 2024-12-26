@@ -54,7 +54,8 @@ namespace TAABP.Application.Services
 
         public async Task<int> CreateCityAsync(CityDto cityDto)
         {
-            var city = _cityMapper.CityDtoToCity(cityDto);
+            var city = new City();
+            _cityMapper.CityDtoToCity(cityDto, city);
             city.CreatedAt = DateTime.Now;
             city.CreatedBy = await GetCurrentUsernameAsync();
 
@@ -71,11 +72,14 @@ namespace TAABP.Application.Services
             {
                 throw new EntityNotFoundException("City not found");
             }
-            var city = _cityMapper.CityDtoToCity(cityDto);
-            city.UpdatedAt = DateTime.Now;
-            city.UpdatedBy = await GetCurrentUsernameAsync();
-            await _cityRepository.UpdateCityAsync(city);
+            _cityMapper.CityDtoToCity(cityDto, targetCity);
+
+            targetCity.UpdatedAt = DateTime.Now;
+            targetCity.UpdatedBy = await GetCurrentUsernameAsync();
+
+            await _cityRepository.UpdateCityAsync(targetCity);
         }
+
 
         public async Task DeleteCityAsync(int id)
         {
