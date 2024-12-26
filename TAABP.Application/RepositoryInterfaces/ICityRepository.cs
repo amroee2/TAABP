@@ -1,6 +1,6 @@
 ﻿using TAABP.Core;
 
-namespace TAABP.Application.ServiceInterfaces
+namespace TAABP.Application.RepositoryInterfaces
 {
     public interface ICityRepository
     {

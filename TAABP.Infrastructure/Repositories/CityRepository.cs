@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TAABP.Application.ServiceInterfaces;
+using TAABP.Application.RepositoryInterfaces;
 using TAABP.Core;
 
 namespace TAABP.Infrastructure.Repositories
