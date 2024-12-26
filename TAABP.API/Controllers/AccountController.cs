@@ -5,7 +5,7 @@ using TAABP.Application.ServiceInterfaces;
 
 namespace TAABP.API.Controllers
 {
-    [Route("api/Users")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
     {
