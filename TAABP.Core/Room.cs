@@ -44,10 +44,12 @@ namespace TAABP.Core
         public Hotel Hotel { get; set; }
         public List<RoomImage> RoomImages { get; set; }
         public List<FeaturedDeal> FeaturedDeals { get; set; }
+        public List<Reservation> Reservations { get; set; }
         public Room()
         {
             RoomImages = new List<RoomImage>();
             FeaturedDeals = new List<FeaturedDeal>();
+            Reservations = new List<Reservation>();
         }
     }
 }
