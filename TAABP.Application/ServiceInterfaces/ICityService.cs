@@ -6,7 +6,7 @@ namespace TAABP.Application.ServiceInterfaces
     {
         Task<List<CityDto>> GetCitiesAsync();
         Task<CityDto> GetCityByIdAsync(int id);
-        Task CreateCityAsync(CityDto cityDto);
+        Task<int> CreateCityAsync(CityDto cityDto);
         Task UpdateCityAsync(CityDto cityDto);
         Task DeleteCityAsync(int id);
     }

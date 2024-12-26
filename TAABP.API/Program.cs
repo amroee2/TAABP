@@ -32,8 +32,9 @@ builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirme
 
 builder.Services.AddControllers()
     .AddNewtonsoftJson();
+builder.Services.AddHttpContextAccessor();
 
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUserService, UserService>();

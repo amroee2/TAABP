@@ -1,7 +1,12 @@
-﻿using TAABP.Application.DTOs;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
 using TAABP.Application.Profile.CityMapping;
+using TAABP.Application.RepositoryInterfaces;
 using TAABP.Application.ServiceInterfaces;
+using TAABP.Core;
 
 namespace TAABP.Application.Services
 {
@@ -9,11 +14,26 @@ namespace TAABP.Application.Services
     {
         private readonly ICityRepository _cityRepository;
         private readonly ICityMapper _cityMapper;
+        private readonly UserManager<User> _userManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CityService(ICityRepository cityRepository, ICityMapper cityMapper)
+        public CityService(
+            ICityRepository cityRepository,
+            ICityMapper cityMapper,
+            UserManager<User> userManager,
+            IHttpContextAccessor httpContextAccessor)
         {
             _cityRepository = cityRepository;
             _cityMapper = cityMapper;
+            _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        private async Task<string> GetCurrentUsernameAsync()
+        {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId);
+            return user.UserName;
         }
 
         public async Task<List<CityDto>> GetCitiesAsync()
@@ -25,20 +45,24 @@ namespace TAABP.Application.Services
         public async Task<CityDto> GetCityByIdAsync(int id)
         {
             var city = await _cityRepository.GetCityByIdAsync(id);
-            if(city == null)
+            if (city == null)
             {
                 throw new EntityNotFoundException("City not found");
             }
             return _cityMapper.CityToCityDto(city);
         }
 
-        public async Task CreateCityAsync(CityDto cityDto)
+        public async Task<int> CreateCityAsync(CityDto cityDto)
         {
             var city = _cityMapper.CityDtoToCity(cityDto);
             city.CreatedAt = DateTime.Now;
-            city.CreatedBy = "Admin";
+            city.CreatedBy = await GetCurrentUsernameAsync();
+
             await _cityRepository.CreateCityAsync(city);
+
+            return city.CityId;
         }
+
 
         public async Task UpdateCityAsync(CityDto cityDto)
         {
@@ -49,7 +73,7 @@ namespace TAABP.Application.Services
             }
             var city = _cityMapper.CityDtoToCity(cityDto);
             city.UpdatedAt = DateTime.Now;
-            city.UpdatedBy = "Admin";
+            city.UpdatedBy = await GetCurrentUsernameAsync();
             await _cityRepository.UpdateCityAsync(city);
         }
 
