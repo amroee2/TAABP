@@ -2,6 +2,7 @@
 using TAABP.Application.Exceptions;
 using TAABP.Application.Profile.ReservationMapping;
 using TAABP.Application.RepositoryInterfaces;
+using TAABP.Application.ServiceInterfaces;
 
 namespace TAABP.Application.Services
 {

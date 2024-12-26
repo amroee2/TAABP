@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
-using TAABP.Application.Services;
+using TAABP.Application.ServiceInterfaces;
 
 namespace TAABP.API.Controllers
 {

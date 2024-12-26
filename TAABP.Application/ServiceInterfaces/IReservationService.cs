@@ -1,6 +1,6 @@
 ﻿using TAABP.Application.DTOs;
 
-namespace TAABP.Application.Services
+namespace TAABP.Application.ServiceInterfaces
 {
     public interface IReservationService
     {
