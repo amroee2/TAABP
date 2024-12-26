@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TAABP.Application.Profile;
 using TAABP.Application.Profile.AmenityMapping;
+using TAABP.Application.Profile.CityMapping;
 using TAABP.Application.Profile.FeaturedDealMapping;
 using TAABP.Application.Profile.HotelMapping;
 using TAABP.Application.Profile.RoomMapping;
@@ -50,6 +51,9 @@ builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<IFeaturedDealService, FeaturedDealService>();
 builder.Services.AddScoped<IFeaturedDealMapper, FeaturedDealMapper>();
 builder.Services.AddScoped<IFeaturedDealRepository, FeaturedDealRepository>();
+builder.Services.AddScoped<ICityService, CityService>();
+builder.Services.AddScoped<ICityMapper, CityMapper>();
+builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddIdentityCore<User>(options =>
 {
     options.Password.RequireDigit = true;

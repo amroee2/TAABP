@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TAABP.Infrastructure;
 
@@ -11,9 +12,11 @@ using TAABP.Infrastructure;
 namespace TAABP.Infrastructure.Migrations
 {
     [DbContext(typeof(TAABPDbContext))]
-    partial class TAABPDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241224130223_CityMigration")]
+    partial class CityMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -198,12 +201,6 @@ namespace TAABP.Infrastructure.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -230,15 +227,9 @@ namespace TAABP.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("CityId");
 
-                    b.ToTable("Cities", t =>
+                    b.ToTable("City", t =>
                         {
                             t.HasCheckConstraint("CK_FeaturedDeal_NumberOfHotels_Positive", "[NumberOfHotels] >= 0");
 
