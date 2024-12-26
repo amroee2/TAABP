@@ -14,26 +14,15 @@ namespace TAABP.Application.Services
     {
         private readonly ICityRepository _cityRepository;
         private readonly ICityMapper _cityMapper;
-        private readonly UserManager<User> _userManager;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUserService _userService;
 
         public CityService(
             ICityRepository cityRepository,
-            ICityMapper cityMapper,
-            UserManager<User> userManager,
-            IHttpContextAccessor httpContextAccessor)
+            ICityMapper cityMapper, IUserService userService)
         {
             _cityRepository = cityRepository;
             _cityMapper = cityMapper;
-            _userManager = userManager;
-            _httpContextAccessor = httpContextAccessor;
-        }
-
-        private async Task<string> GetCurrentUsernameAsync()
-        {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _userManager.FindByIdAsync(userId);
-            return user.UserName;
+            _userService = userService;
         }
 
         public async Task<List<CityDto>> GetCitiesAsync()
@@ -57,7 +46,7 @@ namespace TAABP.Application.Services
             var city = new City();
             _cityMapper.CityDtoToCity(cityDto, city);
             city.CreatedAt = DateTime.Now;
-            city.CreatedBy = await GetCurrentUsernameAsync();
+            city.CreatedBy = await _userService.GetCurrentUsernameAsync();
 
             await _cityRepository.CreateCityAsync(city);
 
@@ -75,7 +64,7 @@ namespace TAABP.Application.Services
             _cityMapper.CityDtoToCity(cityDto, targetCity);
 
             targetCity.UpdatedAt = DateTime.Now;
-            targetCity.UpdatedBy = await GetCurrentUsernameAsync();
+            targetCity.UpdatedBy = await _userService.GetCurrentUsernameAsync();
 
             await _cityRepository.UpdateCityAsync(targetCity);
         }
