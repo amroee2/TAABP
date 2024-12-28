@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
 using TAABP.Application.ServiceInterfaces;
 
 namespace TAABP.API.Controllers
 {
-    [Route("api/Hotels/{id}/[controller]")]
+    [Route("api/Hotels/{hotelId}/[controller]")]
     [ApiController]
     public class HotelImageController : ControllerBase
     {
@@ -17,65 +16,83 @@ namespace TAABP.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNewImageAsync(int id, HotelImageDto image)
+        public async Task<IActionResult> CreateNewHotelImageAsync(int hotelId, HotelImageDto image)
         {
             try
             {
-                await _hotelService.AddNewImageAsync(id, image);
+                var imageId = await _hotelService.CreateNewHotelImageAsync(hotelId, image);
+                var hotelImage = await _hotelService.GetHotelImageByIdAsync(hotelId, imageId);
+                return StatusCode(201, hotelImage);
             }
             catch (EntityNotFoundException ex)
             {
                 return NotFound(ex.Message);
             }
-            return Ok();
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpGet("{imageId}")]
-        public async Task<IActionResult> GetHotelImage(int imageId)
+        public async Task<IActionResult> GetHotelImageAsync(int hotelId, int imageId)
         {
             try
             {
-                var hotelImage = await _hotelService.GetHotelImageAsync(imageId);
+                var hotelImage = await _hotelService.GetHotelImageByIdAsync(hotelId, imageId);
                 return Ok(hotelImage);
             }
             catch (EntityNotFoundException ex)
             {
                 return NotFound(ex.Message);
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetHotelImages(int id)
+        public async Task<IActionResult> GetHotelImagesAsync(int hotelId)
         {
-            var hotelImages = await _hotelService.GetHotelImagesAsync(id);
+            var hotelImages = await _hotelService.GetHotelImagesAsync(hotelId);
             return Ok(hotelImages);
         }
 
         [HttpDelete("{imageId}")]
-        public async Task<IActionResult> DeleteHotelImage( int imageId)
+        public async Task<IActionResult> DeleteHotelImageAsync(int hotelId, int imageId)
         {
             try
             {
-                await _hotelService.DeleteHotelImageAsync(imageId);
+                await _hotelService.GetHotelImageByIdAsync(hotelId, imageId);
                 return NoContent();
             }
             catch (EntityNotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
             }
         }
 
         [HttpPut("{imageId}")]
-        public async Task<IActionResult> UpdateHotelImage(int imageId, HotelImageDto imageUrl)
+        public async Task<IActionResult> UpdateHotelImageAsync(int hotelId, int imageId, HotelImageDto imageUrl)
         {
+            imageUrl.HotelImageId = imageId;
             try
             {
-                await _hotelService.UpdateHotelImageAsync(imageId, imageUrl);
+                await _hotelService.UpdateHotelImageAsync(hotelId, imageId, imageUrl);
                 return NoContent();
             }
             catch (EntityNotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
             }
         }
     }
