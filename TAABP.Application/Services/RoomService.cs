@@ -18,12 +18,13 @@ namespace TAABP.Application.Services
             _hotelRepository = hotelRepository;
         }
 
-        public async Task<RoomDto> GetRoomAsync(int id)
+        public async Task<RoomDto> GetRoomByIdAsync(int hotelId, int id)
         {
+            var hotel = await _hotelRepository.GetHotelByIdAsync(hotelId);
             var room = await _roomRepository.GetRoomByIdAsync(id);
-            if(room == null)
+            if(hotel == null || room == null  || room.HotelId != hotelId)
             {
-                throw new EntityNotFoundException("Room not found");
+                throw new EntityNotFoundException("Hotel Or Room not found");
             }
             return _roomMapper.RoomToRoomDto(room);
         }
@@ -38,31 +39,27 @@ namespace TAABP.Application.Services
             return rooms.Select(r => _roomMapper.RoomToRoomDto(r)).ToList();
         }
 
-        public async Task CreateRoomAsync(RoomDto roomDto)
+        public async Task<int> CreateRoomAsync(RoomDto roomDto)
         {
             var hotel = await _hotelRepository.GetHotelByIdAsync(roomDto.HotelId);
             if (hotel == null)
             {
                 throw new EntityNotFoundException("Hotel not found");
             }
-
             var room = _roomMapper.RoomDtoToRoom(roomDto);
             room.CreatedAt = DateTime.Now;
             room.CreatedBy = "System";
             await _roomRepository.CreateRoomAsync(room);
+            return room.RoomId;
         }
 
         public async Task UpdateRoomAsync(RoomDto roomDto)
         {
             var hotel = await _hotelRepository.GetHotelByIdAsync(roomDto.HotelId);
-            if (hotel == null)
-            {
-                throw new EntityNotFoundException("Hotel not found");
-            }
             var room = await _roomRepository.GetRoomByIdAsync(roomDto.RoomId);
-            if (room == null)
+            if(hotel == null || room == null || room.HotelId != roomDto.HotelId)
             {
-                throw new EntityNotFoundException("Room not found");
+                throw new EntityNotFoundException("Hotel Or Room not found");
             }
             room = _roomMapper.RoomDtoToRoom(roomDto);
             room.UpdatedAt = DateTime.Now;
@@ -70,12 +67,13 @@ namespace TAABP.Application.Services
             await _roomRepository.UpdateRoomAsync(room);
         }
 
-        public async Task DeleteRoomAsync(int id)
+        public async Task DeleteRoomAsync(int hotelId , int id)
         {
+            var hotel = await _hotelRepository.GetHotelByIdAsync(hotelId);
             var room = await _roomRepository.GetRoomByIdAsync(id);
-            if (room == null)
+            if (hotel == null || room == null || room.HotelId != hotelId)
             {
-                throw new EntityNotFoundException("Room not found");
+                throw new EntityNotFoundException("Hotel Or Room not found");
             }
             await _roomRepository.DeleteRoomAsync(room);
         }

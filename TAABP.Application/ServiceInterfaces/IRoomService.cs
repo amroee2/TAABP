@@ -4,10 +4,10 @@ namespace TAABP.Application.ServiceInterfaces
 {
     public interface IRoomService
     {
-        Task CreateRoomAsync(RoomDto roomDto);
-        Task<RoomDto> GetRoomAsync(int id);
+        Task<int> CreateRoomAsync(RoomDto roomDto);
+        Task<RoomDto> GetRoomByIdAsync(int hotelId, int id);
         Task<List<RoomDto>> GetRoomsAsync(int hotelId);
-        Task DeleteRoomAsync(int id);
+        Task DeleteRoomAsync(int hotelId, int id);
         Task UpdateRoomAsync(RoomDto roomDto);
         Task CreateRoomImageAsync(RoomImageDto roomImageDto);
         Task<RoomImageDto> GetRoomImageAsync(int id);
