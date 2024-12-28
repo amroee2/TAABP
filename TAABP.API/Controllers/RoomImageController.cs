@@ -5,7 +5,7 @@ using TAABP.Application.ServiceInterfaces;
 
 namespace TAABP.API.Controllers
 {
-    [Route("api/Hotel/{hotelId}/Room/{roomId}/[controller]")]
+    [Route("api/Room/{roomId}/[controller]")]
     [ApiController]
     public class RoomImageController : ControllerBase
     {
@@ -19,43 +19,74 @@ namespace TAABP.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateRoomImageAsync(int roomId, RoomImageDto roomImageDto)
         {
-            roomImageDto.RoomId = roomId;
-            await _roomImageService.CreateRoomImageAsync(roomImageDto);
-            return Ok();
+            try
+            {
+                roomImageDto.RoomId = roomId;
+                var roomImageId = await _roomImageService.CreateRoomImageAsync(roomImageDto);
+                var roomImage = await _roomImageService.GetRoomImageByIdAsync(roomId, roomImageId);
+                return StatusCode(201, roomImage);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetRoomImageAsync(int id)
+        public async Task<IActionResult> GetRoomImageAsync(int roomId, int id)
         {
             try
             {
-                var roomImage = await _roomImageService.GetRoomImageAsync(id);
+                var roomImage = await _roomImageService.GetRoomImageByIdAsync(roomId, id);
                 return Ok(roomImage);
             }
             catch (EntityNotFoundException ex)
             {
                 return NotFound(ex.Message);
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> GetRoomImagesAsync(int roomId)
         {
-            var roomImages = await _roomImageService.GetRoomImagesAsync(roomId);
-            return Ok(roomImages);
+            try
+            {
+                var roomImages = await _roomImageService.GetRoomImagesAsync(roomId);
+                return Ok(roomImages);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRoomImageAsync(int id)
+        public async Task<IActionResult> DeleteRoomImageAsync(int roomId, int id)
         {
             try
             {
-                await _roomImageService.DeleteRoomImageAsync(id);
+                await _roomImageService.DeleteRoomImageAsync(roomId, id);
                 return NoContent();
             }
             catch (EntityNotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
             }
         }
     }
