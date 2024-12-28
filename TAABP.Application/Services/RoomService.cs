@@ -3,6 +3,7 @@ using TAABP.Application.Exceptions;
 using TAABP.Application.Profile.RoomMapping;
 using TAABP.Application.RepositoryInterfaces;
 using TAABP.Application.ServiceInterfaces;
+using TAABP.Core;
 
 namespace TAABP.Application.Services
 {
@@ -11,11 +12,14 @@ namespace TAABP.Application.Services
         private readonly IRoomRepository _roomRepository;
         private readonly IRoomMapper _roomMapper;
         private readonly IHotelRepository _hotelRepository;
-        public RoomService(IRoomRepository roomRepository, IRoomMapper roomMapper, IHotelRepository hotelRepository)
+        private readonly IUserService _userService;
+        public RoomService(IRoomRepository roomRepository, IRoomMapper roomMapper,
+            IHotelRepository hotelRepository, IUserService userService)
         {
             _roomRepository = roomRepository;
             _roomMapper = roomMapper;
             _hotelRepository = hotelRepository;
+            _userService = userService;
         }
 
         public async Task<RoomDto> GetRoomByIdAsync(int hotelId, int id)
@@ -46,9 +50,10 @@ namespace TAABP.Application.Services
             {
                 throw new EntityNotFoundException("Hotel not found");
             }
-            var room = _roomMapper.RoomDtoToRoom(roomDto);
+            var room = new Room();
+            _roomMapper.RoomDtoToRoom(roomDto, room);
             room.CreatedAt = DateTime.Now;
-            room.CreatedBy = "System";
+            room.CreatedBy = await _userService.GetCurrentUsernameAsync();
             await _roomRepository.CreateRoomAsync(room);
             return room.RoomId;
         }
@@ -61,9 +66,9 @@ namespace TAABP.Application.Services
             {
                 throw new EntityNotFoundException("Hotel Or Room not found");
             }
-            room = _roomMapper.RoomDtoToRoom(roomDto);
+            _roomMapper.RoomDtoToRoom(roomDto, room);
             room.UpdatedAt = DateTime.Now;
-            room.UpdatedBy = "System";
+            room.UpdatedBy = await _userService.GetCurrentUsernameAsync();
             await _roomRepository.UpdateRoomAsync(room);
         }
 
