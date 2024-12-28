@@ -78,7 +78,7 @@ namespace TAABP.Application.Services
             await _roomRepository.DeleteRoomAsync(room);
         }
 
-        public async Task CreateRoomImageAsync(RoomImageDto roomImageDto)
+        public async Task<int> CreateRoomImageAsync(RoomImageDto roomImageDto)
         {
             var room = await _roomRepository.GetRoomByIdAsync(roomImageDto.RoomId);
             if (room == null)
@@ -87,24 +87,16 @@ namespace TAABP.Application.Services
             }
             var roomImage = _roomMapper.RoomImageDtoToRoomImage(roomImageDto);
             await _roomRepository.CreateRoomImageAsync(roomImage);
+            return roomImage.RoomImageId;
         }
 
-        public async Task DeleteRoomImageAsync(int id)
+        public async Task<RoomImageDto> GetRoomImageByIdAsync(int roomId, int id)
         {
-            var roomImage = await _roomRepository.GetRoomImageAsync(id);
-            if (roomImage == null)
+            var roomImage = await _roomRepository.GetRoomImageByIdAsync(id);
+            var room = await _roomRepository.GetRoomByIdAsync(roomId);
+            if (roomImage == null || room == null || room.RoomId != roomImage.RoomId)
             {
-                throw new EntityNotFoundException("Room image not found");
-            }
-            await _roomRepository.DeleteRoomImageAsync(roomImage);
-        }
-
-        public async Task<RoomImageDto> GetRoomImageAsync(int id)
-        {
-            var roomImage = await _roomRepository.GetRoomImageAsync(id);
-            if (roomImage == null)
-            {
-                throw new EntityNotFoundException("Room image not found");
+                throw new EntityNotFoundException("Room or Room image not found");
             }
             return _roomMapper.RoomImageToRoomImageDto(roomImage);
         }
@@ -118,6 +110,17 @@ namespace TAABP.Application.Services
             }
             var roomImages = await _roomRepository.GetRoomImagesAsync(roomId);
             return roomImages.Select(ri => _roomMapper.RoomImageToRoomImageDto(ri)).ToList();
+        }
+
+        public async Task DeleteRoomImageAsync(int roomId, int id)
+        {
+            var roomImage = await _roomRepository.GetRoomImageByIdAsync(id);
+            var room = await _roomRepository.GetRoomByIdAsync(roomId);
+            if (roomImage == null || room == null || room.RoomId != roomImage.RoomId)
+            {
+                throw new EntityNotFoundException("Room or Room image not found");
+            }
+            await _roomRepository.DeleteRoomImageAsync(roomImage);
         }
     }
 }
