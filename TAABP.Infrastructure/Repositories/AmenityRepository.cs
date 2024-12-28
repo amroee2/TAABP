@@ -20,17 +20,16 @@ namespace TAABP.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Amenity> GetAmenityAsync(int amenityId)
+        public async Task<Amenity> GetAmenityByIdAsync(int amenityId)
         {
             return await _context.Amenities.AsNoTracking()
                 .FirstOrDefaultAsync(a => a.AmenityId == amenityId);
         }
 
-        public async Task<Amenity> CreateAmenityAsync(Amenity amenity)
+        public async Task CreateAmenityAsync(Amenity amenity)
         {
             _context.Amenities.Add(amenity);
             await _context.SaveChangesAsync();
-            return amenity;
         }
 
         public async Task<Amenity> UpdateAmenityAsync(Amenity amenity)
