@@ -78,7 +78,7 @@ namespace TAABP.Application.Services
             await _hotelRepository.UpdateHotelAsync(targetHotel);
         }
 
-        public async Task AddNewImageAsync(int Id, HotelImageDto hotelImageDto)
+        public async Task<int> CreateNewHotelImageAsync(int Id, HotelImageDto hotelImageDto)
         {
             var hotel = await _hotelRepository.GetHotelByIdAsync(Id);
             if (hotel == null)
@@ -88,15 +88,16 @@ namespace TAABP.Application.Services
             var hotelImage = new HotelImage();
             _hotelMapper.HotelImageDtoToHotelImage(hotelImageDto, hotelImage);
             hotelImage.HotelId = Id;
-            await _hotelRepository.AddNewImageAsync(hotelImage);
+            await _hotelRepository.CreateNewHotelImageAsync(hotelImage);
+            return hotelImage.HotelImageId;
         }
 
-        public async Task<HotelImageDto> GetHotelImageAsync(int imageId)
+        public async Task<HotelImageDto> GetHotelImageByIdAsync(int hotelId, int imageId)
         {
-            var hotelImage = await _hotelRepository.GetHotelImageAsync(imageId);
+            var hotelImage = await _hotelRepository.GetHotelImageByIdAsync(hotelId, imageId);
             if (hotelImage == null)
             {
-                throw new EntityNotFoundException($"Hotel Image with id {imageId} not found");
+                throw new EntityNotFoundException($"Hotel Image with id {imageId} for hotel with id {hotelId} not found");
             }
             return _hotelMapper.HotelImageToHotelImageDto(hotelImage);
         }
@@ -107,22 +108,22 @@ namespace TAABP.Application.Services
             return hotelImages.Select(hotelImage => _hotelMapper.HotelImageToHotelImageDto(hotelImage)).ToList();
         }
 
-        public async Task DeleteHotelImageAsync(int imageId)
+        public async Task DeleteHotelImageAsync(int hotelId, int imageId)
         {
-            var hotelImage = await _hotelRepository.GetHotelImageAsync(imageId);
+            var hotelImage = await _hotelRepository.GetHotelImageByIdAsync(hotelId, imageId);
             if (hotelImage == null)
             {
-                throw new EntityNotFoundException($"Hotel Image with id {imageId} not found");
+                throw new EntityNotFoundException($"Hotel Image with id {imageId} for hotel with id {hotelId} not found");
             }
             await _hotelRepository.DeleteHotelImageAsync(hotelImage);
         }
 
-        public async Task UpdateHotelImageAsync(int imageId, HotelImageDto imageUrl)
+        public async Task UpdateHotelImageAsync(int hotelId, int imageId, HotelImageDto imageUrl)
         {
-            var hotelImage = await _hotelRepository.GetHotelImageAsync(imageId);
+            var hotelImage = await _hotelRepository.GetHotelImageByIdAsync(hotelId, imageId);
             if (hotelImage == null)
             {
-                throw new EntityNotFoundException($"Hotel Image with id {imageId} not found");
+                throw new EntityNotFoundException($"Hotel Image with id {imageId} for hotel with id {hotelId} not found");
             }
             _hotelMapper.HotelImageDtoToHotelImage(imageUrl, hotelImage);
             await _hotelRepository.UpdateHotelImageAsync(hotelImage);
