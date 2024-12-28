@@ -41,7 +41,7 @@ namespace TAABP.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<RoomImage> GetRoomImageAsync(int roomImageId)
+        public async Task<RoomImage> GetRoomImageByIdAsync(int roomImageId)
         {
             return await _context.RoomImages.AsNoTracking().FirstOrDefaultAsync(ri => ri.RoomImageId == roomImageId);
         }
