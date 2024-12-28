@@ -35,6 +35,7 @@ namespace TAABP.Application.Services
             hotel.CreatedBy = await _userService.GetCurrentUsernameAsync();
             hotel.CityId = cityId;
             await _hotelRepository.CreateHotelAsync(hotel);
+            city.NumberOfHotels++;
             return hotel.HotelId;
         }
 
@@ -62,6 +63,8 @@ namespace TAABP.Application.Services
                 throw new EntityNotFoundException($"Hotel with id {id} not found");
             }
             await _hotelRepository.DeleteHotelAsync(hotel);
+            var city = await _cityRepository.GetCityByIdAsync(hotel.CityId);
+            city.NumberOfHotels--;
         }
 
         public async Task UpdateHotelAsync(int cityId, HotelDto hotelDto)
