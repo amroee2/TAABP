@@ -9,5 +9,9 @@ namespace TAABP.Application.RepositoryInterfaces
         Task CreateCityAsync(City city);
         Task UpdateCityAsync(City city);
         Task DeleteCityAsync(City city);
+        Task IncrementNumberOfHotelsAsync(int cityId);
+        Task DecrementNumberOfHotelsAsync(int cityId);
+        Task IncrementNumberOfVisitsAsync(int cityId);
+        Task DecrementNumberOfVisitsAsync(int cityId);
     }
 }

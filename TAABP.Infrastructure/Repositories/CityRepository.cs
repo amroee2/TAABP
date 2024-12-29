@@ -40,5 +40,33 @@ namespace TAABP.Infrastructure.Repositories
             _context.Cities.Remove(city);
             await _context.SaveChangesAsync();
         }
+
+        public async Task IncrementNumberOfHotelsAsync(int cityId)
+        {
+            var city = await _context.Cities.FirstOrDefaultAsync(c => c.CityId == cityId);
+            city!.NumberOfHotels++;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DecrementNumberOfHotelsAsync(int cityId)
+        {
+            var city = await _context.Cities.FirstOrDefaultAsync(c => c.CityId == cityId);
+            city!.NumberOfHotels--;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task IncrementNumberOfVisitsAsync(int cityId)
+        { 
+            var city = await _context.Cities.FirstOrDefaultAsync(c => c.CityId == cityId);
+            city!.NumberOfVisits++;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DecrementNumberOfVisitsAsync(int cityId)
+        {
+            var city = await _context.Cities.FirstOrDefaultAsync(c => c.CityId == cityId);
+            city!.NumberOfVisits--;
+            await _context.SaveChangesAsync();
+        }
     }
 }

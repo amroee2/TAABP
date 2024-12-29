@@ -68,5 +68,19 @@ namespace TAABP.Infrastructure.Repositories
             _context.HotelImages.Update(hotelImage);
             await _context.SaveChangesAsync();
         }
+
+        public async Task IncrementNumberOfVisitsAsync(int hotelId)
+        {
+            var hotel = await _context.Hotels.FirstOrDefaultAsync(h => h.HotelId == hotelId);
+            hotel!.NumberOfVisits++;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DecrementNumberOfVisitsAsync(int hotelId)
+        {
+            var hotel = await _context.Hotels.FirstOrDefaultAsync(h => h.HotelId == hotelId);
+            hotel!.NumberOfVisits--;
+            await _context.SaveChangesAsync();
+        }
     }
 }

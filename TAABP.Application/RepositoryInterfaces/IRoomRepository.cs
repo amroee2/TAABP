@@ -13,5 +13,7 @@ namespace TAABP.Application.RepositoryInterfaces
         Task<List<RoomImage>> GetRoomImagesAsync(int roomId);
         Task CreateRoomImageAsync(RoomImage roomImage);
         Task DeleteRoomImageAsync(RoomImage roomImage);
+        Task BookRoomAsync(int roomId);
+        Task UnbookRoomAsync(int roomId);
     }
 }
