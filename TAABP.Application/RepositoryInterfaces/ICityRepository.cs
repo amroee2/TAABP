@@ -13,5 +13,6 @@ namespace TAABP.Application.RepositoryInterfaces
         Task DecrementNumberOfHotelsAsync(int cityId);
         Task IncrementNumberOfVisitsAsync(int cityId);
         Task DecrementNumberOfVisitsAsync(int cityId);
+        Task<List<City>> GetTopCitiesAsync();
     }
 }
