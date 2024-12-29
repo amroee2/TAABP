@@ -35,7 +35,7 @@ namespace TAABP.Application.Services
             hotel.CreatedBy = await _userService.GetCurrentUsernameAsync();
             hotel.CityId = cityId;
             await _hotelRepository.CreateHotelAsync(hotel);
-            city.NumberOfHotels++;
+            await _cityRepository.IncrementNumberOfHotelsAsync(cityId);
             return hotel.HotelId;
         }
 
@@ -64,7 +64,7 @@ namespace TAABP.Application.Services
             }
             await _hotelRepository.DeleteHotelAsync(hotel);
             var city = await _cityRepository.GetCityByIdAsync(hotel.CityId);
-            city.NumberOfHotels--;
+            await _cityRepository.DecrementNumberOfHotelsAsync(city.CityId);
         }
 
         public async Task UpdateHotelAsync(int cityId, HotelDto hotelDto)
