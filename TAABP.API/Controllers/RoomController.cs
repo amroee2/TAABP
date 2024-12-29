@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
@@ -8,6 +9,7 @@ namespace TAABP.API.Controllers
 {
     [Route("api/Hotel/{hotelId}/[controller]")]
     [ApiController]
+    [Authorize]
     public class RoomController : ControllerBase
     {
         private readonly IRoomService _roomService;

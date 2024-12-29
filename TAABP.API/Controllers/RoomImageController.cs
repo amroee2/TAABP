@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
 using TAABP.Application.ServiceInterfaces;
@@ -7,6 +8,7 @@ namespace TAABP.API.Controllers
 {
     [Route("api/Room/{roomId}/[controller]")]
     [ApiController]
+    [Authorize]
     public class RoomImageController : ControllerBase
     {
         private readonly IRoomService _roomImageService;
