@@ -34,6 +34,10 @@ namespace TAABP.API.Controllers
             {
                 return NotFound(ex.Message);
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpPost]
@@ -43,18 +47,28 @@ namespace TAABP.API.Controllers
             reservationDto.RoomId = roomId;
             try
             {
-                await _reservationService.CreateReservationAsync(reservationDto);
-                return Ok();
+                var reservationId = await _reservationService.CreateReservationAsync(reservationDto);
+                var reservation = await _reservationService.GetReservationByIdAsync(reservationId);
+                return StatusCode(201, reservation);
             }
             catch (EntityNotFoundException ex)
             {
                 return NotFound(ex.Message);
             }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
-        [HttpPut]
-        public async Task<ActionResult> UpdateReservation(string userId, int roomId, ReservationDto reservationDto)
+        [HttpPut("{reservationId}")]
+        public async Task<ActionResult> UpdateReservation(int reservationId, string userId, int roomId, ReservationDto reservationDto)
         {
+            reservationDto.ReservationId = reservationId;
             reservationDto.UserId = userId;
             reservationDto.RoomId = roomId;
             try
