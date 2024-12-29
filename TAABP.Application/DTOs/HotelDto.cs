@@ -1,9 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace TAABP.Application.DTOs
+﻿namespace TAABP.Application.DTOs
 {
     public class HotelDto
     {
+        public int HotelId { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
         public string PhoneNumber { get; set; }

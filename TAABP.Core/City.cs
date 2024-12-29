@@ -27,9 +27,9 @@ namespace TAABP.Core
         [StringLength(30)]
         public string PostOffice { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "Number of Hotels must be greater than or equal to 0.")]
-        public int? NumberOfHotels { get; set; }
+        public int NumberOfHotels { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "Number of visits must be greater than or equal to 0.")]
-        public int? NumberOfVisits { get; set; }
+        public int NumberOfVisits { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public string? CreatedBy { get; set; }

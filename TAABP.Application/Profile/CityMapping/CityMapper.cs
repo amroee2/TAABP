@@ -7,7 +7,7 @@ namespace TAABP.Application.Profile.CityMapping
     [Mapper]
     public partial class CityMapper : ICityMapper
     {
-        public partial City CityDtoToCity(CityDto cityDto);
+        public partial void CityDtoToCity(CityDto cityDto, City city);
         public partial CityDto CityToCityDto(City city);
     }
 }

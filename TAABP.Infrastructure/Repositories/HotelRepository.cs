@@ -19,7 +19,7 @@ namespace TAABP.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Hotel> GetHotelAsync(int id)
+        public async Task<Hotel> GetHotelByIdAsync(int id)
         {
             return await _context.Hotels.AsNoTracking().FirstOrDefaultAsync(h => h.HotelId == id);
         }
@@ -41,15 +41,15 @@ namespace TAABP.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddNewImageAsync(HotelImage hotelImage)
+        public async Task CreateNewHotelImageAsync(HotelImage hotelImage)
         {
             _context.HotelImages.Add(hotelImage);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<HotelImage> GetHotelImageAsync(int imageId)
+        public async Task<HotelImage> GetHotelImageByIdAsync(int hotelId, int imageId)
         {
-            return await _context.HotelImages.AsNoTracking().FirstOrDefaultAsync(h => h.HotelImageId == imageId);
+            return await _context.HotelImages.AsNoTracking().FirstOrDefaultAsync(h => h.HotelId == hotelId && h.HotelImageId == imageId);
         }
 
         public async Task<List<HotelImage>> GetHotelImagesAsync(int hotelId)
@@ -66,6 +66,20 @@ namespace TAABP.Infrastructure.Repositories
         public async Task UpdateHotelImageAsync(HotelImage hotelImage)
         {
             _context.HotelImages.Update(hotelImage);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task IncrementNumberOfVisitsAsync(int hotelId)
+        {
+            var hotel = await _context.Hotels.FirstOrDefaultAsync(h => h.HotelId == hotelId);
+            hotel!.NumberOfVisits++;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DecrementNumberOfVisitsAsync(int hotelId)
+        {
+            var hotel = await _context.Hotels.FirstOrDefaultAsync(h => h.HotelId == hotelId);
+            hotel!.NumberOfVisits--;
             await _context.SaveChangesAsync();
         }
     }

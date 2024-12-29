@@ -31,6 +31,8 @@ namespace TAABP.Infrastructure
             {
                 entity.ToTable(t =>
                     t.HasCheckConstraint("CK_Hotel_NumberOfRooms_Positive", "[NumberOfRooms] > 0"));
+                entity.ToTable(t =>
+                    t.HasCheckConstraint("CK_Hotel_NumberOfVisits_Positive", "[NumberOfVisits] >= 0"));
             });
 
             modelBuilder.Entity<Room>(entity =>

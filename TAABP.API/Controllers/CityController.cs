@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
 using TAABP.Application.Profile.CityMapping;
@@ -6,8 +7,9 @@ using TAABP.Application.ServiceInterfaces;
 
 namespace TAABP.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/Cities")]
     [ApiController]
+    [Authorize]
     public class CityController : ControllerBase
     {
         private readonly ICityService _cityService;
@@ -39,14 +41,33 @@ namespace TAABP.API.Controllers
             {
                 return NotFound(ex.Message);
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateCityAsync(CityDto cityDto)
         {
-            await _cityService.CreateCityAsync(cityDto);
-            return Ok();
+            try
+            {
+                int id = await _cityService.CreateCityAsync(cityDto);
+
+                var createdCity = await _cityService.GetCityByIdAsync(id);
+
+                return StatusCode(201, createdCity);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCityAsync(int id, CityDto cityDto)
@@ -59,6 +80,10 @@ namespace TAABP.API.Controllers
             catch (EntityNotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
             return NoContent();
         }
@@ -73,6 +98,10 @@ namespace TAABP.API.Controllers
             catch (EntityNotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
             return NoContent();
         }

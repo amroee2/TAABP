@@ -5,7 +5,7 @@ namespace TAABP.Application.Profile.CityMapping
 {
     public interface ICityMapper
     {
-        public City CityDtoToCity(CityDto cityDto);
+        void CityDtoToCity(CityDto cityDto, City city);
         CityDto CityToCityDto(City city);
     }
 }

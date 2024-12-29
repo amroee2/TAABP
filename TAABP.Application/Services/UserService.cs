@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
 using TAABP.Application.Profile.UserMapping;
@@ -17,8 +19,9 @@ namespace TAABP.Application.Services
         private readonly ITokenGenerator _tokenGenerator;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(IUserRepository userRepository, IPasswordHasher<User> passwordHasher,
+        public UserService(IUserRepository userRepository, IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor,
             IUserMapper userMapper, ITokenGenerator tokenGenerator, SignInManager<User> signInManager, UserManager<User> userManager)
         {
             _userRepository = userRepository;
@@ -27,6 +30,7 @@ namespace TAABP.Application.Services
             _tokenGenerator = tokenGenerator;
             _signInManager = signInManager;
             _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task CreateUserAsync(RegisterDto registerDto)
@@ -60,7 +64,7 @@ namespace TAABP.Application.Services
             {
                 throw new InvalidLoginException($"Invalid Email or Password");
             }
-            return _tokenGenerator.GenerateToken(user.Email);
+            return _tokenGenerator.GenerateToken(user.Id);
         }
 
         public async Task<UserDto> GetUserByIdAsync(string id)
@@ -99,6 +103,13 @@ namespace TAABP.Application.Services
             _userMapper.UserDtoToUser(userDto, user);
             user.Id = id;
             await _userRepository.UpdateUserAsync(user);
+        }
+
+        public async Task<string> GetCurrentUsernameAsync()
+        {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId);
+            return user.UserName;
         }
     }
 }
