@@ -6,7 +6,7 @@ namespace TAABP.Application.ServiceInterfaces
     {
         Task<ReservationDto> GetReservationByIdAsync(int id);
         Task<List<ReservationDto>> GetReservationsAsync();
-        Task CreateReservationAsync(ReservationDto reservationDto);
+        Task<int> CreateReservationAsync(ReservationDto reservationDto);
         Task UpdateReservationAsync(ReservationDto reservationDto);
         Task DeleteReservationAsync(int id);
     }
