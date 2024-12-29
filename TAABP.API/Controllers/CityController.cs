@@ -105,5 +105,19 @@ namespace TAABP.API.Controllers
             }
             return NoContent();
         }
+
+        [HttpGet("TopCities")]
+        public async Task<IActionResult> GetTopCitiesAsync()
+        {
+            try
+            {
+                var topCities = await _cityService.GetTopCitiesAsync();
+                return Ok(topCities);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }
