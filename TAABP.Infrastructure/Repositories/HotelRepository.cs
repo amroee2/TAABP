@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TAABP.Application.DTOs;
 using TAABP.Application.RepositoryInterfaces;
 using TAABP.Core;
 
@@ -81,6 +82,44 @@ namespace TAABP.Infrastructure.Repositories
             var hotel = await _context.Hotels.FirstOrDefaultAsync(h => h.HotelId == hotelId);
             hotel!.NumberOfVisits--;
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Hotel>> GetFilteredHotelsAsync(FilterOptionsDto request)
+        {
+            var query = _context.Hotels
+                .AsQueryable();
+
+            if (request != null)
+            {
+                if (request.PriceRange != null && request.PriceRange.Length == 2)
+                {
+                    query = query.Where(h => h.Rooms.Any(r => r.PricePerNight >= request.PriceRange[0]
+                                                              && r.PricePerNight <= request.PriceRange[1]));
+                }
+
+                if (request.StarRating != null && request.StarRating.Length > 0)
+                {
+                    query = query.Where(h => request.StarRating.Contains(h.Rating));
+                }
+
+                if (request.Amenities != null && request.Amenities.Length > 0)
+                {
+                    query = query.Where(h => h.Amenities.Any(a => request.Amenities.Contains(a.Name)));
+                }
+
+                if (!string.IsNullOrEmpty(request.RoomType) && Enum.TryParse(typeof(RoomType), request.RoomType, out var roomType))
+                {
+                    query = query.Where(h => h.Rooms.Any(r => r.Type == (RoomType)roomType));
+                }
+            }
+
+            var totalResults = await query.CountAsync();
+
+            var hotels = await query
+                .OrderByDescending(h => h.Rating)
+                .ToListAsync();
+
+            return hotels;
         }
     }
 }
