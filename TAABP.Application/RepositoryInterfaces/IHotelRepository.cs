@@ -1,4 +1,5 @@
-﻿using TAABP.Core;
+﻿using TAABP.Application.DTOs;
+using TAABP.Core;
 
 namespace TAABP.Application.RepositoryInterfaces
 {
@@ -16,5 +17,6 @@ namespace TAABP.Application.RepositoryInterfaces
         Task<List<HotelImage>> GetHotelImagesAsync(int hotelId);
         Task DeleteHotelImageAsync(HotelImage hotelImage);
         Task UpdateHotelImageAsync(HotelImage hotelImage);
+        Task<List<Hotel>> GetFilteredHotelsAsync(FilterOptionsDto hotelFilter);
     }
 }
