@@ -114,5 +114,23 @@ namespace TAABP.API.Controllers
                 return StatusCode(500, new { message = ex.Message });
             }
         }
+
+        [HttpGet("{userId}/HotelsVisited")]
+        public async Task<IActionResult> GetLastHotelsVisitedAsync(string userId)
+        {
+            try
+            {
+                var hotels = await _userService.GetLastHotelsVisitedAsync(userId);
+                return Ok(hotels);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred." });
+            }
+        }
     }
 }
