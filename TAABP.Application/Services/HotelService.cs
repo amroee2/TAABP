@@ -131,5 +131,15 @@ namespace TAABP.Application.Services
             _hotelMapper.HotelImageDtoToHotelImage(imageUrl, hotelImage);
             await _hotelRepository.UpdateHotelImageAsync(hotelImage);
         }
+
+        public async Task<HotelSearchResultDto> GetFilteredHotelsAsync(FilterOptionsDto hotelFilter)
+        {
+            var hotels = await _hotelRepository.GetFilteredHotelsAsync(hotelFilter);
+            return new HotelSearchResultDto
+            {
+                Hotels = hotels.Select(hotel => _hotelMapper.HotelToHotelDto(hotel)).ToList(),
+                TotalResults = hotels.Count
+            };
+        }
     }
 }
