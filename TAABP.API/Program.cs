@@ -10,6 +10,7 @@ using TAABP.Application.Profile.CityMapping;
 using TAABP.Application.Profile.FeaturedDealMapping;
 using TAABP.Application.Profile.HotelMapping;
 using TAABP.Application.Profile.ReservationMapping;
+using TAABP.Application.Profile.ReviewMapping;
 using TAABP.Application.Profile.RoomMapping;
 using TAABP.Application.Profile.UserMapping;
 using TAABP.Application.RepositoryInterfaces;
@@ -59,6 +60,9 @@ builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IReservationMapper, ReservationMapper>();
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IReviewMapper, ReviewMapper>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddIdentityCore<User>(options =>
 {
     options.Password.RequireDigit = true;
