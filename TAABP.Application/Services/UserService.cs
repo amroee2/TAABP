@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System.Net.WebSockets;
 using System.Security.Claims;
 using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
@@ -27,7 +25,7 @@ namespace TAABP.Application.Services
 
         public UserService(IUserRepository userRepository, IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor,
             IUserMapper userMapper, ITokenGenerator tokenGenerator, SignInManager<User> signInManager, UserManager<User> userManager
-            ,IHotelMapper hotelMapper)
+            , IHotelMapper hotelMapper)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
@@ -131,6 +129,11 @@ namespace TAABP.Application.Services
             }
             var hotels = await _userRepository.GetLastHotelsVisitedAsync(userId);
             return hotels.Select(hotel => _hotelMapper.HotelToHotelDto(hotel)).ToList();
+        }
+
+        public async Task<bool> CheckEmailAsync(string email)
+        {
+            return await _userRepository.CheckEmailAsync(email);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace TAABP.Application.ServiceInterfaces
         public Task UpdateUserAsync(string Id, UserDto userDto);
         public Task<string> GetCurrentUsernameAsync();
         public string GetCurrentUserId();
-
         public Task<List<HotelDto>> GetLastHotelsVisitedAsync(string userId);
+        public Task<bool> CheckEmailAsync(string email);
     }
 }
