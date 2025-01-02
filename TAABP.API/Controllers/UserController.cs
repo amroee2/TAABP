@@ -15,10 +15,12 @@ namespace TAABP.API.Controllers
     {
         private readonly IUserService _userService;
         private readonly IUserMapper _userMapper;
-        public UserController(IUserService userService, IUserMapper userMapper)
+        private readonly IReviewService _reviewService;
+        public UserController(IUserService userService, IUserMapper userMapper, IReviewService reviewService)
         {
             _userService = userService;
             _userMapper = userMapper;
+            _reviewService = reviewService;
         }
 
         [HttpGet("{id}")]
@@ -122,6 +124,24 @@ namespace TAABP.API.Controllers
             {
                 var hotels = await _userService.GetLastHotelsVisitedAsync(userId);
                 return Ok(hotels);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred." });
+            }
+        }
+
+        [HttpGet("{userId}/Reviews")]
+        public async Task<IActionResult> GetAllUserReviewsAsync(string userId)
+        {
+            try
+            {
+                var reviews = await _reviewService.GetAllUserReviewsAsync(userId);
+                return Ok(reviews);
             }
             catch (EntityNotFoundException ex)
             {
