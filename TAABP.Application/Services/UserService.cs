@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System.Net.WebSockets;
 using System.Security.Claims;
 using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
+using TAABP.Application.Profile.HotelMapping;
 using TAABP.Application.Profile.UserMapping;
 using TAABP.Application.RepositoryInterfaces;
 using TAABP.Application.ServiceInterfaces;
@@ -20,9 +23,11 @@ namespace TAABP.Application.Services
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHotelMapper _hotelMapper;
 
         public UserService(IUserRepository userRepository, IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor,
-            IUserMapper userMapper, ITokenGenerator tokenGenerator, SignInManager<User> signInManager, UserManager<User> userManager)
+            IUserMapper userMapper, ITokenGenerator tokenGenerator, SignInManager<User> signInManager, UserManager<User> userManager
+            ,IHotelMapper hotelMapper)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
@@ -31,6 +36,7 @@ namespace TAABP.Application.Services
             _signInManager = signInManager;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
+            _hotelMapper = hotelMapper;
         }
 
         public async Task CreateUserAsync(RegisterDto registerDto)
@@ -110,6 +116,21 @@ namespace TAABP.Application.Services
             var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _userManager.FindByIdAsync(userId);
             return user.UserName;
+        }
+        public string GetCurrentUserId()
+        {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return userId;
+        }
+        public async Task<List<HotelDto>> GetLastHotelsVisitedAsync(string userId)
+        {
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                throw new EntityNotFoundException("User Not Found");
+            }
+            var hotels = await _userRepository.GetLastHotelsVisitedAsync(userId);
+            return hotels.Select(hotel => _hotelMapper.HotelToHotelDto(hotel)).ToList();
         }
     }
 }

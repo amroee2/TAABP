@@ -12,5 +12,8 @@ namespace TAABP.Application.ServiceInterfaces
         public Task DeleteUserAsync(string id);
         public Task UpdateUserAsync(string Id, UserDto userDto);
         public Task<string> GetCurrentUsernameAsync();
+        public string GetCurrentUserId();
+
+        public Task<List<HotelDto>> GetLastHotelsVisitedAsync(string userId);
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TAABP.Application.DTOs;
 using TAABP.Application.ServiceInterfaces;
@@ -7,6 +7,7 @@ namespace TAABP.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SearchController : ControllerBase
     {
         private readonly IHotelService _hotelService;

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
 using TAABP.Application.ServiceInterfaces;
+using TAABP.Application.Services;
 
 namespace TAABP.API.Controllers
 {
@@ -13,9 +14,11 @@ namespace TAABP.API.Controllers
     public class HotelController : ControllerBase
     {
         private readonly IHotelService _hotelService;
-        public HotelController(IHotelService hotelService)
+        private readonly IReviewService _reviewService;
+        public HotelController(IHotelService hotelService, IReviewService reviewService)
         {
             _hotelService = hotelService;
+            _reviewService = reviewService;
         }
 
         [HttpPost]
@@ -120,6 +123,24 @@ namespace TAABP.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("{hotelId}/Reviews")]
+        public async Task<IActionResult> GetAllUserReviewsAsync(int hotelId)
+        {
+            try
+            {
+                var reviews = await _reviewService.GetAllHotelReviewsAsync(hotelId);
+                return Ok(reviews);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred." });
             }
         }
     }

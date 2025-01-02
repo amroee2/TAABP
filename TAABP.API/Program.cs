@@ -10,6 +10,7 @@ using TAABP.Application.Profile.CityMapping;
 using TAABP.Application.Profile.FeaturedDealMapping;
 using TAABP.Application.Profile.HotelMapping;
 using TAABP.Application.Profile.ReservationMapping;
+using TAABP.Application.Profile.ReviewMapping;
 using TAABP.Application.Profile.RoomMapping;
 using TAABP.Application.Profile.UserMapping;
 using TAABP.Application.RepositoryInterfaces;
@@ -59,6 +60,9 @@ builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IReservationMapper, ReservationMapper>();
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IReviewMapper, ReviewMapper>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddIdentityCore<User>(options =>
 {
     options.Password.RequireDigit = true;
@@ -97,12 +101,56 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+async Task SeedAdminUser(IServiceProvider serviceProvider)
+{
+    using var scope = serviceProvider.CreateScope();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    const string adminRole = "Admin";
+    if (!await roleManager.RoleExistsAsync(adminRole))
+    {
+        await roleManager.CreateAsync(new IdentityRole(adminRole));
+    }
+    const string adminEmail = "admin@example.com";
+    const string adminPassword = "Admin@1234";
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+    if (adminUser == null)
+    {
+        adminUser = new User
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            FirstName = "Admin",
+            LastName = "User",
+            EmailConfirmed = true
+        };
+
+        var result = await userManager.CreateAsync(adminUser, adminPassword);
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(adminUser, adminRole);
+        }
+        else
+        {
+            throw new Exception($"Failed to create admin user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+        }
+    }
+    else if (!await userManager.IsInRoleAsync(adminUser, adminRole))
+    {
+        await userManager.AddToRoleAsync(adminUser, adminRole);
+    }
+}
+
+await SeedAdminUser(app.Services);
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
