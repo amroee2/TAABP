@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TAABP.Application;
 using TAABP.Application.DTOs;
+using TAABP.Application.DTOs.AccountDto;
 using TAABP.Application.Exceptions;
 using TAABP.Application.ServiceInterfaces;
 using TAABP.Application.TokenGenerators;

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using TAABP.Application.DTOs;
+using TAABP.Application.DTOs.AccountDto;
 using TAABP.Application.Exceptions;
 using TAABP.Application.Profile.HotelMapping;
 using TAABP.Application.Profile.UserMapping;

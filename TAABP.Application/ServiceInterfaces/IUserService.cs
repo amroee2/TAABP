@@ -1,4 +1,5 @@
 ﻿using TAABP.Application.DTOs;
+using TAABP.Application.DTOs.AccountDto;
 using TAABP.Core;
 
 namespace TAABP.Application.ServiceInterfaces
