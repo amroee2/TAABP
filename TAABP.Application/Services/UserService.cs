@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using TAABP.Application.DTOs;
@@ -136,5 +137,43 @@ namespace TAABP.Application.Services
         {
             return await _userRepository.CheckEmailAsync(email);
         }
+
+        public async Task ChangeEmailAsync(string userId, ChangeEmailDto changeEmailDto)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                throw new EntityNotFoundException("User not found.");
+            }
+            var oldEmail = user.Email;
+            var checkPassword = await _userManager.CheckPasswordAsync(user, changeEmailDto.Password);
+            if (!checkPassword)
+            {
+                throw new Exception("Invalid Password.");
+            }
+
+            var emailExists = await _userRepository.CheckEmailAsync(changeEmailDto.NewEmail);
+            if (emailExists)
+            {
+                throw new EmailAlreadyExistsException("Email Already Exists.");
+            }
+
+            var token = await _userManager.GenerateChangeEmailTokenAsync(user, changeEmailDto.NewEmail);
+            var emailChangeResult = await _userManager.ChangeEmailAsync(user, changeEmailDto.NewEmail, token);
+            if (!emailChangeResult.Succeeded)
+            {
+                throw new Exception("Failed to change email: " + string.Join(", ", emailChangeResult.Errors.Select(e => e.Description)));
+            }
+
+            if (user.UserName == oldEmail)
+            {
+                var usernameChangeResult = await _userManager.SetUserNameAsync(user, changeEmailDto.NewEmail);
+                if (!usernameChangeResult.Succeeded)
+                {
+                    throw new Exception("Failed to change username: " + string.Join(", ", usernameChangeResult.Errors.Select(e => e.Description)));
+                }
+            }
+        }
+
     }
 }

@@ -16,5 +16,6 @@ namespace TAABP.Application.ServiceInterfaces
         public string GetCurrentUserId();
         public Task<List<HotelDto>> GetLastHotelsVisitedAsync(string userId);
         public Task<bool> CheckEmailAsync(string email);
+        public Task ChangeEmailAsync(string userId, ChangeEmailDto changeEmailDto);
     }
 }
