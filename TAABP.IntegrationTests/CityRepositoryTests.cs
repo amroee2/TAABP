@@ -104,5 +104,74 @@ namespace TAABP.IntegrationTests
             var result = await _context.Cities.FirstOrDefaultAsync(c => c.CityId == city.CityId);
             Assert.Null(result);
         }
+
+        [Fact]
+        public async Task IncrementNumberOfHotelsAsync_ShouldIncrementNumberOfHotelsAsync()
+        {
+            // Arrange
+            var city = _fixture.Create<City>();
+            await _context.Cities.AddAsync(city);
+            await _context.SaveChangesAsync();
+
+            // Act
+            await _cityRepository.IncrementNumberOfHotelsAsync(city.CityId);
+
+            // Assert
+            var result = await _context.Cities.FirstOrDefaultAsync(c => c.CityId == city.CityId);
+            Assert.Equal(city.NumberOfHotels, result.NumberOfHotels);
+        }
+
+        [Fact]
+        public async Task DecrementNumberOfHotelsAsync_ShouldDecrementNumberOfHotelsAsync()
+        {
+            // Arrange
+            int numberOfHotels = 10;
+            var city = _fixture.Build<City>()
+                .With(c => c.NumberOfHotels, numberOfHotels)
+                .Create();
+            await _context.Cities.AddAsync(city);
+            await _context.SaveChangesAsync();
+            // Act
+            await _cityRepository.DecrementNumberOfHotelsAsync(city.CityId);
+
+            // Assert
+            var result = await _context.Cities.FirstOrDefaultAsync(c => c.CityId == city.CityId);
+            Assert.Equal(9, result.NumberOfHotels);
+        }
+
+        [Fact]
+        public async Task IncrementNumberOfVisitsAsync_ShouldIncrementNumberOfVisitsAsync()
+        {
+            // Arrange
+            var city = _fixture.Create<City>();
+            await _context.Cities.AddAsync(city);
+            await _context.SaveChangesAsync();
+
+            // Act
+            await _cityRepository.IncrementNumberOfVisitsAsync(city.CityId);
+
+            // Assert
+            var result = await _context.Cities.FirstOrDefaultAsync(c => c.CityId == city.CityId);
+            Assert.Equal(city.NumberOfVisits, result.NumberOfVisits);
+        }
+
+        [Fact]
+        public async Task DecrementNumberOfVisitsAsync_ShouldDecrementNumberOfVisitsAsync()
+        {
+            // Arrange
+            int numberOfVisits = 10;
+            var city = _fixture.Build<City>()
+                .With(c => c.NumberOfVisits, numberOfVisits)
+                .Create();
+            await _context.Cities.AddAsync(city);
+            await _context.SaveChangesAsync();
+
+            // Act
+            await _cityRepository.DecrementNumberOfVisitsAsync(city.CityId);
+
+            // Assert
+            var result = await _context.Cities.FirstOrDefaultAsync(c => c.CityId == city.CityId);
+            Assert.Equal(9, result.NumberOfVisits);
+        }
     }
 }
