@@ -83,6 +83,16 @@ namespace TAABP.Application.Services
             return _userMapper.UserToUserDto(user);
         }
 
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            var user = await _userRepository.GetUserByEmailAsync(email);
+            if (user == null)
+            {
+                throw new EntityNotFoundException("User Not Found");
+            }
+            return user;
+        }
+
         public async Task<List<UserDto>> GetUsersAsync()
         {
             var users = await _userRepository.GetUsersAsync();
@@ -175,5 +185,19 @@ namespace TAABP.Application.Services
             }
         }
 
+        public async Task ResetUserPasswordAsync(string email, string password)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                throw new EntityNotFoundException("User not found.");
+            }
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var resetPasswordResult = await _userManager.ResetPasswordAsync(user, token, password);
+            if (!resetPasswordResult.Succeeded)
+            {
+                throw new Exception("Failed to reset password: " + string.Join(", ", resetPasswordResult.Errors.Select(e => e.Description)));
+            }
+        }
     }
 }

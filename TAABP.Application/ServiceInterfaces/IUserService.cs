@@ -17,5 +17,7 @@ namespace TAABP.Application.ServiceInterfaces
         public Task<List<HotelDto>> GetLastHotelsVisitedAsync(string userId);
         public Task<bool> CheckEmailAsync(string email);
         public Task ChangeEmailAsync(string userId, ChangeEmailDto changeEmailDto);
+        public Task<User> GetUserByEmailAsync(string email);
+        public Task ResetUserPasswordAsync(string email, string password);
     }
 }
