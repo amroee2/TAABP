@@ -78,6 +78,7 @@ builder.Services.AddIdentityCore<User>(options =>
 })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<TAABPDbContext>()
+    .AddDefaultTokenProviders()
     .AddSignInManager<SignInManager<User>>();
 
 var externalAssembly = AppDomain.CurrentDomain.Load("TAABP.Application");
