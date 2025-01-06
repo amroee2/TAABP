@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using TAABP.Application;
 using TAABP.Application.Profile;
 using TAABP.Application.Profile.AmenityMapping;
 using TAABP.Application.Profile.CityMapping;
@@ -63,6 +64,10 @@ builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IReviewMapper, ReviewMapper>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IStorageService, StorageService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddMemoryCache();
 builder.Services.AddIdentityCore<User>(options =>
 {
     options.Password.RequireDigit = true;
@@ -74,6 +79,7 @@ builder.Services.AddIdentityCore<User>(options =>
 })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<TAABPDbContext>()
+    .AddDefaultTokenProviders()
     .AddSignInManager<SignInManager<User>>();
 
 var externalAssembly = AppDomain.CurrentDomain.Load("TAABP.Application");
