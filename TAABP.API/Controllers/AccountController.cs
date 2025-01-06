@@ -18,12 +18,15 @@ namespace TAABP.API.Controllers
         private readonly IEmailService _emailService;
         private readonly ITokenGenerator _tokenGenerator;
         private readonly IStorageService _storageService;
-        public AccountController(ITokenGenerator tokenGenerator, IUserService userService, IEmailService emailService, IStorageService storageService)
+        private readonly IAccountService _accountService;
+        public AccountController(ITokenGenerator tokenGenerator, IUserService userService,
+            IEmailService emailService, IStorageService storageService, IAccountService accountService)
         {
             _userService = userService;
             _emailService = emailService;
             _storageService = storageService;
             _tokenGenerator = tokenGenerator;
+            _accountService = accountService;
         }
 
         [HttpPost("register")]
@@ -61,7 +64,7 @@ namespace TAABP.API.Controllers
         {
             try
             {
-                var token = await _userService.LoginAsync(loginDto);
+                var token = await _accountService.LoginAsync(loginDto);
                 return Ok(new { token });
             }
             catch (InvalidLoginException ex)
@@ -89,7 +92,7 @@ namespace TAABP.API.Controllers
                     return NotFound(new { message = "Token not found" });
                 }
 
-                await _userService.CreateUserAsync(registerDto);
+                await _accountService.CreateUserAsync(registerDto);
 
                 await _storageService.DeleteTokenAsync(token);
 
@@ -114,7 +117,7 @@ namespace TAABP.API.Controllers
                 {
                     return Conflict(new { message = "Email already exists" });
                 }
-                await _userService.ChangeEmailAsync(_userService.GetCurrentUserId(), changeEmailDto);
+                await _accountService.ChangeEmailAsync(_userService.GetCurrentUserId(), changeEmailDto);
                 await _emailService.SendEmailAsync(
                     changeEmailDto.NewEmail,
                     "Confirm Your Email Change",
@@ -176,7 +179,7 @@ namespace TAABP.API.Controllers
                 {
                     return NotFound(new { message = "Token not found" });
                 }
-                await _userService.ResetUserPasswordAsync(registerDto.Email, resetPasswordDto.Password);
+                await _accountService.ResetUserPasswordAsync(registerDto.Email, resetPasswordDto.Password);
                 await _storageService.DeleteTokenAsync(resetPasswordDto.Token);
                 return Ok(new { message = "Password reset successfully" });
             }
