@@ -189,5 +189,39 @@ namespace TAABP.IntegrationTests
             var result = await _context.HotelImages.FirstOrDefaultAsync(h => h.HotelImageId == hotelImage.HotelImageId);
             Assert.Equal(hotelImage.ImageUrl, result.ImageUrl);
         }
+
+        [Fact]
+        public async Task IncrementNumberOfVisits_ShouldIncrementNumberOfVisitsAsync()
+        {
+            // Arrange
+            var hotel = _fixture.Create<Hotel>();
+            await _context.Hotels.AddAsync(hotel);
+            await _context.SaveChangesAsync();
+
+            // Act
+            await _hotelRepository.IncrementNumberOfVisitsAsync(hotel.HotelId);
+
+            // Assert
+            var result = await _context.Hotels.FirstOrDefaultAsync(h => h.HotelId == hotel.HotelId);
+            Assert.Equal(hotel.NumberOfVisits, result.NumberOfVisits);
+        }
+
+        [Fact]
+        public async Task DecrementNumberOfVisits_ShouldDecrementNumberOfVisitsAsync()
+        {
+            // Arrange
+            var hotel = _fixture.Build<Hotel>()
+                .With(h => h.NumberOfVisits, 10)
+                .Create();
+            await _context.Hotels.AddAsync(hotel);
+            await _context.SaveChangesAsync();
+
+            // Act
+            await _hotelRepository.DecrementNumberOfVisitsAsync(hotel.HotelId);
+
+            // Assert
+            var result = await _context.Hotels.FirstOrDefaultAsync(h => h.HotelId == hotel.HotelId);
+            Assert.Equal(9, result.NumberOfVisits);
+        }
     }
 }
