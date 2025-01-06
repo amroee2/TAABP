@@ -158,5 +158,29 @@ namespace TAABP.IntegrationTests
             var result = await _context.Users.FindAsync(user.Id);
             Assert.Equal("UpdatedName", result.FirstName);
         }
+
+        [Fact]
+        public async Task GetLastHotelsVisitedAsync_ShouldReturnLastVisitedHotelsAsync()
+        {
+            // Arrange
+            var user = _fixture.Create<User>();
+            user.Reservations = _fixture.CreateMany<Reservation>(5).ToList();
+            foreach (var reservation in user.Reservations)
+            {
+                reservation.Room = _fixture.Create<Room>();
+                reservation.Room.Hotel = _fixture.Create<Hotel>();
+            }
+
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _userRepository.GetLastHotelsVisitedAsync(user.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(5, result.Count);
+            Assert.All(result, hotel => Assert.NotNull(hotel));
+        }
     }
 }
