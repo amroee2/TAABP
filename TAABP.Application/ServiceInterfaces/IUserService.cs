@@ -6,8 +6,6 @@ namespace TAABP.Application.ServiceInterfaces
 {
     public interface IUserService
     {
-        public Task CreateUserAsync(RegisterDto registerDto);
-        public Task<string> LoginAsync(LoginDto loginDto);
         public Task<UserDto> GetUserByIdAsync(string id);
         public Task<List<UserDto>> GetUsersAsync();
         public Task DeleteUserAsync(string id);
@@ -16,8 +14,6 @@ namespace TAABP.Application.ServiceInterfaces
         public string GetCurrentUserId();
         public Task<List<HotelDto>> GetLastHotelsVisitedAsync(string userId);
         public Task<bool> CheckEmailAsync(string email);
-        public Task ChangeEmailAsync(string userId, ChangeEmailDto changeEmailDto);
         public Task<User> GetUserByEmailAsync(string email);
-        public Task ResetUserPasswordAsync(string email, string password);
     }
 }
