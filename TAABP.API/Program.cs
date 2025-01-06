@@ -66,6 +66,7 @@ builder.Services.AddScoped<IReviewMapper, ReviewMapper>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IStorageService, StorageService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddMemoryCache();
 builder.Services.AddIdentityCore<User>(options =>
 {
