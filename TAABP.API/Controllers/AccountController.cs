@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TAABP.Application;
 using TAABP.Application.DTOs;
 using TAABP.Application.DTOs.AccountDto;
@@ -93,6 +94,41 @@ namespace TAABP.API.Controllers
                 await _storageService.DeleteTokenAsync(token);
 
                 return Ok(new { message = "Email confirmed successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("change-email")]
+        [Authorize]
+        public async Task<IActionResult> ChangeEmailAsync(ChangeEmailDto changeEmailDto)
+        {
+            try
+            {
+                var user = await _userService.GetUserByIdAsync(_userService.GetCurrentUserId());
+
+                var emailExists = await _userService.CheckEmailAsync(changeEmailDto.NewEmail);
+                if (emailExists)
+                {
+                    return Conflict(new { message = "Email already exists" });
+                }
+                await _userService.ChangeEmailAsync(_userService.GetCurrentUserId(), changeEmailDto);
+                await _emailService.SendEmailAsync(
+                    changeEmailDto.NewEmail,
+                    "Confirm Your Email Change",
+                    $"<p>Your Email has neem changed</p>"
+                );
+                return Accepted(new { message = "Please check your email to confirm your email change." });
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (EmailAlreadyExistsException ex)
+            {
+                return Conflict(new { message = ex.Message });
             }
             catch (Exception ex)
             {
