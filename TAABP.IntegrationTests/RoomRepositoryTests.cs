@@ -174,5 +174,37 @@ namespace TAABP.IntegrationTests
             var result = await _context.RoomImages.FirstOrDefaultAsync(r => r.RoomId == roomImage.RoomId && r.RoomImageId == roomImage.RoomImageId);
             Assert.Null(result);
         }
+
+        [Fact]
+        public async Task BookRoomAsync_ShouldBookRoomAsync()
+        {
+            // Arrange
+            var room = _fixture.Create<Room>();
+            await _context.Rooms.AddAsync(room);
+            await _context.SaveChangesAsync();
+
+            // Act
+            await _roomRepository.BookRoomAsync(room.RoomId);
+
+            // Assert
+            var result = await _context.Rooms.FirstOrDefaultAsync(r => r.RoomId == room.RoomId);
+            Assert.False(result.IsAvailable);
+        }
+
+        [Fact]
+        public async Task UnbookRoomAsync_ShouldUnbookRoomAsync()
+        {
+            // Arrange
+            var room = _fixture.Create<Room>();
+            await _context.Rooms.AddAsync(room);
+            await _context.SaveChangesAsync();
+
+            // Act
+            await _roomRepository.UnbookRoomAsync(room.RoomId);
+
+            // Assert
+            var result = await _context.Rooms.FirstOrDefaultAsync(r => r.RoomId == room.RoomId);
+            Assert.True(result.IsAvailable);
+        }
     }
 }
