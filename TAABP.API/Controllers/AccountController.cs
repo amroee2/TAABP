@@ -135,5 +135,55 @@ namespace TAABP.API.Controllers
                 return StatusCode(500, new { message = ex.Message });
             }
         }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordDto)
+        {
+            try
+            {
+                var user = await _userService.GetUserByEmailAsync(forgotPasswordDto.Email);
+                var token = _tokenGenerator.GenerateToken(user.Email);
+                await _storageService.StoreUserAsync(token, new RegisterDto { Email = user.Email });
+                var resetLink = $"https://localhost:7210/api/Account/reset-password?token={token}";
+                await _emailService.SendEmailAsync(
+                    user.Email,
+                    "Reset Your Password",
+                    $"<p>Please reset your password by clicking this link: <a href='{resetLink}'>Reset Password</a></p>"
+                );
+                return Accepted(new { message = "Please check your email to reset your password." });
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPasswordAsync(ResetPasswordDto resetPasswordDto)
+        {
+            try
+            {
+                if (!_tokenGenerator.ValidateToken(resetPasswordDto.Token))
+                {
+                    return BadRequest(new { message = "Invalid or expired token." });
+                }
+                var registerDto = await _storageService.RetrieveUserAsync(resetPasswordDto.Token);
+                if (registerDto == null)
+                {
+                    return NotFound(new { message = "Token not found" });
+                }
+                await _userService.ResetUserPasswordAsync(registerDto.Email, resetPasswordDto.Password);
+                await _storageService.DeleteTokenAsync(resetPasswordDto.Token);
+                return Ok(new { message = "Password reset successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
     }
 }
