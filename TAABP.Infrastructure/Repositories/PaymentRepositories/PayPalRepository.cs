@@ -49,5 +49,11 @@ namespace TAABP.Infrastructure.Repositories.PaymentRepositories
             return await _context.PayPals.AsNoTracking()
                 .FirstOrDefaultAsync(cc => cc.PaymentMethodId == paymentMethodId);
         }
+
+        public async Task<bool> CheckIfEmailAlreadyExists(string email)
+        {
+            return await _context.PayPals.AsNoTracking()
+                .AnyAsync(cc => cc.PayPalEmail == email);
+        }
     }
 }

@@ -10,5 +10,6 @@ namespace TAABP.Application.RepositoryInterfaces
         Task UpdatePaymentOptionAsync(PayPal paymentOption);
         Task DeletePaymentOptionAsync(PayPal paymentOption);
         Task<PayPal> GetPaymentOptionByPaymentMethodId(int paymentMethodId);
+        Task<bool> CheckIfEmailAlreadyExists(string email);
     }
 }
