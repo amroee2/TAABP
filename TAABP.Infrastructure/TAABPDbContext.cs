@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TAABP.Core;
 using TAABP.Core.PaymentEntities;
+using TAABP.Core.ShoppingEntities;
 
 namespace TAABP.Infrastructure
 {
@@ -23,6 +24,8 @@ namespace TAABP.Infrastructure
         public DbSet<PaymentMethod> PaymentMethods { get; set; }
         public DbSet<CreditCard> CreditCards { get; set; }
         public DbSet<PayPal> PayPals { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -11,6 +11,5 @@ namespace TAABP.Core.PaymentEntities
         public PaymentMethodOption PaymentMethodName { get; set; }
         public string UserId { get; set; }
         public User User { get; set; }
-
     }
 }
