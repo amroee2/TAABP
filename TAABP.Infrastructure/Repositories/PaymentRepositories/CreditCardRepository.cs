@@ -42,5 +42,11 @@ namespace TAABP.Infrastructure.Repositories.PaymentRepositories
             _context.CreditCards.Remove(creditCard);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<CreditCard> GetPaymentOptionByPaymentMethodId(int paymentMethodId)
+        {
+            return await _context.CreditCards.AsNoTracking()
+                .FirstOrDefaultAsync(cc => cc.PaymentMethodId == paymentMethodId);
+        }
     }
 }

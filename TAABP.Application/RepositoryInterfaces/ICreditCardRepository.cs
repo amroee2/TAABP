@@ -9,5 +9,6 @@ namespace TAABP.Application.RepositoryInterfaces
         Task AddNewPaymentOptionAsync(CreditCard creditCard);
         Task UpdatePaymentOptionAsync(CreditCard creditCard);
         Task DeletePaymentOptionAsync(CreditCard creditCard);
+        Task<CreditCard> GetPaymentOptionByPaymentMethodId(int paymentMethodId);
     }
 }
