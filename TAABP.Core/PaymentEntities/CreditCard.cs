@@ -11,7 +11,7 @@ namespace TAABP.Core.PaymentEntities
         [Required(ErrorMessage = "CardNumber is required")]
         public string CardNumber { get; set; }
         [Required(ErrorMessage = "ExpirationDate is required")]
-        public string ExpirationDate { get; set; }
+        public DateTime ExpirationDate { get; set; }
         [Required(ErrorMessage = "CVV is required")]
         public string CVV { get; set; }
         public int PaymentMethodId { get; set; }
