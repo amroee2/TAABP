@@ -5,7 +5,7 @@ using TAABP.Application.ServiceInterfaces;
 
 namespace TAABP.API.Controllers
 {
-    [Route("api/{userId}/[controller]")]
+    [Route("api/{userId}/CreditCards")]
     [ApiController]
     public class CreditCardController : ControllerBase
     {
