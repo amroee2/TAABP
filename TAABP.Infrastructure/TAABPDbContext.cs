@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TAABP.Core;
+using TAABP.Core.PaymentEntities;
 
 namespace TAABP.Infrastructure
 {
@@ -19,6 +20,9 @@ namespace TAABP.Infrastructure
         public DbSet<City> Cities { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<PaymentMethod> PaymentMethods { get; set; }
+        public DbSet<CreditCard> CreditCards { get; set; }
+        public DbSet<PayPal> PayPals { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -70,6 +74,16 @@ namespace TAABP.Infrastructure
                 entity.ToTable(t =>
                     t.HasCheckConstraint("CK_Reservation_Price_Positive", "[Price] > 0"));
             });
+
+            modelBuilder.Entity<PayPal>()
+                .HasOne(p => p.PaymentMethod)
+                .WithOne()
+                .HasForeignKey<PayPal>(p => p.PaymentMethodId);
+
+            modelBuilder.Entity<CreditCard>()
+                .HasOne(cc => cc.PaymentMethod)
+                .WithOne()
+                .HasForeignKey<CreditCard>(cc => cc.PaymentMethodId);
         }
     }
 }
