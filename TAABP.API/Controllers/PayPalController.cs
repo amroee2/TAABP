@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
 using TAABP.Application.ServiceInterfaces;
@@ -7,6 +8,7 @@ namespace TAABP.API.Controllers
 {
     [Route("api/{userId}/PayPals")]
     [ApiController]
+    [Authorize]
     public class PayPalController : ControllerBase
     {
         private readonly IPayPalService _payPalService;
@@ -47,6 +49,10 @@ namespace TAABP.API.Controllers
             {
                 return NotFound(ex.Message);
             }
+            catch(EmailAlreadyExistsException ex)
+            {
+                return Conflict(ex.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = ex.Message });
@@ -64,6 +70,10 @@ namespace TAABP.API.Controllers
             catch (EntityNotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch(EmailAlreadyExistsException ex)
+            {
+                return Conflict(ex.Message);
             }
             catch (Exception ex)
             {
