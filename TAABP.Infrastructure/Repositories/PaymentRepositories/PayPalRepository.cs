@@ -43,5 +43,11 @@ namespace TAABP.Infrastructure.Repositories.PaymentRepositories
             _context.PayPals.Remove(payPal);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<PayPal> GetPaymentOptionByPaymentMethodId(int paymentMethodId)
+        {
+            return await _context.PayPals.AsNoTracking()
+                .FirstOrDefaultAsync(cc => cc.PaymentMethodId == paymentMethodId);
+        }
     }
 }
