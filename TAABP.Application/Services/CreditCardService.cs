@@ -22,17 +22,11 @@ namespace TAABP.Application.Services
             _creditCardMapper = creditCardMapper;
         }
 
-        public async Task<List<IPaymentOption>> GetUserPaymentOptionAsync(string userId)
+        public async Task<IPaymentOption> GetPaymentOptionByPaymentMethodId(int paymentMethodId)
         {
-            var user = await _userRepository.GetUserByIdAsync(userId);
-            if (user == null)
-            {
-                throw new EntityNotFoundException("User not found");
-            }
-            var creditCards = await _creditCardRepository.GetUserPaymentOptionAsync(userId);
-            return creditCards.Cast<IPaymentOption>().ToList();
+            var creditCard = await _creditCardRepository.GetPaymentOptionByPaymentMethodId(paymentMethodId);
+            return creditCard;
         }
-
         public async Task<CreditCard> GetPaymentOptionByIdAsync(int paymentOptionId)
         {
             var creditCard= await _creditCardRepository.GetPaymentOptionByIdAsync(paymentOptionId);
