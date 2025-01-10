@@ -46,6 +46,11 @@ namespace TAABP.Application.Services
             {
                 throw new EntityNotFoundException("User not found");
             }
+            var isEmailExists = await _payPalRepository.CheckIfEmailAlreadyExists(paymentOption.PayPalEmail);
+            if (isEmailExists)
+            {
+                throw new EmailAlreadyExistsException("Email already exists");
+            }
             PaymentMethod paymentMethod = new PaymentMethod
             {
                 UserId = userId,
@@ -66,12 +71,12 @@ namespace TAABP.Application.Services
             {
                 throw new EntityNotFoundException("User not found");
             }
-            var card = await _payPalRepository.GetPaymentOptionByIdAsync(payPalId);
-            if (card == null)
+            var paypal = await _payPalRepository.GetPaymentOptionByIdAsync(payPalId);
+            if (paypal == null)
             {
-                throw new EntityNotFoundException("Credit card not found");
+                throw new EntityNotFoundException("PayPal not found");
             }
-            var paymentMethod = await _paymentMethodRepository.GetPaymentMethodByIdAsync(card.PaymentMethodId);
+            var paymentMethod = await _paymentMethodRepository.GetPaymentMethodByIdAsync(paypal.PaymentMethodId);
 
             if (paymentMethod == null)
             {
@@ -81,9 +86,17 @@ namespace TAABP.Application.Services
             {
                 throw new EntityNotFoundException("Payment method does not belong to user");
             }
-            paymentOption.PaymentMethodId = card.PaymentMethodId;
-            _payPalMapper.PayPalDtoToPayPal(paymentOption, card);
-            await _payPalRepository.UpdatePaymentOptionAsync(card);
+            if(paymentOption.PayPalEmail != paypal.PayPalEmail)
+            {
+                var isEmailExists = await _payPalRepository.CheckIfEmailAlreadyExists(paymentOption.PayPalEmail);
+                if (isEmailExists)
+                {
+                    throw new EmailAlreadyExistsException("Email already exists");
+                }
+            }
+            paymentOption.PaymentMethodId = paypal.PaymentMethodId;
+            _payPalMapper.PayPalDtoToPayPal(paymentOption, paypal);
+            await _payPalRepository.UpdatePaymentOptionAsync(paypal);
         }
 
         public async Task DeletePaymentOptionAsync(string userId, int paymentOptionId)
