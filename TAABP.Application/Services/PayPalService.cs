@@ -23,15 +23,10 @@ namespace TAABP.Application.Services
             _payPalMapper = payPalMapper;
         }
 
-        public async Task<List<IPaymentOption>> GetUserPaymentOptionAsync(string userId)
+        public async Task<IPaymentOption> GetPaymentOptionByPaymentMethodId(int paymentMethodId)
         {
-            var user = await _userRepository.GetUserByIdAsync(userId);
-            if (user == null)
-            {
-                throw new EntityNotFoundException("User not found");
-            }
-            var payPals = await _payPalRepository.GetUserPaymentOptionAsync(userId);
-            return payPals.Cast<IPaymentOption>().ToList();
+            var payPal = await _payPalRepository.GetPaymentOptionByPaymentMethodId(paymentMethodId);
+            return payPal;
         }
 
         public async Task<PayPal> GetPaymentOptionByIdAsync(int paymentOptionId)
