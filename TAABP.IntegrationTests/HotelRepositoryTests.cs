@@ -57,18 +57,24 @@ namespace TAABP.IntegrationTests
         }
 
         [Fact]
-        public async Task GetHotelsAsync_ShouldReturnAllHotelsAsync()
+        public async Task GetHotelsAsync_ShouldReturnAllCityHotelsAsync()
         {
             // Arrange
+            var city = _fixture.Create<City>();
+            await _context.Cities.AddAsync(city);
+            await _context.SaveChangesAsync();
+            _fixture.Customize<Hotel>(c => c.With(h => h.CityId, city.CityId));
+
             var hotels = _fixture.CreateMany<Hotel>(3).ToList();
             await _context.Hotels.AddRangeAsync(hotels);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _hotelRepository.GetHotelsAsync();
+            var result = await _hotelRepository.GetHotelsAsync(city.CityId);
 
             // Assert
             Assert.Equal(hotels.Count, result.Count);
+            Assert.All(result, h => Assert.Equal(city.CityId, h.CityId));
         }
 
         [Fact]

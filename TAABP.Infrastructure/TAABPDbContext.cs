@@ -78,6 +78,12 @@ namespace TAABP.Infrastructure
                     t.HasCheckConstraint("CK_Reservation_Price_Positive", "[Price] > 0"));
             });
 
+            modelBuilder.Entity<Review>(entity =>
+            {
+                entity.ToTable(t =>
+                    t.HasCheckConstraint("CK_Review_Rating", "[Rating] >= 0 AND [Rating] <= 5"));
+            });
+
             modelBuilder.Entity<PayPal>()
                 .HasOne(p => p.PaymentMethod)
                 .WithOne()

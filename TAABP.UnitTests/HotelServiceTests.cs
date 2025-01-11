@@ -92,12 +92,13 @@ namespace TAABP.UnitTests
         public async Task GetHotelByIdAsync_ShouldThrowEntityNotFoundException_WhenHotelDoesNotExist()
         {
             // Arrange
+            var cityId = _fixture.Create<int>();
             var hotelId = _fixture.Create<int>();
             _mockHotelRepository.Setup(x => x.GetHotelByIdAsync(hotelId)).ReturnsAsync((Hotel)null);
-
+            _mockCityRepository.Setup(x => x.GetCityByIdAsync(cityId)).ReturnsAsync(new City());
             // Act
             var exception = await Assert.ThrowsAsync<EntityNotFoundException>(() =>
-                _hotelService.GetHotelByIdAsync(hotelId));
+                _hotelService.GetHotelByIdAsync(cityId, hotelId));
 
             // Assert
             Assert.Equal($"Hotel with id {hotelId} not found", exception.Message);
@@ -109,19 +110,26 @@ namespace TAABP.UnitTests
         public async Task GetHotelByIdAsync_ShouldReturnHotelDto_WhenHotelExists()
         {
             // Arrange
+
+            var cityId = _fixture.Create<int>();
             var hotelId = _fixture.Create<int>();
+            _fixture.Customize<Hotel>(c => c.With(h => h.HotelId, hotelId).With(h=>h.CityId,cityId));
+            _fixture.Customize<City>(City => City.With(c => c.CityId, cityId));
             var hotel = _fixture.Create<Hotel>();
-            var hotelDto = _fixture.Build<HotelDto>().With(d => d.HotelId, hotelId).Create();
+            var city = _fixture.Create<City>();
+            var hotelDto = _fixture.Build<HotelDto>().With(d => d.HotelId, hotel.HotelId).Create();
 
             _mockHotelRepository.Setup(x => x.GetHotelByIdAsync(hotelId)).ReturnsAsync(hotel);
+            _mockCityRepository.Setup(x => x.GetCityByIdAsync(cityId)).ReturnsAsync(city);
             _mockHotelMapper.Setup(x => x.HotelToHotelDto(hotel)).Returns(hotelDto);
 
             // Act
-            var result = await _hotelService.GetHotelByIdAsync(hotelId);
+            var result = await _hotelService.GetHotelByIdAsync(cityId, hotelId);
 
             // Assert
             Assert.Equal(hotelDto, result);
             _mockHotelRepository.Verify(x => x.GetHotelByIdAsync(hotelId), Times.Once);
+            _mockCityRepository.Verify(x => x.GetCityByIdAsync(cityId), Times.Once);
             _mockHotelMapper.Verify(x => x.HotelToHotelDto(hotel), Times.Once);
         }
 
@@ -129,21 +137,22 @@ namespace TAABP.UnitTests
         public async Task GetHotelsAsync_ShouldReturnListOfHotelDtos()
         {
             // Arrange
+            var cityId = _fixture.Create<int>();
             var hotels = _fixture.CreateMany<Hotel>().ToList();
             var hotelDtos = hotels.Select(hotel => _fixture.Build<HotelDto>().With(d => d.HotelId, hotel.HotelId).Create()).ToList();
 
-            _mockHotelRepository.Setup(x => x.GetHotelsAsync()).ReturnsAsync(hotels);
+            _mockHotelRepository.Setup(x => x.GetHotelsAsync(cityId)).ReturnsAsync(hotels);
             _mockHotelMapper.SetupSequence(x => x.HotelToHotelDto(It.IsAny<Hotel>()))
                 .Returns(hotelDtos[0])
                 .Returns(hotelDtos[1])
                 .Returns(hotelDtos[2]);
 
             // Act
-            var result = await _hotelService.GetHotelsAsync();
+            var result = await _hotelService.GetHotelsAsync(cityId);
 
             // Assert
             Assert.Equal(hotelDtos, result);
-            _mockHotelRepository.Verify(x => x.GetHotelsAsync(), Times.Once);
+            _mockHotelRepository.Verify(x => x.GetHotelsAsync(cityId), Times.Once);
             _mockHotelMapper.Verify(x => x.HotelToHotelDto(hotels[0]), Times.Once);
             _mockHotelMapper.Verify(x => x.HotelToHotelDto(hotels[1]), Times.Once);
             _mockHotelMapper.Verify(x => x.HotelToHotelDto(hotels[2]), Times.Once);
@@ -153,41 +162,46 @@ namespace TAABP.UnitTests
         public async Task DeleteHotelAsync_ShouldThrowEntityNotFoundException_WhenHotelDoesNotExist()
         {
             // Arrange
+            var cityId = _fixture.Create<int>();
             var hotelId = _fixture.Create<int>();
+            _fixture.Customize<Hotel>(c => c.With(h => h.HotelId, hotelId).With(h => h.CityId, cityId));
+            _fixture.Customize<City>(City => City.With(c => c.CityId, cityId));
             _mockHotelRepository.Setup(x => x.GetHotelByIdAsync(hotelId)).ReturnsAsync((Hotel)null);
-
+            _mockCityRepository.Setup(x => x.GetCityByIdAsync(cityId)).ReturnsAsync(new City());
             // Act
             var exception = await Assert.ThrowsAsync<EntityNotFoundException>(() =>
-                _hotelService.DeleteHotelAsync(hotelId));
+                _hotelService.DeleteHotelAsync(cityId, hotelId));
 
             // Assert
             Assert.Equal($"Hotel with id {hotelId} not found", exception.Message);
             _mockHotelRepository.Verify(x => x.GetHotelByIdAsync(hotelId), Times.Once);
             _mockHotelRepository.Verify(x => x.DeleteHotelAsync(It.IsAny<Hotel>()), Times.Never);
-            _mockCityRepository.Verify(x => x.DecrementNumberOfHotelsAsync(It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
         public async Task DeleteHotelAsync_ShouldDeleteHotel_WhenHotelExists()
         {
             // Arrange
+            var cityId = _fixture.Create<int>();
             var hotelId = _fixture.Create<int>();
+            _fixture.Customize<Hotel>(c => c.With(h => h.HotelId, hotelId).With(h => h.CityId, cityId));
+            _fixture.Customize<City>(City => City.With(c => c.CityId, cityId));
             var hotel = _fixture.Create<Hotel>();
             var city = _fixture.Create<City>();
 
             _mockHotelRepository.Setup(x => x.GetHotelByIdAsync(hotelId)).ReturnsAsync(hotel);
-            _mockCityRepository.Setup(x => x.GetCityByIdAsync(hotel.CityId)).ReturnsAsync(city);
+            _mockCityRepository.Setup(x => x.GetCityByIdAsync(cityId)).ReturnsAsync(city);
             _mockHotelRepository.Setup(x => x.DeleteHotelAsync(hotel)).Returns(Task.CompletedTask);
-            _mockCityRepository.Setup(x => x.DecrementNumberOfHotelsAsync(city.CityId)).Returns(Task.CompletedTask);
+            _mockCityRepository.Setup(x => x.DecrementNumberOfHotelsAsync(cityId)).Returns(Task.CompletedTask);
 
             // Act
-            await _hotelService.DeleteHotelAsync(hotelId);
+            await _hotelService.DeleteHotelAsync(cityId, hotelId);
 
             // Assert
             _mockHotelRepository.Verify(x => x.GetHotelByIdAsync(hotelId), Times.Once);
-            _mockCityRepository.Verify(x => x.GetCityByIdAsync(hotel.CityId), Times.Once);
+            _mockCityRepository.Verify(x => x.GetCityByIdAsync(cityId), Times.Once);
             _mockHotelRepository.Verify(x => x.DeleteHotelAsync(hotel), Times.Once);
-            _mockCityRepository.Verify(x => x.DecrementNumberOfHotelsAsync(city.CityId), Times.Once);
+            _mockCityRepository.Verify(x => x.DecrementNumberOfHotelsAsync(cityId), Times.Once);
         }
 
         [Fact]
@@ -197,7 +211,7 @@ namespace TAABP.UnitTests
             var cityId = _fixture.Create<int>();
             var hotelDto = _fixture.Create<HotelDto>();
             _mockHotelRepository.Setup(x => x.GetHotelByIdAsync(hotelDto.HotelId)).ReturnsAsync((Hotel)null);
-
+            _mockCityRepository.Setup(x => x.GetCityByIdAsync(cityId)).ReturnsAsync(new City());
             // Act
             var exception = await Assert.ThrowsAsync<EntityNotFoundException>(() =>
                 _hotelService.UpdateHotelAsync(cityId, hotelDto));
@@ -205,6 +219,7 @@ namespace TAABP.UnitTests
             // Assert
             Assert.Equal($"Hotel with id {hotelDto.HotelId} not found", exception.Message);
             _mockHotelRepository.Verify(x => x.GetHotelByIdAsync(hotelDto.HotelId), Times.Once);
+            _mockHotelMapper.Verify(x => x.HotelDtoToHotel(It.IsAny<HotelDto>(), It.IsAny<Hotel>()), Times.Never);
             _mockHotelRepository.Verify(x => x.UpdateHotelAsync(It.IsAny<Hotel>()), Times.Never);
         }
 
@@ -213,6 +228,9 @@ namespace TAABP.UnitTests
         {
             // Arrange
             var cityId = _fixture.Create<int>();
+            var hotelId = _fixture.Create<int>();
+            _fixture.Customize<Hotel>(c => c.With(h => h.HotelId, hotelId).With(h => h.CityId, cityId));
+            _fixture.Customize<City>(City => City.With(c => c.CityId, cityId));
             var hotelDto = _fixture.Create<HotelDto>();
             var hotel = _fixture.Create<Hotel>();
             var city = _fixture.Create<City>();

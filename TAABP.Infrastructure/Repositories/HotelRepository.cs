@@ -25,9 +25,9 @@ namespace TAABP.Infrastructure.Repositories
             return await _context.Hotels.AsNoTracking().FirstOrDefaultAsync(h => h.HotelId == id);
         }
 
-        public async Task<List<Hotel>> GetHotelsAsync()
+        public async Task<List<Hotel>> GetHotelsAsync(int cityId)
         {
-            return await _context.Hotels.AsNoTracking().ToListAsync();
+            return await _context.Hotels.AsNoTracking().Where(h => h.CityId == cityId).ToListAsync();
         }
 
         public async Task DeleteHotelAsync(Hotel hotel)
@@ -81,6 +81,20 @@ namespace TAABP.Infrastructure.Repositories
         {
             var hotel = await _context.Hotels.FirstOrDefaultAsync(h => h.HotelId == hotelId);
             hotel!.NumberOfVisits--;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task IncrementNumberOfRoomsAsync(int hotelId)
+        {
+            var hotel = await _context.Hotels.FirstOrDefaultAsync(h => h.HotelId == hotelId);
+            hotel!.NumberOfRooms++;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DecrementNumberOfRoomsAsync(int hotelId)
+        {
+            var hotel = await _context.Hotels.FirstOrDefaultAsync(h => h.HotelId == hotelId);
+            hotel!.NumberOfRooms--;
             await _context.SaveChangesAsync();
         }
 

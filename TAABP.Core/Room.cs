@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using TAABP.Core.ShoppingEntities;
 
 namespace TAABP.Core
 {
@@ -45,11 +46,13 @@ namespace TAABP.Core
         public List<RoomImage> RoomImages { get; set; }
         public List<FeaturedDeal> FeaturedDeals { get; set; }
         public List<Reservation> Reservations { get; set; }
+        public List<CartItem> CartItems { get; set; }
         public Room()
         {
             RoomImages = new List<RoomImage>();
             FeaturedDeals = new List<FeaturedDeal>();
             Reservations = new List<Reservation>();
+            CartItems = new List<CartItem>();
         }
     }
 }
