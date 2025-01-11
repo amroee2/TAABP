@@ -22,8 +22,7 @@ namespace TAABP.Infrastructure.Repositories.ShoppingRepositories
 
         public async Task<Cart> GetCartByIdAsync(int cartId)
         {
-            var cart = await _context.Carts
-                .AsTracking()
+            var cart = await _context.Carts.Include(c => c.CartItems)
                 .FirstOrDefaultAsync(c => c.CartId == cartId);
 
             if (cart != null)
