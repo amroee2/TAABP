@@ -34,7 +34,7 @@ namespace TAABP.Application.Services
             return featuredDeals.Select(x => _featuredDealMapper.FeaturedDealToFeaturedDealDto(x)).ToList();
         }
 
-        public async Task CreateFeaturedDealAsync(FeatueredDealDto featuredDealDto)
+        public async Task<int> CreateFeaturedDealAsync(FeatueredDealDto featuredDealDto)
         {
             var room = await _roomRepository.GetRoomByIdAsync(featuredDealDto.RoomId);
             if (room == null)
@@ -43,21 +43,24 @@ namespace TAABP.Application.Services
             }
             var featuredDeal = _featuredDealMapper.FeaturedDealDtoToFeaturedDeal(featuredDealDto);
             await _featuredDealRepository.CreateFeaturedDealAsync(featuredDeal);
+            return featuredDeal.FeaturedDealId;
         }
 
         public async Task UpdateFeaturedDealAsync(FeatueredDealDto featuredDealDto)
         {
-            var room = await _roomRepository.GetRoomByIdAsync(featuredDealDto.RoomId);
-            if (room == null)
-            {
-                throw new EntityNotFoundException("Room not found");
-            }
             var targetFeaturedDeal = await _featuredDealRepository.GetFeaturedDealAsync(featuredDealDto.FeaturedDealId);
             if (targetFeaturedDeal == null)
             {
                 throw new EntityNotFoundException("Featured deal not found");
             }
+            var room = await _roomRepository.GetRoomByIdAsync(targetFeaturedDeal.RoomId);
+            if (room == null)
+            {
+                throw new EntityNotFoundException("Room not found");
+            }
+
             var featuredDeal = _featuredDealMapper.FeaturedDealDtoToFeaturedDeal(featuredDealDto);
+            featuredDeal.RoomId = targetFeaturedDeal.RoomId;
             await _featuredDealRepository.UpdateFeaturedDealAsync(featuredDeal);
         }
 

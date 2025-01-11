@@ -6,7 +6,7 @@ namespace TAABP.Application.ServiceInterfaces
     {
         Task<FeatueredDealDto> GetFeaturedDealByIdAsync(int id);
         Task<List<FeatueredDealDto>> GetFeaturedDealsAsync();
-        Task CreateFeaturedDealAsync(FeatueredDealDto featuredDealDto);
+        Task<int> CreateFeaturedDealAsync(FeatueredDealDto featuredDealDto);
         Task UpdateFeaturedDealAsync(FeatueredDealDto featuredDealDto);
         Task DeleteFeaturedDealAsync(int id);
     }
