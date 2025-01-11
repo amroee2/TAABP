@@ -25,6 +25,10 @@ namespace TAABP.Application.Services
         public async Task<IPaymentOption> GetPaymentOptionByPaymentMethodId(int paymentMethodId)
         {
             var creditCard = await _creditCardRepository.GetPaymentOptionByPaymentMethodId(paymentMethodId);
+            if(creditCard == null)
+            {
+                throw new EntityNotFoundException("Credit card not found");
+            }
             return creditCard;
         }
         public async Task<CreditCard> GetPaymentOptionByIdAsync(int paymentOptionId)

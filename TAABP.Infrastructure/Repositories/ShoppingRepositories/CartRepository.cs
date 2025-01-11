@@ -33,7 +33,7 @@ namespace TAABP.Infrastructure.Repositories.ShoppingRepositories
             return cart;
         }
 
-        public async Task<List<Cart>> GetUserCarts(string userId)
+        public async Task<List<Cart>> GetUserCartsAsync(string userId)
         {
             var userCarts = await _context.Carts
                 .Include(c => c.PaymentMethod)
