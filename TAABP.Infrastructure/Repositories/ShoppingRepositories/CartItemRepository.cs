@@ -19,9 +19,9 @@ namespace TAABP.Infrastructure.Repositories.ShoppingRepositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<CartItem> GetCartItemByIdAsync(int cartItemId)
+        public async Task<CartItem> GetCartItemByIdAsync(int cartId, int cartItemId)
         {
-            return await _context.CartItems.AsNoTracking().FirstOrDefaultAsync(c=> c.CartItemId == cartItemId);
+            return await _context.CartItems.Include(ci=>ci.Room).AsNoTracking().FirstOrDefaultAsync(c => c.CartId == cartId && c.CartItemId == cartItemId);
         }
 
         public async Task<List<CartItem>> GetCartItemsByCartIdAsync(int cartId)
