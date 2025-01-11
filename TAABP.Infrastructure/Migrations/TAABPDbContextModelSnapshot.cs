@@ -155,6 +155,138 @@ namespace TAABP.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("TAABP.Core.Amenity", b =>
+                {
+                    b.Property<int>("AmenityId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AmenityId"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("HotelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("AmenityId");
+
+                    b.HasIndex("HotelId");
+
+                    b.ToTable("Amenities");
+                });
+
+            modelBuilder.Entity("TAABP.Core.City", b =>
+                {
+                    b.Property<int>("CityId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CityId"));
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<int>("NumberOfHotels")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberOfVisits")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PostOffice")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Thumbnail")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CityId");
+
+                    b.ToTable("Cities", t =>
+                        {
+                            t.HasCheckConstraint("CK_FeaturedDeal_NumberOfHotels_Positive", "[NumberOfHotels] >= 0");
+
+                            t.HasCheckConstraint("CK_FeaturedDeal_NumberOfVists_Positive", "[NumberOfVisits] >= 0");
+                        });
+                });
+
+            modelBuilder.Entity("TAABP.Core.FeaturedDeal", b =>
+                {
+                    b.Property<int>("FeaturedDealId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FeaturedDealId"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Discount")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("FeaturedDealId");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("FeaturedDeals", t =>
+                        {
+                            t.HasCheckConstraint("CK_FeaturedDeal_Discount_Positive", "[Discount] >= 0");
+                        });
+                });
+
             modelBuilder.Entity("TAABP.Core.Hotel", b =>
                 {
                     b.Property<int>("HotelId")
@@ -167,6 +299,9 @@ namespace TAABP.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -185,6 +320,9 @@ namespace TAABP.Infrastructure.Migrations
                         .HasColumnType("nvarchar(30)");
 
                     b.Property<int>("NumberOfRooms")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberOfVisits")
                         .HasColumnType("int");
 
                     b.Property<string>("Owner")
@@ -213,9 +351,13 @@ namespace TAABP.Infrastructure.Migrations
 
                     b.HasKey("HotelId");
 
+                    b.HasIndex("CityId");
+
                     b.ToTable("Hotels", t =>
                         {
                             t.HasCheckConstraint("CK_Hotel_NumberOfRooms_Positive", "[NumberOfRooms] > 0");
+
+                            t.HasCheckConstraint("CK_Hotel_NumberOfVisits_Positive", "[NumberOfVisits] >= 0");
 
                             t.HasCheckConstraint("CK_Hotels_Rating", "Rating >= 0 AND Rating <= 5");
                         });
@@ -241,6 +383,304 @@ namespace TAABP.Infrastructure.Migrations
                     b.HasIndex("HotelId");
 
                     b.ToTable("HotelImages");
+                });
+
+            modelBuilder.Entity("TAABP.Core.PaymentEntities.CreditCard", b =>
+                {
+                    b.Property<int>("CreditCardId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CreditCardId"));
+
+                    b.Property<string>("CVV")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardHolderName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PaymentMethodId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CreditCardId");
+
+                    b.HasIndex("PaymentMethodId")
+                        .IsUnique();
+
+                    b.ToTable("CreditCards");
+                });
+
+            modelBuilder.Entity("TAABP.Core.PaymentEntities.PayPal", b =>
+                {
+                    b.Property<int>("PayPalId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PayPalId"));
+
+                    b.Property<string>("PayPalEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PaymentMethodId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PayPalId");
+
+                    b.HasIndex("PaymentMethodId")
+                        .IsUnique();
+
+                    b.ToTable("PayPals");
+                });
+
+            modelBuilder.Entity("TAABP.Core.PaymentEntities.PaymentMethod", b =>
+                {
+                    b.Property<int>("PaymentMethodId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentMethodId"));
+
+                    b.Property<int>("PaymentMethodName")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("PaymentMethodId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PaymentMethods");
+                });
+
+            modelBuilder.Entity("TAABP.Core.Reservation", b =>
+                {
+                    b.Property<int>("ReservationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReservationId"));
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ReservationId");
+
+                    b.HasIndex("RoomId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Reservations", t =>
+                        {
+                            t.HasCheckConstraint("CK_Reservation_Price_Positive", "[Price] > 0");
+                        });
+                });
+
+            modelBuilder.Entity("TAABP.Core.Review", b =>
+                {
+                    b.Property<int>("ReviewId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReviewId"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("HotelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ReviewId");
+
+                    b.HasIndex("HotelId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Reviews");
+                });
+
+            modelBuilder.Entity("TAABP.Core.Room", b =>
+                {
+                    b.Property<int>("RoomId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomId"));
+
+                    b.Property<int>("AdultsCapacity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ChildrenCapacity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("HotelId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<double>("PricePerNight")
+                        .HasColumnType("float");
+
+                    b.Property<int>("RoomNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Thumbnail")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("RoomId");
+
+                    b.HasIndex("HotelId");
+
+                    b.ToTable("Rooms", t =>
+                        {
+                            t.HasCheckConstraint("CK_Room_Adault_Capacity_Positive", "[AdultsCapacity] >= 0");
+
+                            t.HasCheckConstraint("CK_Room_Children_Capacity_Positive", "[ChildrenCapacity] >= 0");
+
+                            t.HasCheckConstraint("CK_Room_Number_Positive", "[RoomNumber] > 0");
+
+                            t.HasCheckConstraint("CK_Room_Price_Positive", "[PricePerNight] > 0");
+                        });
+                });
+
+            modelBuilder.Entity("TAABP.Core.RoomImage", b =>
+                {
+                    b.Property<int>("RoomImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomImageId"));
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RoomImageId");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("RoomImages");
+                });
+
+            modelBuilder.Entity("TAABP.Core.ShoppingEntities.Cart", b =>
+                {
+                    b.Property<int>("CartId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartId"));
+
+                    b.Property<int>("CartStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PaymentMethodId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("TotalPrice")
+                        .HasColumnType("float");
+
+                    b.HasKey("CartId");
+
+                    b.HasIndex("PaymentMethodId");
+
+                    b.ToTable("Carts");
+                });
+
+            modelBuilder.Entity("TAABP.Core.ShoppingEntities.CartItem", b =>
+                {
+                    b.Property<int>("CartItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartItemId"));
+
+                    b.Property<int>("CartId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("CartItemId");
+
+                    b.HasIndex("CartId");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("CartItems");
                 });
 
             modelBuilder.Entity("TAABP.Core.User", b =>
@@ -373,6 +813,39 @@ namespace TAABP.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TAABP.Core.Amenity", b =>
+                {
+                    b.HasOne("TAABP.Core.Hotel", "Hotel")
+                        .WithMany("Amenities")
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Hotel");
+                });
+
+            modelBuilder.Entity("TAABP.Core.FeaturedDeal", b =>
+                {
+                    b.HasOne("TAABP.Core.Room", "Room")
+                        .WithMany("FeaturedDeals")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Room");
+                });
+
+            modelBuilder.Entity("TAABP.Core.Hotel", b =>
+                {
+                    b.HasOne("TAABP.Core.City", "City")
+                        .WithMany("Hotels")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("City");
+                });
+
             modelBuilder.Entity("TAABP.Core.HotelImage", b =>
                 {
                     b.HasOne("TAABP.Core.Hotel", "Hotel")
@@ -384,9 +857,164 @@ namespace TAABP.Infrastructure.Migrations
                     b.Navigation("Hotel");
                 });
 
+            modelBuilder.Entity("TAABP.Core.PaymentEntities.CreditCard", b =>
+                {
+                    b.HasOne("TAABP.Core.PaymentEntities.PaymentMethod", "PaymentMethod")
+                        .WithOne()
+                        .HasForeignKey("TAABP.Core.PaymentEntities.CreditCard", "PaymentMethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PaymentMethod");
+                });
+
+            modelBuilder.Entity("TAABP.Core.PaymentEntities.PayPal", b =>
+                {
+                    b.HasOne("TAABP.Core.PaymentEntities.PaymentMethod", "PaymentMethod")
+                        .WithOne()
+                        .HasForeignKey("TAABP.Core.PaymentEntities.PayPal", "PaymentMethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PaymentMethod");
+                });
+
+            modelBuilder.Entity("TAABP.Core.PaymentEntities.PaymentMethod", b =>
+                {
+                    b.HasOne("TAABP.Core.User", "User")
+                        .WithMany("PaymentMethods")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TAABP.Core.Reservation", b =>
+                {
+                    b.HasOne("TAABP.Core.Room", "Room")
+                        .WithMany("Reservations")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TAABP.Core.User", "User")
+                        .WithMany("Reservations")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Room");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TAABP.Core.Review", b =>
+                {
+                    b.HasOne("TAABP.Core.Hotel", "Hotel")
+                        .WithMany("Reviews")
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TAABP.Core.User", "User")
+                        .WithMany("Reviews")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Hotel");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TAABP.Core.Room", b =>
+                {
+                    b.HasOne("TAABP.Core.Hotel", "Hotel")
+                        .WithMany("Rooms")
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Hotel");
+                });
+
+            modelBuilder.Entity("TAABP.Core.RoomImage", b =>
+                {
+                    b.HasOne("TAABP.Core.Room", "Room")
+                        .WithMany("RoomImages")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Room");
+                });
+
+            modelBuilder.Entity("TAABP.Core.ShoppingEntities.Cart", b =>
+                {
+                    b.HasOne("TAABP.Core.PaymentEntities.PaymentMethod", "PaymentMethod")
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodId");
+
+                    b.Navigation("PaymentMethod");
+                });
+
+            modelBuilder.Entity("TAABP.Core.ShoppingEntities.CartItem", b =>
+                {
+                    b.HasOne("TAABP.Core.ShoppingEntities.Cart", "Cart")
+                        .WithMany("CartItems")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TAABP.Core.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
+
+                    b.Navigation("Room");
+                });
+
+            modelBuilder.Entity("TAABP.Core.City", b =>
+                {
+                    b.Navigation("Hotels");
+                });
+
             modelBuilder.Entity("TAABP.Core.Hotel", b =>
                 {
+                    b.Navigation("Amenities");
+
                     b.Navigation("HotelImages");
+
+                    b.Navigation("Reviews");
+
+                    b.Navigation("Rooms");
+                });
+
+            modelBuilder.Entity("TAABP.Core.Room", b =>
+                {
+                    b.Navigation("FeaturedDeals");
+
+                    b.Navigation("Reservations");
+
+                    b.Navigation("RoomImages");
+                });
+
+            modelBuilder.Entity("TAABP.Core.ShoppingEntities.Cart", b =>
+                {
+                    b.Navigation("CartItems");
+                });
+
+            modelBuilder.Entity("TAABP.Core.User", b =>
+                {
+                    b.Navigation("PaymentMethods");
+
+                    b.Navigation("Reservations");
+
+                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }
