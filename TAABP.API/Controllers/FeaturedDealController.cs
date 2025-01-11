@@ -46,13 +46,15 @@ namespace TAABP.API.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateFeaturedDealAsync(FeatueredDealDto featuredDealDto)
+        [HttpPost("Room/{roomId}")]
+        public async Task<IActionResult> CreateFeaturedDealAsync(int roomId, FeatueredDealDto featuredDealDto)
         {
             try
             {
-                await _featuredDealService.CreateFeaturedDealAsync(featuredDealDto);
-                return Ok(new { message = "Featured deal created successfully!" });
+                featuredDealDto.RoomId = roomId;
+                int id = await _featuredDealService.CreateFeaturedDealAsync(featuredDealDto);
+                var featuredDeal = await _featuredDealService.GetFeaturedDealByIdAsync(id);
+                return StatusCode(201, featuredDeal);
             }
             catch (EntityNotFoundException ex)
             {
