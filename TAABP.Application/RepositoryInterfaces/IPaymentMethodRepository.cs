@@ -8,7 +8,6 @@ namespace TAABP.Application.RepositoryInterfaces
         Task<List<PaymentMethod>> GetUserPaymentMethodsAsync(string userId);
         Task<PaymentMethod> GetPaymentMethodByIdAsync(int paymentMethodId);
         Task AddNewPaymentMethodAsync(PaymentMethod paymentMethod);
-        Task UpdatePaymentMethodAsync(PaymentMethod paymentMethod);
         Task DeletePaymentMethodAsync(PaymentMethod paymentMethod);
         Task<User> GetUserByPaymentMethodId(int paymentMethodId);
     }

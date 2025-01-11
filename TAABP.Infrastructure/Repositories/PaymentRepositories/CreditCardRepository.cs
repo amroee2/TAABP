@@ -12,13 +12,6 @@ namespace TAABP.Infrastructure.Repositories.PaymentRepositories
             _context = context;
         }
 
-        public async Task<List<CreditCard>> GetUserPaymentOptionAsync(string userId)
-        {
-            return await _context.CreditCards.AsNoTracking()
-                .Where(cc => cc.PaymentMethod.UserId == userId)
-                .ToListAsync();
-        }
-
         public async Task<CreditCard> GetPaymentOptionByIdAsync(int creditCardId)
         {
             return await _context.CreditCards.AsNoTracking()
@@ -36,13 +29,6 @@ namespace TAABP.Infrastructure.Repositories.PaymentRepositories
             _context.CreditCards.Update(creditCard);
             await _context.SaveChangesAsync();
         }
-
-        public async Task DeletePaymentOptionAsync(CreditCard creditCard)
-        {
-            _context.CreditCards.Remove(creditCard);
-            await _context.SaveChangesAsync();
-        }
-
         public async Task<CreditCard> GetPaymentOptionByPaymentMethodId(int paymentMethodId)
         {
             return await _context.CreditCards.AsNoTracking()

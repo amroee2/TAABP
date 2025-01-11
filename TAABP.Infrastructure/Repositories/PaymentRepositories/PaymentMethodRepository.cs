@@ -32,12 +32,6 @@ namespace TAABP.Infrastructure.Repositories.PaymentRepositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdatePaymentMethodAsync(PaymentMethod paymentMethod)
-        {
-            _context.PaymentMethods.Update(paymentMethod);
-            await _context.SaveChangesAsync();
-        }
-
         public async Task DeletePaymentMethodAsync(PaymentMethod paymentMethod)
         {
             _context.PaymentMethods.Remove(paymentMethod);
