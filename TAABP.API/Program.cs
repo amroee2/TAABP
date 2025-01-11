@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using TAABP.Application;
 using TAABP.Application.Profile;
 using TAABP.Application.Profile.AmenityMapping;
+using TAABP.Application.Profile.CartItemMapping;
 using TAABP.Application.Profile.CityMapping;
 using TAABP.Application.Profile.CreditCardMapping;
 using TAABP.Application.Profile.FeaturedDealMapping;
@@ -24,6 +25,7 @@ using TAABP.Core;
 using TAABP.Infrastructure;
 using TAABP.Infrastructure.Repositories;
 using TAABP.Infrastructure.Repositories.PaymentRepositories;
+using TAABP.Infrastructure.Repositories.ShoppingRepositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -81,6 +83,10 @@ builder.Services.AddScoped<ICreditCardService,  CreditCardService>();
 builder.Services.AddScoped<IPayPalService, PayPalService>();
 builder.Services.AddScoped<ICreditCardMapper, CreditCardMapper>();
 builder.Services.AddScoped<IPayPalMapper, PayPalMapper>();
+builder.Services.AddScoped<ICartItemService, CartItemService>();
+builder.Services.AddScoped<ICartItemMapper, CartItemMapper>();
+builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddMemoryCache();
 builder.Services.AddIdentityCore<User>(options =>
 {
