@@ -7,9 +7,6 @@ namespace TAABP.Application.Validators
     {
         public FeaturedDealDtoValidator()
         {
-            RuleFor(x => x.RoomId)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .GreaterThan(0).WithMessage("{PropertyName} must be greater than 0");
             RuleFor(x => x.StartDate)
                 .NotEmpty().WithMessage("{PropertyName} is required")
                 .GreaterThan(DateTime.Now).WithMessage("{PropertyName} must be greater than today");
