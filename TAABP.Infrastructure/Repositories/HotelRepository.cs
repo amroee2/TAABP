@@ -84,6 +84,20 @@ namespace TAABP.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task IncrementNumberOfRoomsAsync(int hotelId)
+        {
+            var hotel = await _context.Hotels.FirstOrDefaultAsync(h => h.HotelId == hotelId);
+            hotel!.NumberOfRooms++;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DecrementNumberOfRoomsAsync(int hotelId)
+        {
+            var hotel = await _context.Hotels.FirstOrDefaultAsync(h => h.HotelId == hotelId);
+            hotel!.NumberOfRooms--;
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<List<Hotel>> GetFilteredHotelsAsync(FilterOptionsDto request)
         {
             var query = _context.Hotels

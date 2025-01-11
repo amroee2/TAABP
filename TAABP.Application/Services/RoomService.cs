@@ -55,6 +55,7 @@ namespace TAABP.Application.Services
             room.CreatedAt = DateTime.Now;
             room.CreatedBy = await _userService.GetCurrentUsernameAsync();
             await _roomRepository.CreateRoomAsync(room);
+            await _hotelRepository.IncrementNumberOfRoomsAsync(roomDto.HotelId);
             return room.RoomId;
         }
 
@@ -81,6 +82,7 @@ namespace TAABP.Application.Services
                 throw new EntityNotFoundException("Hotel Or Room not found");
             }
             await _roomRepository.DeleteRoomAsync(room);
+            await _hotelRepository.DecrementNumberOfRoomsAsync(hotelId);
         }
 
         public async Task<int> CreateRoomImageAsync(RoomImageDto roomImageDto)
