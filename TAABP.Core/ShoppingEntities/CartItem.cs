@@ -16,7 +16,7 @@ namespace TAABP.Core.ShoppingEntities
 
         public CartItem()
         {
-            Price = (EndDate - StartDate).Days * Room.PricePerNight;
+
         }
     }
 }
