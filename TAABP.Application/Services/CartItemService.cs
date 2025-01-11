@@ -159,5 +159,11 @@ namespace TAABP.Application.Services
                 await _reservationService.CreateReservationAsync(reservationDto);
             }
         }
+
+        public async Task<List<Cart>> GetUserCartsAsync(string userId)
+        {
+            var carts = await _cartRepository.GetUserCartsAsync(userId);
+            return carts;
+        }
     }
 }

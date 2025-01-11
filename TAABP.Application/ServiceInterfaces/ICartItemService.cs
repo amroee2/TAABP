@@ -11,5 +11,6 @@ namespace TAABP.Application.ServiceInterfaces
         Task DeleteCartItemAsync(int cartId, int cartItemId);
         Task<Cart> GetCartAsync(int cartId);
         Task ConfirmCartAsync(int cartId, int paymentMethodId);
+        Task<List<Cart>> GetUserCartsAsync(string userId);
     }
 }
