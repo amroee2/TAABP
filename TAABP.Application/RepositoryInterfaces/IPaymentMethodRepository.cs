@@ -1,4 +1,5 @@
-﻿using TAABP.Core.PaymentEntities;
+﻿using TAABP.Core;
+using TAABP.Core.PaymentEntities;
 
 namespace TAABP.Application.RepositoryInterfaces
 {
@@ -9,5 +10,6 @@ namespace TAABP.Application.RepositoryInterfaces
         Task AddNewPaymentMethodAsync(PaymentMethod paymentMethod);
         Task UpdatePaymentMethodAsync(PaymentMethod paymentMethod);
         Task DeletePaymentMethodAsync(PaymentMethod paymentMethod);
+        Task<User> GetUserByPaymentMethodId(int paymentMethodId);
     }
 }

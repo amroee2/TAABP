@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TAABP.Application.RepositoryInterfaces;
+using TAABP.Core;
 using TAABP.Core.PaymentEntities;
 
 namespace TAABP.Infrastructure.Repositories.PaymentRepositories
@@ -41,6 +42,15 @@ namespace TAABP.Infrastructure.Repositories.PaymentRepositories
         {
             _context.PaymentMethods.Remove(paymentMethod);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<User> GetUserByPaymentMethodId(int paymentMethodId)
+        {
+            var user = await _context.PaymentMethods
+                .Include(pm => pm.User)
+                .FirstOrDefaultAsync(pm => pm.PaymentMethodId == paymentMethodId);
+
+            return user.User;
         }
     }
 }
