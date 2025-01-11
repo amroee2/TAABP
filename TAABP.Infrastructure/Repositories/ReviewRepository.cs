@@ -50,5 +50,13 @@ namespace TAABP.Infrastructure.Repositories
             _context.Reviews.Remove(review);
             await _context.SaveChangesAsync();
         }
+
+        public async Task UpdateHotelRating(int hotelId)
+        {
+            var hotel = await _context.Hotels.FirstOrDefaultAsync(h => h.HotelId == hotelId);
+            var reviews = await _context.Reviews.Where(r => r.HotelId == hotelId).ToListAsync();
+            hotel.Rating =  reviews.Count > 0 ? (int) reviews.Average(r => r.Rating) : 0;
+            await _context.SaveChangesAsync();
+        }
     }
 }
