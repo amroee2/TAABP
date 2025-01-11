@@ -4,10 +4,18 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using TAABP.Application;
 using TAABP.Application.Profile;
 using TAABP.Application.Profile.AmenityMapping;
+using TAABP.Application.Profile.CartItemMapping;
+using TAABP.Application.Profile.CityMapping;
+using TAABP.Application.Profile.CreditCardMapping;
 using TAABP.Application.Profile.FeaturedDealMapping;
 using TAABP.Application.Profile.HotelMapping;
+using TAABP.Application.Profile.PayPalMapping;
+using TAABP.Application.Profile.ReservationMapping;
+using TAABP.Application.Profile.ReviewMapping;
 using TAABP.Application.Profile.RoomMapping;
 using TAABP.Application.Profile.UserMapping;
 using TAABP.Application.RepositoryInterfaces;
@@ -17,6 +25,8 @@ using TAABP.Application.TokenGenerators;
 using TAABP.Core;
 using TAABP.Infrastructure;
 using TAABP.Infrastructure.Repositories;
+using TAABP.Infrastructure.Repositories.PaymentRepositories;
+using TAABP.Infrastructure.Repositories.ShoppingRepositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,9 +39,14 @@ builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirme
     .AddEntityFrameworkStores<TAABPDbContext>();
 
 builder.Services.AddControllers()
-    .AddNewtonsoftJson();
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+    });
 
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddHttpContextAccessor();
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -50,6 +65,34 @@ builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<IFeaturedDealService, FeaturedDealService>();
 builder.Services.AddScoped<IFeaturedDealMapper, FeaturedDealMapper>();
 builder.Services.AddScoped<IFeaturedDealRepository, FeaturedDealRepository>();
+builder.Services.AddScoped<ICityService, CityService>();
+builder.Services.AddScoped<ICityMapper, CityMapper>(); 
+builder.Services.AddScoped<ICityRepository, CityRepository>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddScoped<IReservationMapper, ReservationMapper>();
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IReviewMapper, ReviewMapper>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IStorageService, StorageService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IPaymentMethodService, PaymentMethodService>();
+builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
+builder.Services.AddScoped<IPaymentOptionService, CreditCardService>();
+builder.Services.AddScoped<ICreditCardRepository, CreditCardRepository>();
+builder.Services.AddScoped<IPaymentOptionService, PayPalService>();
+builder.Services.AddScoped<IPayPalRepository, PayPalRepository>();
+builder.Services.AddScoped<PaymentOptionServiceFactory>();
+builder.Services.AddScoped<ICreditCardService,  CreditCardService>();
+builder.Services.AddScoped<IPayPalService, PayPalService>();
+builder.Services.AddScoped<ICreditCardMapper, CreditCardMapper>();
+builder.Services.AddScoped<IPayPalMapper, PayPalMapper>();
+builder.Services.AddScoped<ICartItemService, CartItemService>();
+builder.Services.AddScoped<ICartItemMapper, CartItemMapper>();
+builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddMemoryCache();
 builder.Services.AddIdentityCore<User>(options =>
 {
     options.Password.RequireDigit = true;
@@ -61,6 +104,7 @@ builder.Services.AddIdentityCore<User>(options =>
 })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<TAABPDbContext>()
+    .AddDefaultTokenProviders()
     .AddSignInManager<SignInManager<User>>();
 
 var externalAssembly = AppDomain.CurrentDomain.Load("TAABP.Application");
@@ -88,12 +132,56 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+async Task SeedAdminUser(IServiceProvider serviceProvider)
+{
+    using var scope = serviceProvider.CreateScope();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    const string adminRole = "Admin";
+    if (!await roleManager.RoleExistsAsync(adminRole))
+    {
+        await roleManager.CreateAsync(new IdentityRole(adminRole));
+    }
+    const string adminEmail = "admin@example.com";
+    const string adminPassword = "Admin@1234";
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+    if (adminUser == null)
+    {
+        adminUser = new User
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            FirstName = "Admin",
+            LastName = "User",
+            EmailConfirmed = true
+        };
+
+        var result = await userManager.CreateAsync(adminUser, adminPassword);
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(adminUser, adminRole);
+        }
+        else
+        {
+            throw new Exception($"Failed to create admin user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+        }
+    }
+    else if (!await userManager.IsInRoleAsync(adminUser, adminRole))
+    {
+        await userManager.AddToRoleAsync(adminUser, adminRole);
+    }
+}
+
+await SeedAdminUser(app.Services);
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

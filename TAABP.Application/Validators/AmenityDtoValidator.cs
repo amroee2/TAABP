@@ -10,7 +10,6 @@ namespace TAABP.Application.Validators
             RuleFor(x => x.Name).NotEmpty().WithMessage("Name can't be empty");
             RuleFor(x => x.Description).NotEmpty().WithMessage("Description can't be empty");
             RuleFor(x => x.ImageUrl).NotEmpty().WithMessage("Image is required");
-            RuleFor(x => x.HotelId).NotEmpty().WithMessage("Hotel id is required");
         }
     }
 }

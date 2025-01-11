@@ -5,7 +5,7 @@ namespace TAABP.Application.Profile.RoomMapping
 {
     public partial interface IRoomMapper
     {
-        Room RoomDtoToRoom(RoomDto roomDto);
+        void RoomDtoToRoom(RoomDto roomDto, Room room);
         RoomDto RoomToRoomDto(Room room);
         RoomImage RoomImageDtoToRoomImage(RoomImageDto roomImageDto);
         RoomImageDto RoomImageToRoomImageDto(RoomImage roomImage);
