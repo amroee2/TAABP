@@ -25,9 +25,9 @@ namespace TAABP.Infrastructure.Repositories
             return await _context.Hotels.AsNoTracking().FirstOrDefaultAsync(h => h.HotelId == id);
         }
 
-        public async Task<List<Hotel>> GetHotelsAsync()
+        public async Task<List<Hotel>> GetHotelsAsync(int cityId)
         {
-            return await _context.Hotels.AsNoTracking().ToListAsync();
+            return await _context.Hotels.AsNoTracking().Where(h => h.CityId == cityId).ToListAsync();
         }
 
         public async Task DeleteHotelAsync(Hotel hotel)
