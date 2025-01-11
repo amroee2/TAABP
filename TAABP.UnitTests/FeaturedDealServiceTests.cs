@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using AutoFixture.AutoMoq;
 using Moq;
 using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
@@ -15,7 +16,7 @@ namespace TAABP.UnitTests
         private readonly Mock<IFeaturedDealMapper> _featuredDealMapperMock;
         private readonly Mock<IRoomRepository> _roomRepositoryMock;
         private readonly FeaturedDealService _featuredDealService;
-        private readonly Fixture _fixture;
+        private readonly IFixture _fixture;
 
         public FeaturedDealServiceTests()
         {
@@ -27,10 +28,10 @@ namespace TAABP.UnitTests
                 _featuredDealMapperMock.Object,
                 _featuredDealRepositoryMock.Object);
 
-            _fixture = new Fixture();
+            _fixture = new Fixture().Customize(new AutoMoqCustomization());
             _fixture.Behaviors.OfType<ThrowingRecursionBehavior>()
-                .ToList()
-                .ForEach(b => _fixture.Behaviors.Remove(b));
+            .ToList()
+            .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
 
@@ -38,20 +39,45 @@ namespace TAABP.UnitTests
         public async Task UpdateFeaturedDealAsync_ShouldUpdate_WhenFeaturedDealAndRoomExist()
         {
             // Arrange
-            var featuredDealDto = _fixture.Create<FeatueredDealDto>();
-            var existingFeaturedDeal = _fixture.Create<FeaturedDeal>();
-            var room = _fixture.Create<Room>();
+            var roomId = _fixture.Create<int>();
+            var featuredDealId = _fixture.Create<int>();
 
-            _roomRepositoryMock.Setup(repo => repo.GetRoomByIdAsync(featuredDealDto.RoomId)).ReturnsAsync(room);
-            _featuredDealRepositoryMock.Setup(repo => repo.GetFeaturedDealAsync(featuredDealDto.FeaturedDealId)).ReturnsAsync(existingFeaturedDeal);
+            var room = _fixture.Build<Room>()
+                .With(r => r.RoomId, roomId)
+                .Create();
+
+            var featuredDealDto = _fixture.Build<FeatueredDealDto>()
+                .With(fd => fd.FeaturedDealId, featuredDealId)
+                .With(fd => fd.RoomId, roomId)
+                .Create();
+
+            var existingFeaturedDeal = _fixture.Build<FeaturedDeal>()
+                .With(fd => fd.FeaturedDealId, featuredDealId)
+                .With(fd => fd.RoomId, roomId)
+                .Create();
+
+            _roomRepositoryMock.Setup(repo => repo.GetRoomByIdAsync(roomId)).ReturnsAsync(room);
+            _featuredDealRepositoryMock.Setup(repo => repo.GetFeaturedDealAsync(featuredDealId)).ReturnsAsync(existingFeaturedDeal);
+            _featuredDealRepositoryMock.Setup(repo => repo.UpdateFeaturedDealAsync(It.IsAny<FeaturedDeal>()))
+                .Returns(Task.CompletedTask);
+            _featuredDealMapperMock.Setup(mapper => mapper.FeaturedDealDtoToFeaturedDeal(featuredDealDto))
+                .Returns(new FeaturedDeal
+                {
+                    FeaturedDealId = featuredDealDto.FeaturedDealId,
+                    RoomId = featuredDealDto.RoomId
+                });
+
 
             // Act
             await _featuredDealService.UpdateFeaturedDealAsync(featuredDealDto);
 
             // Assert
             _featuredDealMapperMock.Verify(mapper => mapper.FeaturedDealDtoToFeaturedDeal(featuredDealDto), Times.Once);
-            _featuredDealRepositoryMock.Verify(repo => repo.UpdateFeaturedDealAsync(It.IsAny<FeaturedDeal>()), Times.Once);
+            _featuredDealRepositoryMock.Verify(repo => repo.UpdateFeaturedDealAsync(It.Is<FeaturedDeal>(fd =>
+                fd.FeaturedDealId == featuredDealDto.FeaturedDealId &&
+                fd.RoomId == roomId)), Times.Once);
         }
+
 
         [Fact]
         public async Task UpdateFeaturedDealAsync_ShouldThrowException_WhenRoomDoesNotExist()
@@ -176,9 +202,10 @@ namespace TAABP.UnitTests
                 .Returns(featuredDeal);
 
             // Act
-            await _featuredDealService.CreateFeaturedDealAsync(featuredDealDto);
+            var id = await _featuredDealService.CreateFeaturedDealAsync(featuredDealDto);
 
             // Assert
+            Assert.Equal(featuredDeal.FeaturedDealId, id);
             _roomRepositoryMock.Verify(repo => repo.GetRoomByIdAsync(featuredDealDto.RoomId), Times.Once);
             _featuredDealMapperMock.Verify(mapper => mapper.FeaturedDealDtoToFeaturedDeal(featuredDealDto), Times.Once);
             _featuredDealRepositoryMock.Verify(repo => repo.CreateFeaturedDealAsync(featuredDeal), Times.Once);
