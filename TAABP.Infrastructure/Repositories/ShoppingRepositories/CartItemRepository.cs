@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TAABP.Application.RepositoryInterfaces;
 using TAABP.Core.ShoppingEntities;
 
 namespace TAABP.Infrastructure.Repositories.ShoppingRepositories
 {
-    public class CartItemRepository
+    public class CartItemRepository : ICartItemRepository
     {
         private readonly TAABPDbContext _context;
 
