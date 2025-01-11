@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TAABP.Infrastructure;
 
@@ -11,9 +12,11 @@ using TAABP.Infrastructure;
 namespace TAABP.Infrastructure.Migrations
 {
     [DbContext(typeof(TAABPDbContext))]
-    partial class TAABPDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250110110131_PaymentMethodMigration")]
+    partial class PaymentMethodMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -405,8 +408,9 @@ namespace TAABP.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ExpirationDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("ExpirationDate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PaymentMethodId")
                         .HasColumnType("int");
@@ -625,62 +629,6 @@ namespace TAABP.Infrastructure.Migrations
                     b.HasIndex("RoomId");
 
                     b.ToTable("RoomImages");
-                });
-
-            modelBuilder.Entity("TAABP.Core.ShoppingEntities.Cart", b =>
-                {
-                    b.Property<int>("CartId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartId"));
-
-                    b.Property<int>("CartStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PaymentMethodId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("TotalPrice")
-                        .HasColumnType("float");
-
-                    b.HasKey("CartId");
-
-                    b.HasIndex("PaymentMethodId");
-
-                    b.ToTable("Carts");
-                });
-
-            modelBuilder.Entity("TAABP.Core.ShoppingEntities.CartItem", b =>
-                {
-                    b.Property<int>("CartItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartItemId"));
-
-                    b.Property<int>("CartId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
-
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("CartItemId");
-
-                    b.HasIndex("CartId");
-
-                    b.HasIndex("RoomId");
-
-                    b.ToTable("CartItems");
                 });
 
             modelBuilder.Entity("TAABP.Core.User", b =>
@@ -950,34 +898,6 @@ namespace TAABP.Infrastructure.Migrations
                     b.Navigation("Room");
                 });
 
-            modelBuilder.Entity("TAABP.Core.ShoppingEntities.Cart", b =>
-                {
-                    b.HasOne("TAABP.Core.PaymentEntities.PaymentMethod", "PaymentMethod")
-                        .WithMany()
-                        .HasForeignKey("PaymentMethodId");
-
-                    b.Navigation("PaymentMethod");
-                });
-
-            modelBuilder.Entity("TAABP.Core.ShoppingEntities.CartItem", b =>
-                {
-                    b.HasOne("TAABP.Core.ShoppingEntities.Cart", "Cart")
-                        .WithMany("CartItems")
-                        .HasForeignKey("CartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TAABP.Core.Room", "Room")
-                        .WithMany()
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cart");
-
-                    b.Navigation("Room");
-                });
-
             modelBuilder.Entity("TAABP.Core.City", b =>
                 {
                     b.Navigation("Hotels");
@@ -1001,11 +921,6 @@ namespace TAABP.Infrastructure.Migrations
                     b.Navigation("Reservations");
 
                     b.Navigation("RoomImages");
-                });
-
-            modelBuilder.Entity("TAABP.Core.ShoppingEntities.Cart", b =>
-                {
-                    b.Navigation("CartItems");
                 });
 
             modelBuilder.Entity("TAABP.Core.User", b =>

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TAABP.Infrastructure;
 
@@ -11,9 +12,11 @@ using TAABP.Infrastructure;
 namespace TAABP.Infrastructure.Migrations
 {
     [DbContext(typeof(TAABPDbContext))]
-    partial class TAABPDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250110171844_CartAndCartItemMigration")]
+    partial class CartAndCartItemMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -635,10 +638,7 @@ namespace TAABP.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartId"));
 
-                    b.Property<int>("CartStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PaymentMethodId")
+                    b.Property<int>("PaymentMethodId")
                         .HasColumnType("int");
 
                     b.Property<double>("TotalPrice")
@@ -954,7 +954,9 @@ namespace TAABP.Infrastructure.Migrations
                 {
                     b.HasOne("TAABP.Core.PaymentEntities.PaymentMethod", "PaymentMethod")
                         .WithMany()
-                        .HasForeignKey("PaymentMethodId");
+                        .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("PaymentMethod");
                 });

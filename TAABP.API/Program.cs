@@ -4,12 +4,16 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using TAABP.Application;
 using TAABP.Application.Profile;
 using TAABP.Application.Profile.AmenityMapping;
+using TAABP.Application.Profile.CartItemMapping;
 using TAABP.Application.Profile.CityMapping;
+using TAABP.Application.Profile.CreditCardMapping;
 using TAABP.Application.Profile.FeaturedDealMapping;
 using TAABP.Application.Profile.HotelMapping;
+using TAABP.Application.Profile.PayPalMapping;
 using TAABP.Application.Profile.ReservationMapping;
 using TAABP.Application.Profile.ReviewMapping;
 using TAABP.Application.Profile.RoomMapping;
@@ -21,6 +25,8 @@ using TAABP.Application.TokenGenerators;
 using TAABP.Core;
 using TAABP.Infrastructure;
 using TAABP.Infrastructure.Repositories;
+using TAABP.Infrastructure.Repositories.PaymentRepositories;
+using TAABP.Infrastructure.Repositories.ShoppingRepositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +39,11 @@ builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirme
     .AddEntityFrameworkStores<TAABPDbContext>();
 
 builder.Services.AddControllers()
-    .AddNewtonsoftJson();
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+    });
+
 builder.Services.AddHttpContextAccessor();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -67,6 +77,21 @@ builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IStorageService, StorageService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IPaymentMethodService, PaymentMethodService>();
+builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
+builder.Services.AddScoped<IPaymentOptionService, CreditCardService>();
+builder.Services.AddScoped<ICreditCardRepository, CreditCardRepository>();
+builder.Services.AddScoped<IPaymentOptionService, PayPalService>();
+builder.Services.AddScoped<IPayPalRepository, PayPalRepository>();
+builder.Services.AddScoped<PaymentOptionServiceFactory>();
+builder.Services.AddScoped<ICreditCardService,  CreditCardService>();
+builder.Services.AddScoped<IPayPalService, PayPalService>();
+builder.Services.AddScoped<ICreditCardMapper, CreditCardMapper>();
+builder.Services.AddScoped<IPayPalMapper, PayPalMapper>();
+builder.Services.AddScoped<ICartItemService, CartItemService>();
+builder.Services.AddScoped<ICartItemMapper, CartItemMapper>();
+builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddMemoryCache();
 builder.Services.AddIdentityCore<User>(options =>
 {
