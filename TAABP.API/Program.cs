@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using TAABP.Application;
 using TAABP.Application.Profile;
 using TAABP.Application.Profile.AmenityMapping;
@@ -38,7 +39,11 @@ builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirme
     .AddEntityFrameworkStores<TAABPDbContext>();
 
 builder.Services.AddControllers()
-    .AddNewtonsoftJson();
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+    });
+
 builder.Services.AddHttpContextAccessor();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
