@@ -64,6 +64,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpPost("Room/{roomId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateFeaturedDealAsync(int roomId, FeatueredDealDto featuredDealDto)
         {
             _logger.Information("Creating featured deal for room with ID {RoomId}", roomId);
@@ -89,6 +90,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateFeaturedDealAsync(int id, FeatueredDealDto featuredDealDto)
         {
             _logger.Information("Updating featured deal with ID {FeaturedDealId}", id);
@@ -113,6 +115,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteFeaturedDealAsync(int id)
         {
             _logger.Information("Deleting featured deal with ID {FeaturedDealId}", id);

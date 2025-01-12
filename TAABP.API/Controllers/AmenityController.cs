@@ -69,6 +69,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> CreateAmenityAsync(int hotelId, AmenityDto amenity)
         {
             _logger.Information("Creating a new amenity for hotel {HotelId}", hotelId);
@@ -93,6 +94,8 @@ namespace TAABP.API.Controllers
         }
 
         [HttpPut("{amenityId}")]
+        [Authorize(Roles = "Admin")]
+
         public async Task<ActionResult> UpdateAmenityAsync(int hotelId, int amenityId, AmenityDto amenity)
         {
             _logger.Information("Updating amenity {AmenityId} for hotel {HotelId}", amenityId, hotelId);
@@ -118,6 +121,8 @@ namespace TAABP.API.Controllers
         }
 
         [HttpDelete("{amenityId}")]
+        [Authorize(Roles = "Admin")]
+
         public async Task<ActionResult> DeleteAmenityAsync(int hotelId, int amenityId)
         {
             _logger.Information("Deleting amenity {AmenityId} for hotel {HotelId}", amenityId, hotelId);

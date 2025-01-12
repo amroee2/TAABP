@@ -69,6 +69,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateRoomAsync(int hotelId, RoomDto roomDto)
         {
             _logger.Information("Creating a new room for hotel with ID {HotelId}", hotelId);
@@ -94,6 +95,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpPut("{roomId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateRoomAsync(int hotelId, int roomId, RoomDto roomDto)
         {
             _logger.Information("Updating room with ID {RoomId} for hotel with ID {HotelId}", roomId, hotelId);
@@ -119,6 +121,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpDelete("{roomId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteRoomAsync(int hotelId, int roomId)
         {
             _logger.Information("Deleting room with ID {RoomId} for hotel with ID {HotelId}", roomId, hotelId);

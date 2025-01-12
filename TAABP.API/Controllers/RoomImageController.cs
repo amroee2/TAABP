@@ -25,6 +25,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateRoomImageAsync(int roomId, RoomImageDto roomImageDto)
         {
             _logger.Information("Adding room image for room with ID {RoomId}", roomId);
@@ -93,6 +94,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteRoomImageAsync(int roomId, int id)
         {
             _logger.Information("Deleting room image with ID {RoomImageId} for room with ID {RoomId}", id, roomId);

@@ -59,6 +59,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateCityAsync(CityDto cityDto)
         {
             _logger.Information("Creating city with name {CityName}", cityDto.Name);
@@ -84,6 +85,7 @@ namespace TAABP.API.Controllers
 
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateCityAsync(int id, CityDto cityDto)
         {
             _logger.Information("Updating city with ID {CityId}", id);
@@ -108,6 +110,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteCityAsync(int id)
         {
             _logger.Information("Deleting city with ID {CityId}", id);
