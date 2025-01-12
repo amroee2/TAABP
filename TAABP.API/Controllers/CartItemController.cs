@@ -1,19 +1,28 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using TAABP.Application;
 using TAABP.Application.DTOs.ShoppingDto;
 using TAABP.Application.Exceptions;
 using TAABP.Application.ServiceInterfaces;
+using TAABP.Core;
 
 namespace TAABP.API.Controllers
 {
     [Route("api/Carts/{cartId}")]
     [ApiController]
+    [Authorize]
     public class CartItemController : ControllerBase
     {
         private readonly ICartItemService _cartItemService;
-
-        public CartItemController(ICartItemService cartItemService)
+        private readonly IEmailService _emailService;
+        private readonly UserManager<User> _userManager;
+        public CartItemController(IEmailService emailService, 
+            ICartItemService cartItemService, UserManager<User> userManager)
         {
             _cartItemService = cartItemService;
+            _emailService = emailService;
+            _userManager = userManager;
         }
 
         [HttpPost("Rooms/{roomId}/CartItems")]
@@ -113,7 +122,9 @@ namespace TAABP.API.Controllers
         {
             try
             {
-                await _cartItemService.ConfirmCartAsync(cartId, paymentMethodId);
+                string userId = await _cartItemService.ConfirmCartAsync(cartId, paymentMethodId);
+                var user = await _userManager.FindByIdAsync(userId);
+                await _emailService.SendEmailAsync(user.Email, "Cart Confirmed", "Your cart has been confirmed.");
                 return NoContent();
             }
             catch (EntityNotFoundException ex)

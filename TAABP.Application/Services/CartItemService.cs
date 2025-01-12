@@ -15,7 +15,7 @@ namespace TAABP.Application.Services
         private readonly IRoomRepository _roomRepository;
         private readonly ICartRepository _cartRepository;
         private readonly ICartItemMapper _cartItemMapper;
-        private readonly IPaymentMethodRepository _pwaymentMethodRepository;
+        private readonly IPaymentMethodRepository _paymentMethodRepository;
         private readonly IReservationService _reservationService;
         public CartItemService(ICartItemRepository cartItemRepository, ICartRepository cartRepository,
             IRoomRepository roomRepository, ICartItemMapper cartItemMapper,
@@ -25,7 +25,7 @@ namespace TAABP.Application.Services
             _cartRepository = cartRepository;
             _roomRepository = roomRepository;
             _cartItemMapper = cartItemMapper;
-            _pwaymentMethodRepository = pwaymentMethodRepository;
+            _paymentMethodRepository = pwaymentMethodRepository;
             _reservationService = reservationService;
         }
 
@@ -130,7 +130,7 @@ namespace TAABP.Application.Services
             return cart;
         }
 
-        public async Task ConfirmCartAsync(int cartId, int paymentMethodId)
+        public async Task<string> ConfirmCartAsync(int cartId, int paymentMethodId)
         {
             var cart = await _cartRepository.GetCartByIdAsync(cartId);
             if (cart == null)
@@ -141,14 +141,14 @@ namespace TAABP.Application.Services
             {
                 throw new EntityCreationException("Cart is already closed");
             }
-            var payment = await _pwaymentMethodRepository.GetPaymentMethodByIdAsync(paymentMethodId);
+            var payment = await _paymentMethodRepository.GetPaymentMethodByIdAsync(paymentMethodId);
             if (payment == null)
             {
                 throw new EntityNotFoundException("Payment method not found");
             }
             cart.PaymentMethodId = payment.PaymentMethodId;
             cart.CartStatus = CartStatus.Closed;
-            var user = await _pwaymentMethodRepository.GetUserByPaymentMethodId(paymentMethodId);
+            var user = await _paymentMethodRepository.GetUserByPaymentMethodId(paymentMethodId);
             foreach(var item in cart.CartItems)
             {
                 var reservationDto = new ReservationDto();
@@ -158,6 +158,7 @@ namespace TAABP.Application.Services
                 reservationDto.EndDate = item.EndDate;
                 await _reservationService.CreateReservationAsync(reservationDto);
             }
+            return user.Id;
         }
 
         public async Task<List<Cart>> GetUserCartsAsync(string userId)
