@@ -28,12 +28,26 @@ namespace TAABP.Application.Services
             _cityRepository = cityRepository;
         }
 
-        public async Task<ReservationDto> GetReservationByIdAsync(int id)
+        public async Task<ReservationDto> GetReservationByIdAsync(string userId, int roomId, int id)
         {
             var reservation = await _reservationRepository.GetReservationByIdAsync(id);
             if (reservation == null)
             {
                 throw new EntityNotFoundException("Reservation not found");
+            }
+            var room = await _roomRepository.GetRoomByIdAsync(reservation.RoomId);
+            if(room == null)
+            {
+                throw new EntityNotFoundException("Room not found");
+            }
+            var user = await _userRepository.GetUserByIdAsync(reservation.UserId);
+            if (user == null)
+            {
+                throw new EntityNotFoundException("User not found");
+            }
+            if(reservation.UserId != userId || reservation.RoomId != roomId)
+            {
+                throw new EntityNotFoundException("Reservation does not belong to user or room");
             }
             return _reservationMapper.ReservationToResevationDto(reservation);
         }

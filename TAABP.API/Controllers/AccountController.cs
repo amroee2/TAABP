@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using TAABP.Application;
 using TAABP.Application.DTOs;
 using TAABP.Application.DTOs.AccountDto;
 using TAABP.Application.Exceptions;
 using TAABP.Application.ServiceInterfaces;
 using TAABP.Application.TokenGenerators;
-using TAABP.Core;
+using ILogger = Serilog.ILogger;
 
 namespace TAABP.API.Controllers
 {
@@ -19,21 +21,37 @@ namespace TAABP.API.Controllers
         private readonly ITokenGenerator _tokenGenerator;
         private readonly IStorageService _storageService;
         private readonly IAccountService _accountService;
-        public AccountController(ITokenGenerator tokenGenerator, IUserService userService,
-            IEmailService emailService, IStorageService storageService, IAccountService accountService)
+        private readonly ILogger _logger;
+        private readonly IValidator<RegisterDto> _registerValidator;
+        private readonly IValidator<ChangeEmailDto> _changeEmailValidator;
+        private readonly IValidator<ResetPasswordDto> _resetPasswordValidator;
+        public AccountController(ITokenGenerator tokenGenerator,
+            IUserService userService,
+            IEmailService emailService,
+            IStorageService storageService,
+            IAccountService accountService,
+            IValidator<ChangeEmailDto> changeEmailValidator,
+            IValidator<ResetPasswordDto> resetPasswordValidator,
+            IValidator<RegisterDto> registerValidator)
         {
             _userService = userService;
             _emailService = emailService;
             _storageService = storageService;
             _tokenGenerator = tokenGenerator;
             _accountService = accountService;
+            _logger = Log.ForContext<AccountController>();
+            _changeEmailValidator = changeEmailValidator;
+            _resetPasswordValidator = resetPasswordValidator;
+            _registerValidator = registerValidator;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUserAsync(RegisterDto registerDto)
         {
+            _logger.Information("Registering user with email {Email}", registerDto.Email);
             try
             {
+                await _registerValidator.ValidateAndThrowAsync(registerDto);
                 var emailExists = await _userService.CheckEmailAsync(registerDto.Email);
                 if (emailExists)
                 {
@@ -55,6 +73,7 @@ namespace TAABP.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.Error(ex, "An error occurred while registering user with email {Email}", registerDto.Email);
                 return StatusCode(500, new { message = ex.Message });
             }
         }
@@ -62,17 +81,21 @@ namespace TAABP.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginAsync(LoginDto loginDto)
         {
+            _logger.Information("Logging in user with email {Email}", loginDto.Email);
             try
             {
                 var token = await _accountService.LoginAsync(loginDto);
+                _logger.Information("User with email {Email} logged in successfully", loginDto.Email);
                 return Ok(new { token });
             }
             catch (InvalidLoginException ex)
             {
+                _logger.Warning("Invalid login attempt for user with email {Email}", loginDto.Email);
                 return Unauthorized(new { message = ex.Message });
             }
             catch (Exception)
             {
+                _logger.Error("An error occurred while logging in user with email {Email}", loginDto.Email);
                 return StatusCode(500, new { message = "An unexpected error occurred." });
             }
         }
@@ -80,6 +103,7 @@ namespace TAABP.API.Controllers
         [HttpGet("confirm-email")]
         public async Task<IActionResult> ConfirmEmailAsync(string token)
         {
+            _logger.Information("Confirming email with token {Token}", token);
             try
             {
                 if (!_tokenGenerator.ValidateToken(token))
@@ -95,11 +119,12 @@ namespace TAABP.API.Controllers
                 await _accountService.CreateUserAsync(registerDto);
 
                 await _storageService.DeleteTokenAsync(token);
-
+                _logger.Information("Email confirmed successfully");
                 return Ok(new { message = "Email confirmed successfully" });
             }
             catch (Exception ex)
             {
+                _logger.Error(ex, "An error occurred while confirming email with token {Token}", token);
                 return StatusCode(500, new { message = ex.Message });
             }
         }
@@ -108,8 +133,10 @@ namespace TAABP.API.Controllers
         [Authorize]
         public async Task<IActionResult> ChangeEmailAsync(ChangeEmailDto changeEmailDto)
         {
+            _logger.Information("Changing email for user with ID {UserId}", _userService.GetCurrentUserId());
             try
             {
+                await _changeEmailValidator.ValidateAndThrowAsync(changeEmailDto);
                 var user = await _userService.GetUserByIdAsync(_userService.GetCurrentUserId());
 
                 var emailExists = await _userService.CheckEmailAsync(changeEmailDto.NewEmail);
@@ -123,10 +150,12 @@ namespace TAABP.API.Controllers
                     "Confirm Your Email Change",
                     $"<p>Your Email has neem changed</p>"
                 );
+                _logger.Information("Email changed successfully");
                 return Accepted(new { message = "Please check your email to confirm your email change." });
             }
             catch (EntityNotFoundException ex)
             {
+                _logger.Warning("User with ID {UserId} not found", _userService.GetCurrentUserId());
                 return NotFound(new { message = ex.Message });
             }
             catch (EmailAlreadyExistsException ex)
@@ -135,6 +164,7 @@ namespace TAABP.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.Error(ex, "An error occurred while changing email for user with ID {UserId}", _userService.GetCurrentUserId());
                 return StatusCode(500, new { message = ex.Message });
             }
         }
@@ -142,6 +172,7 @@ namespace TAABP.API.Controllers
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordDto)
         {
+            _logger.Information("Forgot password for user with email {Email}", forgotPasswordDto.Email);
             try
             {
                 var user = await _userService.GetUserByEmailAsync(forgotPasswordDto.Email);
@@ -157,10 +188,12 @@ namespace TAABP.API.Controllers
             }
             catch (EntityNotFoundException ex)
             {
+                _logger.Warning("User with email {Email} not found", forgotPasswordDto.Email);
                 return NotFound(new { message = ex.Message });
             }
             catch (Exception ex)
             {
+                _logger.Error(ex, "An error occurred while resetting password for user with email {Email}", forgotPasswordDto.Email);
                 return StatusCode(500, new { message = ex.Message });
             }
         }
@@ -168,8 +201,10 @@ namespace TAABP.API.Controllers
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPasswordAsync(ResetPasswordDto resetPasswordDto)
         {
+            _logger.Information("Resetting password for user with token {Token}", resetPasswordDto.Token);
             try
             {
+                await _resetPasswordValidator.ValidateAndThrowAsync(resetPasswordDto);
                 if (!_tokenGenerator.ValidateToken(resetPasswordDto.Token))
                 {
                     return BadRequest(new { message = "Invalid or expired token." });
@@ -181,10 +216,12 @@ namespace TAABP.API.Controllers
                 }
                 await _accountService.ResetUserPasswordAsync(registerDto.Email, resetPasswordDto.Password);
                 await _storageService.DeleteTokenAsync(resetPasswordDto.Token);
+                _logger.Information("Password reset successfully");
                 return Ok(new { message = "Password reset successfully" });
             }
             catch (Exception ex)
             {
+                _logger.Error(ex, "An error occurred while resetting password for user with token {Token}", resetPasswordDto.Token);
                 return StatusCode(500, new { message = ex.Message });
             }
         }

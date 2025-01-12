@@ -133,6 +133,11 @@ namespace TAABP.Application.Services
 
         public async Task<List<HotelImageDto>> GetHotelImagesAsync(int hotelId)
         {
+            var hotel = await _hotelRepository.GetHotelByIdAsync(hotelId);
+            if (hotel == null)
+            {
+                throw new EntityNotFoundException($"Hotel with id {hotelId} not found");
+            }
             var hotelImages = await _hotelRepository.GetHotelImagesAsync(hotelId);
             return hotelImages.Select(hotelImage => _hotelMapper.HotelImageToHotelImageDto(hotelImage)).ToList();
         }

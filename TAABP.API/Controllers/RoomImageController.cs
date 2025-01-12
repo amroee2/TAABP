@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
 using TAABP.Application.ServiceInterfaces;
+using ILogger = Serilog.ILogger;
 
 namespace TAABP.API.Controllers
 {
@@ -12,17 +15,22 @@ namespace TAABP.API.Controllers
     public class RoomImageController : ControllerBase
     {
         private readonly IRoomService _roomImageService;
-
-        public RoomImageController(IRoomService roomImageService)
+        private readonly ILogger _logger;
+        private readonly IValidator<RoomImageDto> _roomImageValidator;
+        public RoomImageController(IRoomService roomImageService, IValidator<RoomImageDto> validator)
         {
             _roomImageService = roomImageService;
+            _logger = Log.ForContext<RoomImageController>();
+            _roomImageValidator = validator;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateRoomImageAsync(int roomId, RoomImageDto roomImageDto)
         {
+            _logger.Information("Adding room image for room with ID {RoomId}", roomId);
             try
             {
+                await _roomImageValidator.ValidateAndThrowAsync(roomImageDto);
                 roomImageDto.RoomId = roomId;
                 var roomImageId = await _roomImageService.CreateRoomImageAsync(roomImageDto);
                 var roomImage = await _roomImageService.GetRoomImageByIdAsync(roomId, roomImageId);
@@ -30,10 +38,12 @@ namespace TAABP.API.Controllers
             }
             catch (EntityNotFoundException ex)
             {
+                _logger.Warning("Room with ID {RoomId} not found", roomId);
                 return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
+                _logger.Error(ex, "An error occurred while adding room image for room with ID {RoomId}", roomId);
                 return StatusCode(500, new { message = ex.Message });
             }
         }
@@ -41,17 +51,21 @@ namespace TAABP.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetRoomImageAsync(int roomId, int id)
         {
+            _logger.Information("Fetching room image with ID {RoomImageId} for room with ID {RoomId}", id, roomId);
             try
             {
                 var roomImage = await _roomImageService.GetRoomImageByIdAsync(roomId, id);
+                _logger.Information("Successfully fetched room image with ID {RoomImageId} for room with ID {RoomId}", id, roomId);
                 return Ok(roomImage);
             }
             catch (EntityNotFoundException ex)
             {
+                _logger.Warning("Room image with ID {RoomImageId} not found for room with ID {RoomId}", id, roomId);
                 return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
+                _logger.Error(ex, "An error occurred while fetching room image with ID {RoomImageId} for room with ID {RoomId}", id, roomId);
                 return StatusCode(500, new { message = ex.Message });
             }
         }
@@ -59,17 +73,21 @@ namespace TAABP.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetRoomImagesAsync(int roomId)
         {
+            _logger.Information("Fetching all room images for room with ID {RoomId}", roomId);
             try
             {
                 var roomImages = await _roomImageService.GetRoomImagesAsync(roomId);
+                _logger.Information("Successfully fetched all room images for room with ID {RoomId}", roomId);
                 return Ok(roomImages);
             }
             catch (EntityNotFoundException ex)
             {
+                _logger.Warning("No room images found for room with ID {RoomId}", roomId);
                 return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
+                _logger.Error(ex, "An error occurred while fetching all room images for room with ID {RoomId}", roomId);
                 return StatusCode(500, new { message = ex.Message });
             }
         }
@@ -77,17 +95,21 @@ namespace TAABP.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRoomImageAsync(int roomId, int id)
         {
+            _logger.Information("Deleting room image with ID {RoomImageId} for room with ID {RoomId}", id, roomId);
             try
             {
                 await _roomImageService.DeleteRoomImageAsync(roomId, id);
+                _logger.Information("Successfully deleted room image with ID {RoomImageId} for room with ID {RoomId}", id, roomId);
                 return NoContent();
             }
             catch (EntityNotFoundException ex)
             {
+                _logger.Warning("Room image with ID {RoomImageId} for room with ID {RoomId} not found", id, roomId);
                 return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
+                _logger.Error(ex, "An error occurred while deleting room image with ID {RoomImageId} for room with ID {RoomId}", id, roomId);
                 return StatusCode(500, new { message = ex.Message });
             }
         }

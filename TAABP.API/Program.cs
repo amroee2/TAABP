@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Serilog;
 using TAABP.Application;
 using TAABP.Application.Profile;
 using TAABP.Application.Profile.AmenityMapping;
@@ -37,6 +38,15 @@ builder.Services.AddDbContext<TAABPDbContext>(options => options.UseSqlServer(co
 builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<TAABPDbContext>();
+
+Log.Logger = new LoggerConfiguration()
+     .MinimumLevel.Information()
+    .WriteTo.Console()
+    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
@@ -108,8 +118,13 @@ builder.Services.AddIdentityCore<User>(options =>
     .AddSignInManager<SignInManager<User>>();
 
 var externalAssembly = AppDomain.CurrentDomain.Load("TAABP.Application");
-builder.Services.AddFluentValidationAutoValidation()
-                .AddValidatorsFromAssembly(externalAssembly);
+builder.Services.AddFluentValidationAutoValidation(options =>
+{
+    options.DisableDataAnnotationsValidation = true;
+});
+builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssembly(externalAssembly);
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
