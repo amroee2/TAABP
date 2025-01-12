@@ -39,40 +39,66 @@ namespace TAABP.Application.Services
             return hotel.HotelId;
         }
 
-        public async Task<HotelDto> GetHotelByIdAsync(int id)
+        public async Task<HotelDto> GetHotelByIdAsync(int cityId, int id)
         {
+            var city = await _cityRepository.GetCityByIdAsync(cityId);
+            if (city == null)
+            {
+                throw new EntityNotFoundException($"City with id {cityId} not found");
+            }
             var hotel = await _hotelRepository.GetHotelByIdAsync(id);
             if (hotel == null)
             {
                 throw new EntityNotFoundException($"Hotel with id {id} not found");
+            }
+            if(hotel.CityId != cityId)
+            {
+                throw new EntityNotFoundException($"Hotel with id {id} not found in city with id {cityId}");
             }
             return _hotelMapper.HotelToHotelDto(hotel);
         }
 
-        public async Task<List<HotelDto>> GetHotelsAsync()
+        public async Task<List<HotelDto>> GetHotelsAsync(int cityId)
         {
-            var hotels = await _hotelRepository.GetHotelsAsync();
+            var hotels = await _hotelRepository.GetHotelsAsync(cityId);
             return hotels.Select(hotel => _hotelMapper.HotelToHotelDto(hotel)).ToList();
         }
 
-        public async Task DeleteHotelAsync(int id)
+        public async Task DeleteHotelAsync(int cityId, int id)
         {
+            var city = await _cityRepository.GetCityByIdAsync(cityId);
+            if (city == null)
+            {
+                throw new EntityNotFoundException($"City with id {cityId} not found");
+            }
             var hotel = await _hotelRepository.GetHotelByIdAsync(id);
             if (hotel == null)
             {
                 throw new EntityNotFoundException($"Hotel with id {id} not found");
             }
+            if (hotel.CityId != cityId)
+            {
+                throw new EntityNotFoundException($"Hotel with id {id} not found in city with id {cityId}");
+            }
             await _hotelRepository.DeleteHotelAsync(hotel);
-            var city = await _cityRepository.GetCityByIdAsync(hotel.CityId);
             await _cityRepository.DecrementNumberOfHotelsAsync(city.CityId);
         }
 
         public async Task UpdateHotelAsync(int cityId, HotelDto hotelDto)
         {
+            var city = await _cityRepository.GetCityByIdAsync(cityId);
+            if (city == null)
+            {
+                throw new EntityNotFoundException($"City with id {cityId} not found");
+            }
             var targetHotel = await _hotelRepository.GetHotelByIdAsync(hotelDto.HotelId);
             if (targetHotel == null)
             {
                 throw new EntityNotFoundException($"Hotel with id {hotelDto.HotelId} not found");
+            }
+            if (targetHotel.CityId != cityId)
+            {
+                throw new EntityNotFoundException($"Hotel with id {hotelDto.HotelId} not found in city with id {cityId}");
             }
             _hotelMapper.HotelDtoToHotel(hotelDto, targetHotel);
             targetHotel.UpdatedAt = DateTime.Now;

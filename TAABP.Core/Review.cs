@@ -11,6 +11,7 @@ namespace TAABP.Core
         public int HotelId { get; set; }
         public Hotel Hotel { get; set; }
         [Required(ErrorMessage = "Please enter the review rating")]
+        public int Rating { get; set; }
         [StringLength(100)]
         public string Comment { get; set; }
         public DateTime Date { get; set; }

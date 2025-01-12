@@ -27,7 +27,7 @@ namespace TAABP.API.Controllers
             try
             {
                 var hotelId = await _hotelService.CreateHotelAsync(cityId, hotelDto);
-                var hotel = await _hotelService.GetHotelByIdAsync(hotelId);
+                var hotel = await _hotelService.GetHotelByIdAsync(cityId, hotelId);
                 return StatusCode(201, hotel);
             }
             catch (EntityNotFoundException ex)
@@ -41,11 +41,11 @@ namespace TAABP.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetHotelByIdAsync(int id)
+        public async Task<IActionResult> GetHotelByIdAsync(int cityId, int id)
         {
             try
             {
-                var hotel = await _hotelService.GetHotelByIdAsync(id);
+                var hotel = await _hotelService.GetHotelByIdAsync(cityId, id);
                 return Ok(hotel);
             }
             catch (EntityNotFoundException ex)
@@ -59,18 +59,18 @@ namespace TAABP.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetHotelsAsync()
+        public async Task<IActionResult> GetHotelsAsync(int cityId)
         {
-            var hotels = await _hotelService.GetHotelsAsync();
+            var hotels = await _hotelService.GetHotelsAsync(cityId);
             return Ok(hotels);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteHotelAsync(int id)
+        public async Task<IActionResult> DeleteHotelAsync(int cityId, int id)
         {
             try
             {
-                await _hotelService.DeleteHotelAsync(id);
+                await _hotelService.DeleteHotelAsync(cityId, id);
                 return NoContent();
             }
             catch (EntityNotFoundException ex)
@@ -99,30 +99,6 @@ namespace TAABP.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
-            }
-        }
-
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchHotelAsync(int id, JsonPatchDocument<HotelDto> patchDoc)
-        {
-            try
-            {
-                var hotel = await _hotelService.GetHotelByIdAsync(id);
-                patchDoc.ApplyTo(hotel, (error) => ModelState.AddModelError(error.AffectedObject.ToString(), error.ErrorMessage));
-                if (!TryValidateModel(hotel))
-                {
-                    return ValidationProblem(ModelState);
-                }
-                await _hotelService.UpdateHotelAsync(id, hotel);
-                return NoContent();
-            }
-            catch (EntityNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = ex.Message });
             }
         }
 

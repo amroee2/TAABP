@@ -10,5 +10,6 @@ namespace TAABP.Application.RepositoryInterfaces
         Task AddReviewAsync(Review review);
         Task UpdateReviewAsync(Review review);
         Task DeleteReviewAsync(Review review);
+        Task UpdateHotelRating(int hotelId);
     }
 }

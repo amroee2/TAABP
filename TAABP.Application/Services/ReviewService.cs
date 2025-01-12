@@ -33,6 +33,7 @@ namespace TAABP.Application.Services
             var review = new Review();
             _reviewMapper.ReviewDtoToReview(reviewDto, review);
             await _reviewRepository.AddReviewAsync(review);
+            await _reviewRepository.UpdateHotelRating(review.HotelId);
             return review.ReviewId;
         }
 
@@ -43,6 +44,10 @@ namespace TAABP.Application.Services
                 Review review = await ValidateReviewAsync(reviewDto);
                 _reviewMapper.ReviewDtoToReview(reviewDto, review);
                 await _reviewRepository.UpdateReviewAsync(review);
+                if(reviewDto.Rating != review.Rating)
+                {
+                    await _reviewRepository.UpdateHotelRating(review.HotelId);
+                }
             }
             catch (EntityNotFoundException)
             {
@@ -58,6 +63,7 @@ namespace TAABP.Application.Services
                 throw new EntityNotFoundException("Review Not Found");
             }
             await _reviewRepository.DeleteReviewAsync(review);
+            await _reviewRepository.UpdateHotelRating(hotelId);
         }
 
         public async Task<List<ReviewDto>> GetAllUserReviewsAsync(string userId)

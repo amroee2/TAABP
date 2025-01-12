@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using TAABP.Core.PaymentEntities;
 
 namespace TAABP.Core
 {
@@ -20,11 +21,12 @@ namespace TAABP.Core
         public string? Address { get; set; }
         public List<Reservation> Reservations { get; set; }
         public List<Review> Reviews { get; set; }
-
+        public List<PaymentMethod> PaymentMethods { get; set; }
         public User()
         {
             Reservations = new List<Reservation>();
             Reviews = new List<Review>();
+            PaymentMethods = new List<PaymentMethod>();
         }
     }
 }

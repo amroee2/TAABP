@@ -16,11 +16,14 @@ namespace TAABP.API.Controllers
         private readonly IUserService _userService;
         private readonly IUserMapper _userMapper;
         private readonly IReviewService _reviewService;
-        public UserController(IUserService userService, IUserMapper userMapper, IReviewService reviewService)
+        private readonly ICartItemService _cartItemService;
+        public UserController(IUserService userService, IUserMapper userMapper,
+            IReviewService reviewService, ICartItemService cartItemService)
         {
             _userService = userService;
             _userMapper = userMapper;
             _reviewService = reviewService;
+            _cartItemService = cartItemService;
         }
 
         [HttpGet("{id}")]
@@ -142,6 +145,24 @@ namespace TAABP.API.Controllers
             {
                 var reviews = await _reviewService.GetAllUserReviewsAsync(userId);
                 return Ok(reviews);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred." });
+            }
+        }
+
+        [HttpGet("{userId}/Carts")]
+        public async Task<IActionResult> GetUserCartsAsync(string userId)
+        {
+            try
+            {
+                var carts = await _cartItemService.GetUserCartsAsync(userId);
+                return Ok(carts);
             }
             catch (EntityNotFoundException ex)
             {
