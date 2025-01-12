@@ -23,7 +23,6 @@ namespace TAABP.API.Controllers
         private readonly IAccountService _accountService;
         private readonly ILogger _logger;
         private readonly IValidator<RegisterDto> _registerValidator;
-        private readonly IValidator<LoginDto> _loginValidator;
         private readonly IValidator<ChangeEmailDto> _changeEmailValidator;
         private readonly IValidator<ResetPasswordDto> _resetPasswordValidator;
         public AccountController(ITokenGenerator tokenGenerator,
@@ -31,7 +30,6 @@ namespace TAABP.API.Controllers
             IEmailService emailService,
             IStorageService storageService,
             IAccountService accountService,
-            IValidator<LoginDto> loginValidator,
             IValidator<ChangeEmailDto> changeEmailValidator,
             IValidator<ResetPasswordDto> resetPasswordValidator,
             IValidator<RegisterDto> registerValidator)
@@ -42,7 +40,6 @@ namespace TAABP.API.Controllers
             _tokenGenerator = tokenGenerator;
             _accountService = accountService;
             _logger = Log.ForContext<AccountController>();
-            _loginValidator = loginValidator;
             _changeEmailValidator = changeEmailValidator;
             _resetPasswordValidator = resetPasswordValidator;
             _registerValidator = registerValidator;
@@ -87,7 +84,6 @@ namespace TAABP.API.Controllers
             _logger.Information("Logging in user with email {Email}", loginDto.Email);
             try
             {
-                await _loginValidator.ValidateAndThrowAsync(loginDto);
                 var token = await _accountService.LoginAsync(loginDto);
                 _logger.Information("User with email {Email} logged in successfully", loginDto.Email);
                 return Ok(new { token });
