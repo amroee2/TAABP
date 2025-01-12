@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using TAABP.Application.DTOs;
@@ -10,7 +9,7 @@ using ILogger = Serilog.ILogger;
 
 namespace TAABP.API.Controllers
 {
-    [Route("api/Hotel/{hotelId}/[controller]")]
+    [Route("api/Hotels/{hotelId}/Rooms")]
     [ApiController]
     [Authorize]
     public class RoomController : ControllerBase

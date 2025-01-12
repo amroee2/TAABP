@@ -1,11 +1,9 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
-using TAABP.Application.Profile.UserMapping;
 using TAABP.Application.ServiceInterfaces;
 using ILogger = Serilog.ILogger;
 

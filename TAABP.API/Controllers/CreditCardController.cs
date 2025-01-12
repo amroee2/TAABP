@@ -9,7 +9,7 @@ using ILogger = Serilog.ILogger;
 
 namespace TAABP.API.Controllers
 {
-    [Route("api/{userId}/CreditCards")]
+    [Route("api/Users/{userId}/CreditCards")]
     [ApiController]
     [Authorize]
     public class CreditCardController : ControllerBase

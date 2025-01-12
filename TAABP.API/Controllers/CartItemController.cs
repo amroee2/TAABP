@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using TAABP.Application;
-using TAABP.Application.DTOs;
 using TAABP.Application.DTOs.ShoppingDto;
 using TAABP.Application.Exceptions;
 using TAABP.Application.ServiceInterfaces;

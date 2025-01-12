@@ -9,7 +9,7 @@ using ILogger = Serilog.ILogger;
 
 namespace TAABP.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/FeaturedDeals")]
     [ApiController]
     [Authorize]
     public class FeaturedDealController : ControllerBase

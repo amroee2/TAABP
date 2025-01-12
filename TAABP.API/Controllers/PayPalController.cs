@@ -9,7 +9,7 @@ using ILogger = Serilog.ILogger;
 
 namespace TAABP.API.Controllers
 {
-    [Route("api/{userId}/PayPals")]
+    [Route("api/Users/{userId}/PayPals")]
     [ApiController]
     [Authorize]
     public class PayPalController : ControllerBase

@@ -9,7 +9,7 @@ using ILogger = Serilog.ILogger;
 
 namespace TAABP.API.Controllers
 {
-    [Route("api/User/{userId}/Hotel/{hotelId}/[controller]")]
+    [Route("api/Users/{userId}/Hotels/{hotelId}/Reviews")]
     [ApiController]
     [Authorize]
     public class ReviewController : ControllerBase
@@ -17,7 +17,7 @@ namespace TAABP.API.Controllers
         private readonly IReviewService _reviewService;
         private readonly ILogger _logger;
         private readonly IValidator<ReviewDto> _reviewValidator;
-        public ReviewController(IReviewService reviewService,IValidator<ReviewDto> validator)
+        public ReviewController(IReviewService reviewService, IValidator<ReviewDto> validator)
         {
             _reviewService = reviewService;
             _logger = Log.ForContext<ReviewController>();
