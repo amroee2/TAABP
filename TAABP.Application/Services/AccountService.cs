@@ -36,7 +36,8 @@ namespace TAABP.Application.Services
             }
 
             var user = _userMapper.RegisterDtoToUser(registerDto);
-            user.UserName = registerDto.Email;
+            user.UserName = registerDto.UserName;
+            user.EmailConfirmed = true;
             var isCreated = await _userRepository.CreateUserAsync(user, registerDto.Password);
 
             if (!isCreated)

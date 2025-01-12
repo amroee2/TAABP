@@ -110,7 +110,7 @@ builder.Services.AddIdentityCore<User>(options =>
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = true;
     options.Password.RequireLowercase = true;
-    options.SignIn.RequireConfirmedAccount = false;
+    options.SignIn.RequireConfirmedAccount = true;
 })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<TAABPDbContext>()
