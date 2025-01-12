@@ -74,7 +74,7 @@ namespace TAABP.API.Controllers
             _logger.Information("Creating a new amenity for hotel {HotelId}", hotelId);
             try
             {
-                _amenityValidator.ValidateAndThrow(amenity);
+                await _amenityValidator.ValidateAndThrowAsync(amenity);
                 amenity.HotelId = hotelId;
                 var amenityId = await _amenityService.CreateAmenityAsync(amenity);
                 var amenityDto = await _amenityService.GetAmenityByIdAsync(amenity.HotelId, amenityId);
@@ -98,7 +98,7 @@ namespace TAABP.API.Controllers
             _logger.Information("Updating amenity {AmenityId} for hotel {HotelId}", amenityId, hotelId);
             try
             {
-                _amenityValidator.ValidateAndThrow(amenity);
+                await _amenityValidator.ValidateAndThrowAsync(amenity);
                 amenity.AmenityId = amenityId;
                 amenity.HotelId = hotelId;
                 await _amenityService.UpdateAmenityAsync(amenity);
