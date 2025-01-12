@@ -497,9 +497,10 @@ namespace TAABP.UnitTests
                 .ReturnsAsync(user);
 
             // Act
-            await _cartItemService.ConfirmCartAsync(cartId, paymentMethodId);
+            string userId = await _cartItemService.ConfirmCartAsync(cartId, paymentMethodId);
 
             // Assert
+            Assert.Equal(user.Id, userId);
             Assert.Equal(CartStatus.Closed, cart.CartStatus);
             _cartRepositoryMock.Verify(repo => repo.GetCartByIdAsync(cartId), Times.Once);
             _paymentMethodRepositoryMock.Verify(repo => repo.GetPaymentMethodByIdAsync(paymentMethodId), Times.Once);

@@ -14,14 +14,12 @@ namespace TAABP.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IUserMapper _userMapper;
         private readonly IReviewService _reviewService;
         private readonly ICartItemService _cartItemService;
-        public UserController(IUserService userService, IUserMapper userMapper,
+        public UserController(IUserService userService,
             IReviewService reviewService, ICartItemService cartItemService)
         {
             _userService = userService;
-            _userMapper = userMapper;
             _reviewService = reviewService;
             _cartItemService = cartItemService;
         }
