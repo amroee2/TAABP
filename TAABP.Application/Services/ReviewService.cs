@@ -28,7 +28,7 @@ namespace TAABP.Application.Services
             var hotel = await _hotelRepository.GetHotelByIdAsync(reviewDto.HotelId);
             if(user == null || hotel == null)
             {
-                throw new EntityNotFoundException();
+                throw new EntityNotFoundException("User or hotel don't exist");
             }
             var review = new Review();
             _reviewMapper.ReviewDtoToReview(reviewDto, review);
