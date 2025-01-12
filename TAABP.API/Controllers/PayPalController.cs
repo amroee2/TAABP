@@ -17,19 +17,26 @@ namespace TAABP.API.Controllers
         private readonly IPayPalService _payPalService;
         private readonly ILogger _logger;
         private readonly IValidator<PayPalDto> _payPalValidator;
-        public PayPalController(IPayPalService payPalService, IValidator<PayPalDto> validator)
+        private readonly IUserService _userService;
+        public PayPalController(IPayPalService payPalService, IValidator<PayPalDto> validator, IUserService userService)
         {
             _payPalService = payPalService;
             _logger = Log.ForContext<PayPalController>();
             _payPalValidator = validator;
+            _userService = userService;
         }
 
         [HttpGet("{paymentOptionId}")]
-        public async Task<IActionResult> GetPaymentOptionByIdAsync(int paymentOptionId)
+        public async Task<IActionResult> GetPaymentOptionByIdAsync(string userId, int paymentOptionId)
         {
             _logger.Information("Fetching payment option with ID {PaymentOptionId}", paymentOptionId);
             try
             {
+                if (userId != _userService.GetCurrentUserId())
+                {
+                    _logger.Warning("Unauthorized access to payment option with ID {PaymentOptionId}", paymentOptionId);
+                    return Unauthorized();
+                }
                 var paymentOption = await _payPalService.GetPaymentOptionByIdAsync(paymentOptionId);
                 _logger.Information("Successfully fetched payment option with ID {PaymentOptionId}", paymentOptionId);
                 return Ok(paymentOption);
@@ -52,6 +59,11 @@ namespace TAABP.API.Controllers
             _logger.Information("Adding a new payment option for user with ID {UserId}", userId);
             try
             {
+                if (userId != _userService.GetCurrentUserId())
+                {
+                    _logger.Warning("Unauthorized access to add a new payment option for user with ID {UserId}", userId);
+                    return Unauthorized();
+                }
                 await _payPalValidator.ValidateAndThrowAsync(paymentOption);
                 int payPalId = await _payPalService.AddNewPaymentOptionAsync(userId, paymentOption);
                 var payPal = await _payPalService.GetPaymentOptionByIdAsync(payPalId);
@@ -81,6 +93,11 @@ namespace TAABP.API.Controllers
             _logger.Information("Updating payment option with ID {PayPalId} for user with ID {UserId}", payPalId, userId);
             try
             {
+                if (userId != _userService.GetCurrentUserId())
+                {
+                    _logger.Warning("Unauthorized access to update payment option with ID {PayPalId}", payPalId);
+                    return Unauthorized();
+                }
                 await _payPalValidator.ValidateAndThrowAsync(paymentOption);
                 await _payPalService.UpdatePaymentOptionAsync(payPalId, userId, paymentOption);
                 _logger.Information("Successfully updated payment option with ID {PayPalId} for user with ID {UserId}", payPalId, userId);
@@ -109,6 +126,11 @@ namespace TAABP.API.Controllers
             _logger.Information("Deleting payment option with ID {PayPalId} for user with ID {UserId}", payPalId, userId);
             try
             {
+                if (userId != _userService.GetCurrentUserId())
+                {
+                    _logger.Warning("Unauthorized access to delete payment option with ID {PayPalId}", payPalId);
+                    return Unauthorized();
+                }
                 await _payPalService.DeletePaymentOptionAsync(userId, payPalId);
                 _logger.Information("Successfully deleted payment option with ID {PayPalId} for user with ID {UserId}", payPalId, userId);
                 return NoContent();
