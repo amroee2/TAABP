@@ -9,10 +9,10 @@ namespace TAABP.Application.Services
     public class PaymentMethodService : IPaymentMethodService
     {
         private readonly IPaymentMethodRepository _paymentMethodRepository;
-        private readonly PaymentOptionServiceFactory _paymentOptionServiceFactory;
+        private readonly IPaymentOptionServiceFactory _paymentOptionServiceFactory;
         private readonly IUserService _userService;
         public PaymentMethodService(IPaymentMethodRepository paymentMethodRepository,
-            PaymentOptionServiceFactory paymentOptionServiceFactory,
+            IPaymentOptionServiceFactory paymentOptionServiceFactory,
             IUserService userService)
         {
             _paymentMethodRepository = paymentMethodRepository;
@@ -52,5 +52,5 @@ namespace TAABP.Application.Services
             return user;
         }
 
-        }
+    }
 }
