@@ -49,32 +49,44 @@ namespace TAABP.UnitTests
         public async Task GetReservationByIdAsync_ShouldReturnReservation_WhenReservationExists()
         {
             // Arrange
-            var reservation = _fixture.Create<Reservation>();
+            var userId = _fixture.Create<string>();
+            var roomId = _fixture.Create<int>();
+            var reservation = _fixture.Build<Reservation>()
+                .With(r => r.UserId, userId)
+                .With(r => r.RoomId, roomId)
+                .Create();
             var reservationDto = _fixture.Create<ReservationDto>();
 
             _reservationRepositoryMock.Setup(repo => repo.GetReservationByIdAsync(reservation.ReservationId))
                 .ReturnsAsync(reservation);
             _reservationMapperMock.Setup(mapper => mapper.ReservationToResevationDto(reservation))
                 .Returns(reservationDto);
+            _roomRepositoryMock.Setup(repo => repo.GetRoomByIdAsync(reservation.RoomId))
+                .ReturnsAsync(new Room { RoomId = reservation.RoomId });
+            _userRepositoryMock.Setup(repo => repo.GetUserByIdAsync(reservation.UserId))
+                .ReturnsAsync(new User { Id = reservation.UserId });
 
             // Act
-            var result = await _reservationService.GetReservationByIdAsync(reservation.ReservationId);
+            var result = await _reservationService.GetReservationByIdAsync(userId, roomId, reservation.ReservationId);
 
             // Assert
+            Assert.NotNull(result);
             Assert.Equal(reservationDto, result);
         }
+
 
         [Fact]
         public async Task GetReservationByIdAsync_ShouldThrowException_WhenReservationDoesNotExist()
         {
             // Arrange
             var reservationId = _fixture.Create<int>();
-
+            var userId = _fixture.Create<string>();
+            var roomId = _fixture.Create<int>();
             _reservationRepositoryMock.Setup(repo => repo.GetReservationByIdAsync(reservationId))
                 .ReturnsAsync((Reservation)null);
 
             // Act & Assert
-            await Assert.ThrowsAsync<EntityNotFoundException>(() => _reservationService.GetReservationByIdAsync(reservationId));
+            await Assert.ThrowsAsync<EntityNotFoundException>(() => _reservationService.GetReservationByIdAsync(userId, roomId, reservationId));
         }
 
         [Fact]
