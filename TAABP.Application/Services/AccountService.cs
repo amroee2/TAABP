@@ -59,7 +59,8 @@ namespace TAABP.Application.Services
             {
                 throw new InvalidLoginException($"Invalid Email or Password");
             }
-            return _tokenGenerator.GenerateToken(user.Id);
+            var userRoles = await _userManager.GetRolesAsync(user);
+            return _tokenGenerator.GenerateToken(user.Id, userRoles);
         }
 
         public async Task ChangeEmailAsync(string userId, ChangeEmailDto changeEmailDto)
