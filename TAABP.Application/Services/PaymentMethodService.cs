@@ -1,6 +1,7 @@
 ﻿using TAABP.Application.Exceptions;
 using TAABP.Application.RepositoryInterfaces;
 using TAABP.Application.ServiceInterfaces;
+using TAABP.Core;
 using TAABP.Core.PaymentEntities;
 
 namespace TAABP.Application.Services
@@ -40,5 +41,16 @@ namespace TAABP.Application.Services
             return paymentOptions;
         }
 
-    }
+        public async Task<User> GetUserByPaymentMethodId(int paymentMethodId)
+        {
+            var paymentMethod = await _paymentMethodRepository.GetPaymentMethodByIdAsync(paymentMethodId);
+            if (paymentMethod == null)
+            {
+                throw new EntityNotFoundException("Payment method not found");
+            }
+            var user = await _paymentMethodRepository.GetUserByPaymentMethodId(paymentMethodId);
+            return user;
+        }
+
+        }
 }
