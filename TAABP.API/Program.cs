@@ -94,7 +94,7 @@ builder.Services.AddScoped<IPaymentOptionService, CreditCardService>();
 builder.Services.AddScoped<ICreditCardRepository, CreditCardRepository>();
 builder.Services.AddScoped<IPaymentOptionService, PayPalService>();
 builder.Services.AddScoped<IPayPalRepository, PayPalRepository>();
-builder.Services.AddScoped<PaymentOptionServiceFactory>();
+builder.Services.AddScoped<IPaymentOptionServiceFactory, PaymentOptionServiceFactory>();
 builder.Services.AddScoped<ICreditCardService,  CreditCardService>();
 builder.Services.AddScoped<IPayPalService, PayPalService>();
 builder.Services.AddScoped<ICreditCardMapper, CreditCardMapper>();
