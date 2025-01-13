@@ -28,6 +28,7 @@ using TAABP.Infrastructure;
 using TAABP.Infrastructure.Repositories;
 using TAABP.Infrastructure.Repositories.PaymentRepositories;
 using TAABP.Infrastructure.Repositories.ShoppingRepositories;
+using TAABP.Infrastructure.Seedings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -146,6 +147,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 var app = builder.Build();
+DatabaseSeeder.Seed(app.Services);
 
 async Task SeedAdminUser(IServiceProvider serviceProvider)
 {
