@@ -9,5 +9,6 @@ namespace TAABP.Application.RepositoryInterfaces
         Task CreateFeaturedDealAsync(FeaturedDeal featuredDeal);
         Task UpdateFeaturedDealAsync(FeaturedDeal featuredDeal);
         Task DeleteFeaturedDealAsync(FeaturedDeal featuredDeal);
+        Task<FeaturedDeal> GetActiveFeaturedDealByRoomIdAsync(int roomId);
     }
 }
