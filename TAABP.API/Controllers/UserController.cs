@@ -1,11 +1,9 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using TAABP.Application.DTOs;
 using TAABP.Application.Exceptions;
-using TAABP.Application.Profile.UserMapping;
 using TAABP.Application.ServiceInterfaces;
 using ILogger = Serilog.ILogger;
 
@@ -54,6 +52,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUsersAsync()
         {
             _logger.Information("Fetching all users");
@@ -76,6 +75,11 @@ namespace TAABP.API.Controllers
             _logger.Information("Deleting user with ID {UserId}", id);
             try
             {
+                if(id != _userService.GetCurrentUserId())
+                {
+                    _logger.Warning("Unauthorized access to delete user with ID {UserId}", id);
+                    return Unauthorized();
+                }
                 await _userService.DeleteUserAsync(id);
                 _logger.Information("Successfully deleted user with ID {UserId}", id);
                 return NoContent();
@@ -98,6 +102,11 @@ namespace TAABP.API.Controllers
             _logger.Information("Updating user with ID {UserId}", id);
             try
             {
+                if (id != _userService.GetCurrentUserId())
+                {
+                    _logger.Warning("Unauthorized access to update user with ID {UserId}", id);
+                    return Unauthorized();
+                }
                 await _userService.UpdateUserAsync(id, userDto);
                 _logger.Information("Successfully updated user with ID {UserId}", id);
                 return NoContent();
@@ -120,6 +129,11 @@ namespace TAABP.API.Controllers
             _logger.Information("Fetching last hotels visited by user with ID {UserId}", userId);
             try
             {
+                if (userId != _userService.GetCurrentUserId())
+                {
+                    _logger.Warning("Unauthorized access to fetch last hotels visited by user with ID {UserId}", userId);
+                    return Unauthorized();
+                }
                 var hotels = await _userService.GetLastHotelsVisitedAsync(userId);
                 _logger.Information("Successfully fetched last hotels visited by user with ID {UserId}", userId);
                 return Ok(hotels);
@@ -164,6 +178,11 @@ namespace TAABP.API.Controllers
             _logger.Information("Fetching carts for user with ID {UserId}", userId);
             try
             {
+                if (userId != _userService.GetCurrentUserId())
+                {
+                    _logger.Warning("Unauthorized access to fetch carts for user with ID {UserId}", userId);
+                    return Unauthorized();
+                }
                 var carts = await _cartItemService.GetUserCartsAsync(userId);
                 _logger.Information("Successfully fetched carts for user with ID {UserId}", userId);
                 return Ok(carts);

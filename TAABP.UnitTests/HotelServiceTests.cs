@@ -344,7 +344,8 @@ namespace TAABP.UnitTests
             var hotelId = _fixture.Create<int>();
             var hotelImages = _fixture.CreateMany<HotelImage>().ToList();
             var hotelImageDtos = hotelImages.Select(image => _fixture.Build<HotelImageDto>().With(d => d.HotelImageId, image.HotelImageId).Create()).ToList();
-
+            var hotel= _fixture.Build<Hotel>().With(h => h.HotelId, hotelId).Create();
+            _mockHotelRepository.Setup(x => x.GetHotelByIdAsync(hotelId)).ReturnsAsync(hotel);
             _mockHotelRepository.Setup(x => x.GetHotelImagesAsync(hotelId)).ReturnsAsync(hotelImages);
             _mockHotelMapper.SetupSequence(x => x.HotelImageToHotelImageDto(It.IsAny<HotelImage>()))
                 .Returns(hotelImageDtos[0])

@@ -2,7 +2,7 @@
 {
     public interface ITokenGenerator
     {
-        string GenerateToken(string id);
+        string GenerateToken(string id, IEnumerable<string>? roles = null);
         bool ValidateToken(string token);
     }
 }

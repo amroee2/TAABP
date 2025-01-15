@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using TAABP.Application.DTOs;
@@ -10,7 +9,7 @@ using ILogger = Serilog.ILogger;
 
 namespace TAABP.API.Controllers
 {
-    [Route("api/Hotel/{hotelId}/[controller]")]
+    [Route("api/Hotels/{hotelId}/Rooms")]
     [ApiController]
     [Authorize]
     public class RoomController : ControllerBase
@@ -70,6 +69,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateRoomAsync(int hotelId, RoomDto roomDto)
         {
             _logger.Information("Creating a new room for hotel with ID {HotelId}", hotelId);
@@ -95,6 +95,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpPut("{roomId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateRoomAsync(int hotelId, int roomId, RoomDto roomDto)
         {
             _logger.Information("Updating room with ID {RoomId} for hotel with ID {HotelId}", roomId, hotelId);
@@ -120,6 +121,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpDelete("{roomId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteRoomAsync(int hotelId, int roomId)
         {
             _logger.Information("Deleting room with ID {RoomId} for hotel with ID {HotelId}", roomId, hotelId);

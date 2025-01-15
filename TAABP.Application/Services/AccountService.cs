@@ -36,7 +36,8 @@ namespace TAABP.Application.Services
             }
 
             var user = _userMapper.RegisterDtoToUser(registerDto);
-            user.UserName = registerDto.Email;
+            user.UserName = registerDto.UserName;
+            user.EmailConfirmed = true;
             var isCreated = await _userRepository.CreateUserAsync(user, registerDto.Password);
 
             if (!isCreated)
@@ -58,7 +59,8 @@ namespace TAABP.Application.Services
             {
                 throw new InvalidLoginException($"Invalid Email or Password");
             }
-            return _tokenGenerator.GenerateToken(user.Id);
+            var userRoles = await _userManager.GetRolesAsync(user);
+            return _tokenGenerator.GenerateToken(user.Id, userRoles);
         }
 
         public async Task ChangeEmailAsync(string userId, ChangeEmailDto changeEmailDto)

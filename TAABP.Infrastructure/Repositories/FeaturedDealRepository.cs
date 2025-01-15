@@ -40,5 +40,10 @@ namespace TAABP.Infrastructure.Repositories
             _context.FeaturedDeals.Remove(featuredDeal);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<FeaturedDeal> GetActiveFeaturedDealByRoomIdAsync(int roomId)
+        {
+            return await _context.FeaturedDeals.AsNoTracking().FirstOrDefaultAsync(fd => fd.RoomId == roomId && fd.IsActive);
+        }
     }
 }

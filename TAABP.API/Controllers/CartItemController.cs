@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using TAABP.Application;
-using TAABP.Application.DTOs;
 using TAABP.Application.DTOs.ShoppingDto;
 using TAABP.Application.Exceptions;
 using TAABP.Application.ServiceInterfaces;
@@ -23,15 +22,23 @@ namespace TAABP.API.Controllers
         private readonly UserManager<User> _userManager;
         private readonly ILogger _logger;
         private readonly IValidator<CartItemDto> _cartItemDtoValidator;
-        public CartItemController(IEmailService emailService,
-            ICartItemService cartItemService, UserManager<User> userManager,
-            IValidator<CartItemDto> cartItemDtoValidator)
+        private readonly IPaymentMethodService _paymentMethodService;
+        private readonly IUserService _userService;
+        public CartItemController(
+            IEmailService emailService,
+            ICartItemService cartItemService,
+            UserManager<User> userManager,
+            IValidator<CartItemDto> cartItemDtoValidator,
+            IPaymentMethodService paymentMethodService,
+            IUserService userService)
         {
             _cartItemService = cartItemService;
             _emailService = emailService;
             _userManager = userManager;
             _logger = Log.ForContext<CartItemController>();
             _cartItemDtoValidator = cartItemDtoValidator;
+            _paymentMethodService = paymentMethodService;
+            _userService = userService;
         }
 
         [HttpPost("Rooms/{roomId}/CartItems")]
@@ -153,8 +160,13 @@ namespace TAABP.API.Controllers
             _logger.Information("Confirming cart with ID {CartId} using payment method with ID {PaymentMethodId}", cartId, paymentMethodId);
             try
             {
-                string userId = await _cartItemService.ConfirmCartAsync(cartId, paymentMethodId);
-                var user = await _userManager.FindByIdAsync(userId);
+                var user = await _paymentMethodService.GetUserByPaymentMethodId(paymentMethodId);
+                if(user.Id != _userService.GetCurrentUserId())
+                {
+                    _logger.Warning("User with ID {UserId} is not authorized to confirm cart with ID {CartId} using payment method with ID {PaymentMethodId}", _userManager.GetUserId(User), cartId, paymentMethodId);
+                    return Unauthorized();
+                }
+                await _cartItemService.ConfirmCartAsync(cartId, paymentMethodId);
                 await _emailService.SendEmailAsync(user.Email, "Cart Confirmed", "Your cart has been confirmed.");
                 _logger.Information("Successfully confirmed cart with ID {CartId} using payment method with ID {PaymentMethodId}", cartId, paymentMethodId);
                 return NoContent();

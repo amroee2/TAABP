@@ -30,6 +30,12 @@ namespace TAABP.Infrastructure
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Cart>()
+                .HasOne(c => c.PaymentMethod)
+                .WithMany()
+                .HasForeignKey(c => c.PaymentMethodId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<Hotel>(entity =>
             {
                 entity.ToTable(t => t.HasCheckConstraint("CK_Hotels_Rating", "Rating >= 0 AND Rating <= 5"));

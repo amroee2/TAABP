@@ -25,6 +25,7 @@ namespace TAABP.API.Controllers
         private readonly IValidator<RegisterDto> _registerValidator;
         private readonly IValidator<ChangeEmailDto> _changeEmailValidator;
         private readonly IValidator<ResetPasswordDto> _resetPasswordValidator;
+        private readonly IConfiguration _configuration;
         public AccountController(ITokenGenerator tokenGenerator,
             IUserService userService,
             IEmailService emailService,
@@ -32,7 +33,8 @@ namespace TAABP.API.Controllers
             IAccountService accountService,
             IValidator<ChangeEmailDto> changeEmailValidator,
             IValidator<ResetPasswordDto> resetPasswordValidator,
-            IValidator<RegisterDto> registerValidator)
+            IValidator<RegisterDto> registerValidator,
+            IConfiguration configuration)
         {
             _userService = userService;
             _emailService = emailService;
@@ -43,6 +45,7 @@ namespace TAABP.API.Controllers
             _changeEmailValidator = changeEmailValidator;
             _resetPasswordValidator = resetPasswordValidator;
             _registerValidator = registerValidator;
+            _configuration = configuration;
         }
 
         [HttpPost("register")]
@@ -61,7 +64,8 @@ namespace TAABP.API.Controllers
 
                 await _storageService.StoreUserAsync(token, registerDto);
 
-                var confirmationLink = $"https://localhost:7210/api/Account/confirm-email?token={token}";
+                var baseUrl = _configuration["Application:BaseUrl"];
+                var confirmationLink = $"{baseUrl}/api/Account/confirm-email?token={Uri.EscapeDataString(token)}";
 
                 await _emailService.SendEmailAsync(
                     registerDto.Email,
@@ -148,7 +152,7 @@ namespace TAABP.API.Controllers
                 await _emailService.SendEmailAsync(
                     changeEmailDto.NewEmail,
                     "Confirm Your Email Change",
-                    $"<p>Your Email has neem changed</p>"
+                    $"<p>Your Email has been changed</p>"
                 );
                 _logger.Information("Email changed successfully");
                 return Accepted(new { message = "Please check your email to confirm your email change." });
@@ -178,7 +182,8 @@ namespace TAABP.API.Controllers
                 var user = await _userService.GetUserByEmailAsync(forgotPasswordDto.Email);
                 var token = _tokenGenerator.GenerateToken(user.Email);
                 await _storageService.StoreUserAsync(token, new RegisterDto { Email = user.Email });
-                var resetLink = $"https://localhost:7210/api/Account/reset-password?token={token}";
+                var baseUrl = _configuration["Application:BaseUrl"];
+                var resetLink = $"{baseUrl}/api/Account/reset-password?token={token}";
                 await _emailService.SendEmailAsync(
                     user.Email,
                     "Reset Your Password",

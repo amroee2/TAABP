@@ -28,6 +28,7 @@ using TAABP.Infrastructure;
 using TAABP.Infrastructure.Repositories;
 using TAABP.Infrastructure.Repositories.PaymentRepositories;
 using TAABP.Infrastructure.Repositories.ShoppingRepositories;
+using TAABP.Infrastructure.Seedings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -93,7 +94,7 @@ builder.Services.AddScoped<IPaymentOptionService, CreditCardService>();
 builder.Services.AddScoped<ICreditCardRepository, CreditCardRepository>();
 builder.Services.AddScoped<IPaymentOptionService, PayPalService>();
 builder.Services.AddScoped<IPayPalRepository, PayPalRepository>();
-builder.Services.AddScoped<PaymentOptionServiceFactory>();
+builder.Services.AddScoped<IPaymentOptionServiceFactory, PaymentOptionServiceFactory>();
 builder.Services.AddScoped<ICreditCardService,  CreditCardService>();
 builder.Services.AddScoped<IPayPalService, PayPalService>();
 builder.Services.AddScoped<ICreditCardMapper, CreditCardMapper>();
@@ -110,7 +111,7 @@ builder.Services.AddIdentityCore<User>(options =>
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = true;
     options.Password.RequireLowercase = true;
-    options.SignIn.RequireConfirmedAccount = false;
+    options.SignIn.RequireConfirmedAccount = true;
 })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<TAABPDbContext>()
@@ -146,6 +147,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 var app = builder.Build();
+DatabaseSeeder.Seed(app.Services);
 
 async Task SeedAdminUser(IServiceProvider serviceProvider)
 {

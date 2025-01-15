@@ -14,11 +14,12 @@ namespace TAABP.API.Controllers
     {
         private readonly IPaymentMethodService _paymentMethodService;
         private readonly ILogger _logger;
-
-        public PaymentController(IPaymentMethodService paymentMethodService)
+        private readonly IUserService _userService;
+        public PaymentController(IPaymentMethodService paymentMethodService, IUserService userService)
         {
             _paymentMethodService = paymentMethodService;
             _logger = Log.ForContext<PaymentController>();
+            _userService = userService;
         }
 
         [HttpGet("user/{userId}")]
@@ -27,6 +28,11 @@ namespace TAABP.API.Controllers
             _logger.Information("Fetching payment options for user with ID {UserId}", userId);
             try
             {
+                if (userId != _userService.GetCurrentUserId())
+                {
+                    _logger.Warning("Unauthorized access to payment options for user with ID {UserId}", userId);
+                    return Unauthorized();
+                }
                 var paymentOptions = await _paymentMethodService.GetAllUserPaymentOptionsAsync(userId);
                 _logger.Information("Successfully fetched payment options for user with ID {UserId}", userId);
                 return Ok(paymentOptions);

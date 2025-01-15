@@ -9,7 +9,7 @@ using ILogger = Serilog.ILogger;
 
 namespace TAABP.API.Controllers
 {
-    [Route("api/Hotels/{hotelId}/[controller]")]
+    [Route("api/Hotels/{hotelId}/HotelImages")]
     [ApiController]
     [Authorize]
     public class HotelImageController : ControllerBase
@@ -25,6 +25,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateNewHotelImageAsync(int hotelId, HotelImageDto image)
         {
             _logger.Information("Creating a new image for hotel with ID {HotelId}", hotelId);
@@ -93,6 +94,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpDelete("{imageId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteHotelImageAsync(int hotelId, int imageId)
         {
             _logger.Information("Deleting image with ID {ImageId} for hotel with ID {HotelId}", imageId, hotelId);
@@ -115,6 +117,7 @@ namespace TAABP.API.Controllers
         }
 
         [HttpPut("{imageId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateHotelImageAsync(int hotelId, int imageId, HotelImageDto imageUrl)
         {
             _logger.Information("Updating image with ID {ImageId} for hotel with ID {HotelId}", imageId, hotelId);

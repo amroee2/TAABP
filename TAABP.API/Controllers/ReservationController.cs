@@ -9,7 +9,7 @@ using ILogger = Serilog.ILogger;
 
 namespace TAABP.API.Controllers
 {
-    [Route("api/User/{userId}/Room/{roomId}/[controller]")]
+    [Route("api/Users/{userId}/Rooms/{roomId}/Reservations")]
     [ApiController]
     [Authorize]
     public class ReservationController : ControllerBase
@@ -17,19 +17,28 @@ namespace TAABP.API.Controllers
         private readonly IReservationService _reservationService;
         private readonly ILogger _logger;
         private readonly IValidator<ReservationDto> _reservationValidator;
-        public ReservationController(IReservationService reservationService, IValidator<ReservationDto> validator)
+        private readonly IUserService _userService;
+        public ReservationController(IReservationService reservationService,
+            IValidator<ReservationDto> validator,
+            IUserService userService)
         {
             _reservationService = reservationService;
             _logger = Log.ForContext<ReservationController>();
             _reservationValidator = validator;
+            _userService = userService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ReservationDto>>> GetReservations()
+        public async Task<ActionResult<List<ReservationDto>>> GetReservations(string userId)
         {
             _logger.Information("Fetching all reservations");
             try
             {
+                if(userId != _userService.GetCurrentUserId())
+                {
+                    _logger.Warning("Unauthorized access to all reservations");
+                    return Unauthorized();
+                }
                 var reservations = await _reservationService.GetReservationsAsync();
                 _logger.Information("Successfully fetched all reservations");
                 return Ok(reservations);
@@ -52,6 +61,11 @@ namespace TAABP.API.Controllers
             _logger.Information("Fetching reservation with ID {ReservationId}", id);
             try
             {
+                if (userId != _userService.GetCurrentUserId())
+                {
+                    _logger.Warning("Unauthorized access to reservation with ID {ReservationId}", id);
+                    return Unauthorized();
+                }
                 var reservation = await _reservationService.GetReservationByIdAsync(userId, roomId, id);
                 _logger.Information("Successfully fetched reservation with ID {ReservationId}", id);
                 return Ok(reservation);
@@ -74,6 +88,11 @@ namespace TAABP.API.Controllers
             _logger.Information("Creating a new reservation for user with ID {UserId} and room with ID {RoomId}", userId, roomId);
             try
             {
+                if(userId != _userService.GetCurrentUserId())
+                {
+                    _logger.Warning("Unauthorized access to create a new reservation for user with ID {UserId} and room with ID {RoomId}", userId, roomId);
+                    return Unauthorized();
+                }
                 await _reservationValidator.ValidateAndThrowAsync(reservationDto);
                 reservationDto.UserId = userId;
                 reservationDto.RoomId = roomId;
@@ -105,6 +124,11 @@ namespace TAABP.API.Controllers
             _logger.Information("Updating reservation with ID {ReservationId} for user with ID {UserId} and room with ID {RoomId}", reservationId, userId, roomId);
             try
             {
+                if (userId != _userService.GetCurrentUserId())
+                {
+                    _logger.Warning("Unauthorized access to update reservation with ID {ReservationId} for user with ID {UserId} and room with ID {RoomId}", reservationId, userId, roomId);
+                    return Unauthorized();
+                }
                 await _reservationValidator.ValidateAndThrowAsync(reservationDto);
                 reservationDto.ReservationId = reservationId;
                 reservationDto.UserId = userId;
@@ -131,11 +155,16 @@ namespace TAABP.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteReservation(int id)
+        public async Task<ActionResult> DeleteReservation(string userId, int id)
         {
             _logger.Information("Deleting reservation with ID {ReservationId}", id);
             try
             {
+                if (userId != _userService.GetCurrentUserId())
+                {
+                    _logger.Warning("Unauthorized access to delete reservation with ID {ReservationId}", id);
+                    return Unauthorized();
+                }
                 await _reservationService.DeleteReservationAsync(id);
                 _logger.Information("Successfully deleted reservation with ID {ReservationId}", id);
                 return NoContent();

@@ -4,7 +4,7 @@ using TAABP.Core.PaymentEntities;
 
 namespace TAABP.Application
 {
-    public class PaymentOptionServiceFactory
+    public class PaymentOptionServiceFactory : IPaymentOptionServiceFactory
     {
         private readonly IEnumerable<IPaymentOptionService> _services;
 

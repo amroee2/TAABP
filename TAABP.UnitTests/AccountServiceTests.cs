@@ -89,7 +89,7 @@ namespace TAABP.UnitTests
             _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(loginDto.Email)).ReturnsAsync(user);
             _signInManagerMock.Setup(signIn => signIn.CheckPasswordSignInAsync(user, loginDto.Password, false))
                 .ReturnsAsync(SignInResult.Success);
-            _tokenGeneratorMock.Setup(gen => gen.GenerateToken(user.Id)).Returns(token);
+            _tokenGeneratorMock.Setup(gen => gen.GenerateToken(user.Id, null)).Returns(token);
 
             //Act
             var result = await _accountService.LoginAsync(loginDto);
