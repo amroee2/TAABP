@@ -16,7 +16,7 @@ namespace TAABP.Infrastructure
         {
             this._configuration = configuration;
         }
-        public string GenerateToken(string id)
+        public string GenerateToken(string id, IEnumerable<string>? roles = null)
         {
             var securityKey = new SymmetricSecurityKey(Convert.FromBase64String(_configuration["Authentication:SecretForKey"]));
 
@@ -26,6 +26,12 @@ namespace TAABP.Infrastructure
             {
                 new Claim(ClaimTypes.NameIdentifier, id),
             };
+
+            if (roles != null)
+            {
+                claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+            }
+
             var jwtSecurityToken = new JwtSecurityToken(
                 _configuration["Authentication:Issuer"],
                 _configuration["Authentication:Audience"],

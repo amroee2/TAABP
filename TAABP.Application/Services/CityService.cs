@@ -79,5 +79,11 @@ namespace TAABP.Application.Services
             }
             await _cityRepository.DeleteCityAsync(city);
         }
+
+        public async Task<List<CityDto>> GetTopCitiesAsync()
+        {
+            var cities = await _cityRepository.GetTopCitiesAsync();
+            return cities.Select(city => _cityMapper.CityToCityDto(city)).ToList();
+        }
     }
 }

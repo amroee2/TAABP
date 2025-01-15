@@ -3,7 +3,6 @@ using TAABP.Application.Exceptions;
 using TAABP.Application.Profile.ReservationMapping;
 using TAABP.Application.RepositoryInterfaces;
 using TAABP.Application.ServiceInterfaces;
-using TAABP.Core;
 
 namespace TAABP.Application.Services
 {
@@ -15,10 +14,10 @@ namespace TAABP.Application.Services
         private readonly IUserRepository _userRepository;
         private readonly IHotelRepository _hotelRepository;
         private readonly ICityRepository _cityRepository;
-
-        public ReservationService(IReservationRepository reservationRepository, IReservationMapper reservationMapper, 
+        private readonly IFeaturedDealRepository _featuredDealRepository;
+        public ReservationService(IReservationRepository reservationRepository, IReservationMapper reservationMapper,
             IRoomRepository roomRepository, IUserRepository userRepository, IHotelRepository hotelRepository,
-            ICityRepository cityRepository)
+            ICityRepository cityRepository, IFeaturedDealRepository featuredDealRepository)
         {
             _reservationRepository = reservationRepository;
             _reservationMapper = reservationMapper;
@@ -26,14 +25,29 @@ namespace TAABP.Application.Services
             _userRepository = userRepository;
             _hotelRepository = hotelRepository;
             _cityRepository = cityRepository;
+            _featuredDealRepository = featuredDealRepository;
         }
 
-        public async Task<ReservationDto> GetReservationByIdAsync(int id)
+        public async Task<ReservationDto> GetReservationByIdAsync(string userId, int roomId, int id)
         {
             var reservation = await _reservationRepository.GetReservationByIdAsync(id);
             if (reservation == null)
             {
                 throw new EntityNotFoundException("Reservation not found");
+            }
+            var room = await _roomRepository.GetRoomByIdAsync(reservation.RoomId);
+            if (room == null)
+            {
+                throw new EntityNotFoundException("Room not found");
+            }
+            var user = await _userRepository.GetUserByIdAsync(reservation.UserId);
+            if (user == null)
+            {
+                throw new EntityNotFoundException("User not found");
+            }
+            if (reservation.UserId != userId || reservation.RoomId != roomId)
+            {
+                throw new EntityNotFoundException("Reservation does not belong to user or room");
             }
             return _reservationMapper.ReservationToResevationDto(reservation);
         }
@@ -65,17 +79,34 @@ namespace TAABP.Application.Services
             {
                 throw new InvalidOperationException("Start date must be before end date");
             }
+
+            var featuredDeal = await _featuredDealRepository.GetActiveFeaturedDealByRoomIdAsync(room.RoomId);
+            double totalPrice = 0;
+            DateTime currentDate = reservation.StartDate;
+
+            while (currentDate <= reservation.EndDate)
+            {
+                if (featuredDeal != null &&
+                    currentDate >= featuredDeal.StartDate && currentDate <= featuredDeal.EndDate)
+                {
+                    totalPrice += featuredDeal.Discount;
+                }
+                else
+                {
+                    totalPrice += room.PricePerNight;
+                }
+
+                currentDate = currentDate.AddDays(1);
+            }
+
+            reservation.Price = totalPrice;
+
+            await _reservationRepository.CreateReservationAsync(reservation);
             var hotel = await _hotelRepository.GetHotelByIdAsync(room.HotelId);
             await _roomRepository.BookRoomAsync(room.RoomId);
             await _hotelRepository.IncrementNumberOfVisitsAsync(room.HotelId);
             await _cityRepository.IncrementNumberOfVisitsAsync(hotel.CityId);
-            var price = (reservation.EndDate - reservation.StartDate).Days * room.PricePerNight;
-            if(price == 0)
-            {
-                price = room.PricePerNight;
-            }
-            reservation.Price = price;
-            await _reservationRepository.CreateReservationAsync(reservation);
+
             return reservation.ReservationId;
         }
 
@@ -95,17 +126,39 @@ namespace TAABP.Application.Services
                 throw new InvalidOperationException("Start date cannot be in the past");
             }
             var reservation = _reservationMapper.ReservationDtoToReservation(reservationDto);
-            var room = await _roomRepository.GetRoomByIdAsync(reservation.RoomId);
-            if(room == null)
+            if (reservation.StartDate != targetReservation.StartDate || reservation.EndDate != targetReservation.EndDate)
             {
-                throw new EntityNotFoundException("Room not found");
+                var room = await _roomRepository.GetRoomByIdAsync(reservation.RoomId);
+                if (room == null)
+                {
+                    throw new EntityNotFoundException("Room not found");
+                }
+
+                var featuredDeal = await _featuredDealRepository.GetActiveFeaturedDealByRoomIdAsync(room.RoomId);
+                double totalPrice = 0;
+                DateTime currentDate = reservation.StartDate;
+
+                while (currentDate <= reservation.EndDate)
+                {
+                    if (featuredDeal != null &&
+                        currentDate >= featuredDeal.StartDate && currentDate <= featuredDeal.EndDate)
+                    {
+                        totalPrice += featuredDeal.Discount;
+                    }
+                    else
+                    {
+                        totalPrice += room.PricePerNight;
+                    }
+
+                    currentDate = currentDate.AddDays(1);
+                }
+
+                reservation.Price = totalPrice;
             }
-            var price = (reservation.EndDate - reservation.StartDate).Days * room.PricePerNight;
-            if (price == 0)
+            else
             {
-                price = room.PricePerNight;
+                reservation.Price = targetReservation.Price;
             }
-            reservation.Price = price;
             await _reservationRepository.UpdateReservationAsync(reservation);
         }
 

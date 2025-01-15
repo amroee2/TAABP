@@ -11,5 +11,6 @@ namespace TAABP.Application.RepositoryInterfaces
         public Task<List<User>> GetUsersAsync();
         public Task DeleteUserAsync(User user);
         public Task UpdateUserAsync(User user);
+        public Task<List<Hotel>> GetLastHotelsVisitedAsync(string userId);
     }
 }

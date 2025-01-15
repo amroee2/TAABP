@@ -68,5 +68,10 @@ namespace TAABP.Infrastructure.Repositories
             city!.NumberOfVisits--;
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<City>> GetTopCitiesAsync()
+        {
+            return await _context.Cities.AsNoTracking().OrderByDescending(c => c.NumberOfVisits).Take(5).ToListAsync();
+        }
     }
 }

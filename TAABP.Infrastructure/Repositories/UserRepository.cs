@@ -52,5 +52,17 @@ namespace TAABP.Infrastructure.Repositories
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<Hotel>> GetLastHotelsVisitedAsync(string userId)
+        {
+            var user = await _context.Users.AsNoTracking().Include(u => u.Reservations)
+                .ThenInclude(r => r.Room)
+                .ThenInclude(room => room.Hotel)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            return user!.Reservations
+                .Select(r => r.Room.Hotel)
+                .Where(h => h != null).Take(5)
+                .ToList();
+        }
     }
 }

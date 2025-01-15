@@ -1,4 +1,4 @@
-﻿namespace TAABP.Application.DTOs
+﻿namespace TAABP.Application.DTOs.AccountDto
 {
     public class LoginDto
     {
