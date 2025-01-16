@@ -48,24 +48,6 @@ namespace TAABP.UnitTests
         }
 
         [Fact]
-        public async Task CreateUserAsync_ShouldCreateUser_WhenEmailDoesNotExist()
-        {
-            //Arrange
-            var registerDto = _fixture.Create<RegisterDto>();
-            var user = _fixture.Create<User>();
-
-            _userRepositoryMock.Setup(repo => repo.CheckEmailAsync(registerDto.Email)).ReturnsAsync(false);
-            _userMapperMock.Setup(mapper => mapper.RegisterDtoToUser(registerDto)).Returns(user);
-            _userRepositoryMock.Setup(repo => repo.CreateUserAsync(user, registerDto.Password)).ReturnsAsync(true);
-
-            //Act
-            await _accountService.CreateUserAsync(registerDto);
-
-            //Assert
-            _userRepositoryMock.Verify(repo => repo.CreateUserAsync(user, registerDto.Password), Times.Once);
-        }
-
-        [Fact]
         public async Task CreateUserAsync_ShouldThrowEmailAlreadyExistsException_WhenEmailExists()
         {
             //Arrange

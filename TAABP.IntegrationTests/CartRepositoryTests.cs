@@ -160,7 +160,7 @@ namespace TAABP.IntegrationTests
 
             var result = await _cartRepository.GetUserRecentCartAsync(userId);
             var maxCartId = await _context.Carts
-                .Where(c => c.UserId == userId)
+                .Where(c => c.UserId == userId).Where(c => c.CartStatus == CartStatus.Open)
                 .MaxAsync(c => c.CartId);
 
             // Assert
