@@ -20,7 +20,7 @@ namespace TAABP.Infrastructure.Repositories.ShoppingRepositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Cart> GetCartByIdAsync(int cartId)
+        public async Task<Cart> GetCartByIdAsync( int cartId)
         {
             var cart = await _context.Carts.Include(c => c.CartItems)
                 .FirstOrDefaultAsync(c => c.CartId == cartId);
@@ -36,9 +36,8 @@ namespace TAABP.Infrastructure.Repositories.ShoppingRepositories
         public async Task<List<Cart>> GetUserCartsAsync(string userId)
         {
             var userCarts = await _context.Carts
-                .Include(c => c.PaymentMethod)
-                .ThenInclude(pm => pm.User)
-                .Where(c => c.PaymentMethod.UserId == userId)
+                .Include(pm => pm.User)
+                .Where(c=>c.UserId==userId)
                 .ToListAsync();
             return userCarts;
         }
@@ -59,6 +58,38 @@ namespace TAABP.Infrastructure.Repositories.ShoppingRepositories
         {
             return await _context.CartItems
                 .AnyAsync(ci => ci.CartId == cartId && ci.RoomId == roomId);
+        }
+
+        public async Task<Cart> GetUserRecentCartAsync(string userId)
+        {
+            return await _context.Carts.AsNoTracking()
+                .Include(c => c.User)
+                .Include(c => c.CartItems)
+                .Where(c => c.UserId == userId)
+                .Where(c => c.CartStatus == CartStatus.Open)
+                .OrderByDescending(c => c.CartId)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task AddToTotalPriceAsync(double price, int cartId)
+        {
+            var cart = await _context.Carts.FindAsync(cartId);
+            cart.TotalPrice+= price;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveFromTotalPriceAsync(double price, int cartId)
+        {
+            var cart = await _context.Carts.FindAsync(cartId);
+            cart.TotalPrice -= price;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateCartStatusAsync(int cartId, CartStatus cartStatus)
+        {
+            var cart = await _context.Carts.FindAsync(cartId);
+            cart.CartStatus = cartStatus;
+            await _context.SaveChangesAsync();
         }
     }
 }

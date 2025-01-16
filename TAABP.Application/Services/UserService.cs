@@ -76,6 +76,14 @@ namespace TAABP.Application.Services
             {
                 throw new EntityNotFoundException("User Not Found");
             }
+            if (user.UserName != userDto.UserName)
+            {
+                var userNameExists = await _userRepository.CheckIfUserNameExists(userDto.UserName);
+                if (userNameExists)
+                {
+                    throw new InvalidOperationException("Username already exists");
+                }
+            }
             _userMapper.UserDtoToUser(userDto, user);
             user.Id = id;
             await _userRepository.UpdateUserAsync(user);

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using TAABP.Core.PaymentEntities;
+using TAABP.Core.ShoppingEntities;
 
 namespace TAABP.Core
 {
@@ -22,11 +23,13 @@ namespace TAABP.Core
         public List<Reservation> Reservations { get; set; }
         public List<Review> Reviews { get; set; }
         public List<PaymentMethod> PaymentMethods { get; set; }
+        public List<Cart> Carts { get; set; }
         public User()
         {
             Reservations = new List<Reservation>();
             Reviews = new List<Review>();
             PaymentMethods = new List<PaymentMethod>();
+            Carts = new List<Cart>();
         }
     }
 }

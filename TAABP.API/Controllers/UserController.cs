@@ -20,7 +20,8 @@ namespace TAABP.API.Controllers
         private readonly ILogger _logger;
         private readonly IValidator<UserDto> _userValidator;
         public UserController(IUserService userService,
-            IReviewService reviewService, ICartItemService cartItemService, IValidator<UserDto> validator)
+            IReviewService reviewService, ICartItemService cartItemService,
+            IValidator<UserDto> validator)
         {
             _userService = userService;
             _reviewService = reviewService;
@@ -107,6 +108,7 @@ namespace TAABP.API.Controllers
                     _logger.Warning("Unauthorized access to update user with ID {UserId}", id);
                     return Unauthorized();
                 }
+                await _userValidator.ValidateAndThrowAsync(userDto);
                 await _userService.UpdateUserAsync(id, userDto);
                 _logger.Information("Successfully updated user with ID {UserId}", id);
                 return NoContent();
@@ -123,17 +125,13 @@ namespace TAABP.API.Controllers
             }
         }
 
-        [HttpGet("{userId}/HotelsVisited")]
-        public async Task<IActionResult> GetLastHotelsVisitedAsync(string userId)
+        [HttpGet("HotelsVisited")]
+        public async Task<IActionResult> GetLastHotelsVisitedAsync()
         {
+            string userId = _userService.GetCurrentUserId();
             _logger.Information("Fetching last hotels visited by user with ID {UserId}", userId);
             try
             {
-                if (userId != _userService.GetCurrentUserId())
-                {
-                    _logger.Warning("Unauthorized access to fetch last hotels visited by user with ID {UserId}", userId);
-                    return Unauthorized();
-                }
                 var hotels = await _userService.GetLastHotelsVisitedAsync(userId);
                 _logger.Information("Successfully fetched last hotels visited by user with ID {UserId}", userId);
                 return Ok(hotels);
@@ -172,17 +170,13 @@ namespace TAABP.API.Controllers
             }
         }
 
-        [HttpGet("{userId}/Carts")]
-        public async Task<IActionResult> GetUserCartsAsync(string userId)
+        [HttpGet("Carts")]
+        public async Task<IActionResult> GetUserCartsAsync()
         {
+            string userId = _userService.GetCurrentUserId();
             _logger.Information("Fetching carts for user with ID {UserId}", userId);
             try
             {
-                if (userId != _userService.GetCurrentUserId())
-                {
-                    _logger.Warning("Unauthorized access to fetch carts for user with ID {UserId}", userId);
-                    return Unauthorized();
-                }
                 var carts = await _cartItemService.GetUserCartsAsync(userId);
                 _logger.Information("Successfully fetched carts for user with ID {UserId}", userId);
                 return Ok(carts);

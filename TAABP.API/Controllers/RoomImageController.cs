@@ -16,12 +16,10 @@ namespace TAABP.API.Controllers
     {
         private readonly IRoomService _roomImageService;
         private readonly ILogger _logger;
-        private readonly IValidator<RoomImageDto> _roomImageValidator;
-        public RoomImageController(IRoomService roomImageService, IValidator<RoomImageDto> validator)
+        public RoomImageController(IRoomService roomImageService)
         {
             _roomImageService = roomImageService;
             _logger = Log.ForContext<RoomImageController>();
-            _roomImageValidator = validator;
         }
 
         [HttpPost]
@@ -31,7 +29,6 @@ namespace TAABP.API.Controllers
             _logger.Information("Adding room image for room with ID {RoomId}", roomId);
             try
             {
-                await _roomImageValidator.ValidateAndThrowAsync(roomImageDto);
                 roomImageDto.RoomId = roomId;
                 var roomImageId = await _roomImageService.CreateRoomImageAsync(roomImageDto);
                 var roomImage = await _roomImageService.GetRoomImageByIdAsync(roomId, roomImageId);

@@ -50,7 +50,7 @@ namespace TAABP.IntegrationTests
             var result = await _userRepository.CreateUserAsync(user, password);
 
             // Assert
-            Assert.True(result);
+            Assert.True(result.Succeeded);
             _mockUserManager.Verify(um => um.CreateAsync(user, password), Times.Once);
         }
 

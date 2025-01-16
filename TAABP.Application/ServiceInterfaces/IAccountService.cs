@@ -9,5 +9,6 @@ namespace TAABP.Application.ServiceInterfaces
         public Task<string> LoginAsync(LoginDto loginDto);
         public Task ChangeEmailAsync(string userId, ChangeEmailDto changeEmailDto);
         public Task ResetUserPasswordAsync(string email, string password);
+        Task<bool> CheckIfUserNameExists(string name);
     }
 }

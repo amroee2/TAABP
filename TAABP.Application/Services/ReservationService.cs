@@ -3,6 +3,7 @@ using TAABP.Application.Exceptions;
 using TAABP.Application.Profile.ReservationMapping;
 using TAABP.Application.RepositoryInterfaces;
 using TAABP.Application.ServiceInterfaces;
+using TAABP.Core;
 
 namespace TAABP.Application.Services
 {
@@ -28,7 +29,7 @@ namespace TAABP.Application.Services
             _featuredDealRepository = featuredDealRepository;
         }
 
-        public async Task<ReservationDto> GetReservationByIdAsync(string userId, int roomId, int id)
+        public async Task<ReservationDto> GetReservationByIdAsync(string userId, int id)
         {
             var reservation = await _reservationRepository.GetReservationByIdAsync(id);
             if (reservation == null)
@@ -45,16 +46,21 @@ namespace TAABP.Application.Services
             {
                 throw new EntityNotFoundException("User not found");
             }
-            if (reservation.UserId != userId || reservation.RoomId != roomId)
+            if (reservation.UserId != userId || reservation.RoomId != room.RoomId)
             {
                 throw new EntityNotFoundException("Reservation does not belong to user or room");
             }
             return _reservationMapper.ReservationToResevationDto(reservation);
         }
 
-        public async Task<List<ReservationDto>> GetReservationsAsync()
+        public async Task<List<ReservationDto>> GetReservationsAsync(string userId)
         {
-            var reservations = await _reservationRepository.GetReservationsAsync();
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                throw new EntityNotFoundException("User not found");
+            }
+            var reservations = await _reservationRepository.GetReservationsAsync(userId);
             return reservations.Select(r => _reservationMapper.ReservationToResevationDto(r)).ToList();
         }
 
@@ -80,24 +86,7 @@ namespace TAABP.Application.Services
                 throw new InvalidOperationException("Start date must be before end date");
             }
 
-            var featuredDeal = await _featuredDealRepository.GetActiveFeaturedDealByRoomIdAsync(room.RoomId);
-            double totalPrice = 0;
-            DateTime currentDate = reservation.StartDate;
-
-            while (currentDate <= reservation.EndDate)
-            {
-                if (featuredDeal != null &&
-                    currentDate >= featuredDeal.StartDate && currentDate <= featuredDeal.EndDate)
-                {
-                    totalPrice += featuredDeal.Discount;
-                }
-                else
-                {
-                    totalPrice += room.PricePerNight;
-                }
-
-                currentDate = currentDate.AddDays(1);
-            }
+            double totalPrice = await CalculateTotoalPriceAsync(room, reservation.StartDate, reservation.EndDate);
 
             reservation.Price = totalPrice;
 
@@ -128,30 +117,13 @@ namespace TAABP.Application.Services
             var reservation = _reservationMapper.ReservationDtoToReservation(reservationDto);
             if (reservation.StartDate != targetReservation.StartDate || reservation.EndDate != targetReservation.EndDate)
             {
-                var room = await _roomRepository.GetRoomByIdAsync(reservation.RoomId);
+                var room = await _roomRepository.GetRoomByIdAsync(targetReservation.RoomId);
                 if (room == null)
                 {
                     throw new EntityNotFoundException("Room not found");
                 }
 
-                var featuredDeal = await _featuredDealRepository.GetActiveFeaturedDealByRoomIdAsync(room.RoomId);
-                double totalPrice = 0;
-                DateTime currentDate = reservation.StartDate;
-
-                while (currentDate <= reservation.EndDate)
-                {
-                    if (featuredDeal != null &&
-                        currentDate >= featuredDeal.StartDate && currentDate <= featuredDeal.EndDate)
-                    {
-                        totalPrice += featuredDeal.Discount;
-                    }
-                    else
-                    {
-                        totalPrice += room.PricePerNight;
-                    }
-
-                    currentDate = currentDate.AddDays(1);
-                }
+                double totalPrice = await CalculateTotoalPriceAsync(room, reservation.StartDate, reservation.EndDate);
 
                 reservation.Price = totalPrice;
             }
@@ -159,9 +131,33 @@ namespace TAABP.Application.Services
             {
                 reservation.Price = targetReservation.Price;
             }
+            reservation.RoomId = targetReservation.RoomId;
             await _reservationRepository.UpdateReservationAsync(reservation);
         }
 
+        public async Task<double> CalculateTotoalPriceAsync(Room room, DateTime StartDate, DateTime EndDate)
+        {
+            var featuredDeal = await _featuredDealRepository.GetActiveFeaturedDealByRoomIdAsync(room.RoomId);
+            double totalPrice = 0;
+            DateTime currentDate = StartDate;
+
+            while (currentDate <= EndDate)
+            {
+                if (featuredDeal != null &&
+                    currentDate >= featuredDeal.StartDate && currentDate <= featuredDeal.EndDate)
+                {
+                    totalPrice += featuredDeal.Discount;
+                }
+                else
+                {
+                    totalPrice += room.PricePerNight;
+                }
+
+                currentDate = currentDate.AddDays(1);
+            }
+
+            return totalPrice;
+        }
         public async Task DeleteReservationAsync(int reservationId)
         {
             var targetReservation = await _reservationRepository.GetReservationByIdAsync(reservationId);

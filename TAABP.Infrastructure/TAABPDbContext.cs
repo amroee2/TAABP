@@ -30,11 +30,11 @@ namespace TAABP.Infrastructure
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Cart>()
-                .HasOne(c => c.PaymentMethod)
-                .WithMany()
-                .HasForeignKey(c => c.PaymentMethodId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //modelBuilder.Entity<Cart>()
+            //    .HasOne(c => c.PaymentMethod)
+            //    .WithMany()
+            //    .HasForeignKey(c => c.PaymentMethodId)
+            //    .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Hotel>(entity =>
             {
