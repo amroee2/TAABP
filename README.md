@@ -66,3 +66,7 @@ Contains the domain models
 ## Swagger documentaiton 
 
 [Api Documentation](https://app.swaggerhub.com/apis/fts-82b/api/1.0)
+
+## Jira for task management
+
+![image](https://github.com/user-attachments/assets/7eca6c94-63a4-4ea3-b91c-9f8666a545bd)
