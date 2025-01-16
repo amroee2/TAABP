@@ -18,15 +18,5 @@ namespace TAABP.Core.ShoppingEntities
 
             CartItems = new List<CartItem>();
         }
-
-        public void AddToPrice(double price)
-        {
-            TotalPrice += price;
-        }
-
-        public void RemoveFromPrice(double price)
-        {
-            TotalPrice -= price;
-        }
     }
 }

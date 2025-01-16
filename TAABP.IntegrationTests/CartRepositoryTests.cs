@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using Microsoft.EntityFrameworkCore;
+using TAABP.Core;
 using TAABP.Core.ShoppingEntities;
 using TAABP.Infrastructure;
 using TAABP.Infrastructure.Repositories.ShoppingRepositories;
@@ -67,11 +68,11 @@ namespace TAABP.IntegrationTests
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _cartRepository.GetUserCartsAsync(cart.PaymentMethod.UserId);
+            var result = await _cartRepository.GetUserCartsAsync(cart.UserId);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(cart.PaymentMethod.UserId, result[0].PaymentMethod.UserId);
+            Assert.NotEmpty(result);
         }
 
         [Fact]
@@ -135,6 +136,86 @@ namespace TAABP.IntegrationTests
             // Assert
             Assert.NotNull(result);
             Assert.Equal(cart.CartItems.Count, result.CartItems.Count);
+        }
+
+        [Fact]
+        public async Task GetUserRecentCartAsync_ShouldReturnMostRecentCart()
+        {
+            // Arrange
+            var userId = Guid.NewGuid().ToString();
+            var user = _fixture.Build<User>()
+                .With(u => u.Id, userId)
+                .Create();
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+            var carts = _fixture.Build<Cart>()
+                .With(c => c.UserId, userId)
+                .With(c => c.CartStatus, CartStatus.Open)
+                .Without(c => c.User)
+                .Without(c => c.CartItems)
+                .CreateMany(3).ToList();
+
+            await _context.Carts.AddRangeAsync(carts);
+            await _context.SaveChangesAsync();
+
+            var result = await _cartRepository.GetUserRecentCartAsync(userId);
+            var maxCartId = await _context.Carts
+                .Where(c => c.UserId == userId)
+                .MaxAsync(c => c.CartId);
+
+            // Assert
+            Assert.Equal(maxCartId, result.CartId);
+        }
+
+        [Fact]
+        public async Task AddToTotalPriceAsync_ShouldIncreaseTotalPrice()
+        {
+            // Arrange
+            var cart = _fixture.Create<Cart>();
+            cart.TotalPrice = 50;
+            await _context.Carts.AddAsync(cart);
+            await _context.SaveChangesAsync();
+
+            // Act
+            await _cartRepository.AddToTotalPriceAsync(25, cart.CartId);
+
+            // Assert
+            var updatedCart = await _context.Carts.FindAsync(cart.CartId);
+            Assert.Equal(75, updatedCart.TotalPrice);
+        }
+
+        [Fact]
+        public async Task RemoveFromTotalPriceAsync_ShouldDecreaseTotalPrice()
+        {
+            // Arrange
+            var cart = _fixture.Create<Cart>();
+            cart.TotalPrice = 50;
+            await _context.Carts.AddAsync(cart);
+            await _context.SaveChangesAsync();
+
+            // Act
+            await _cartRepository.RemoveFromTotalPriceAsync(20, cart.CartId);
+
+            // Assert
+            var updatedCart = await _context.Carts.FindAsync(cart.CartId);
+            Assert.Equal(30, updatedCart.TotalPrice);
+        }
+
+        [Fact]
+        public async Task UpdateCartStatusAsync_ShouldUpdateCartStatus()
+        {
+            // Arrange
+            var cart = _fixture.Create<Cart>();
+            cart.CartStatus = CartStatus.Open;
+            await _context.Carts.AddAsync(cart);
+            await _context.SaveChangesAsync();
+
+            // Act
+            await _cartRepository.UpdateCartStatusAsync(cart.CartId, CartStatus.Closed);
+
+            // Assert
+            var updatedCart = await _context.Carts.FindAsync(cart.CartId);
+            Assert.Equal(CartStatus.Closed, updatedCart.CartStatus);
         }
     }
 }

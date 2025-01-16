@@ -12,7 +12,7 @@ using ILogger = Serilog.ILogger;
 
 namespace TAABP.API.Controllers
 {
-    [Route("api/Carts/{cartId}")]
+    [Route("api/Users/Carts")]
     [ApiController]
     [Authorize]
     public class CartItemController : ControllerBase
@@ -42,58 +42,62 @@ namespace TAABP.API.Controllers
         }
 
         [HttpPost("Rooms/{roomId}/CartItems")]
-        public async Task<IActionResult> AddCartItemAsync(int cartId, int roomId, CartItemDto cartItem)
+        public async Task<IActionResult> AddCartItemAsync( int roomId, CartItemDto cartItem)
         {
-            _logger.Information("Adding cart item to cart with ID {CartId}", cartId);
+            _logger.Information("Adding cart item to cart");
             try
             {
+                string userId = _userService.GetCurrentUserId();
                 await _cartItemDtoValidator.ValidateAndThrowAsync(cartItem);
-                cartItem.CartId = cartId;
                 cartItem.RoomId = roomId;
-                var newCartItem = await _cartItemService.AddCartItemAsync(cartItem);
-                _logger.Information("Successfully added cart item with ID {CartItemId} to cart with ID {CartId}", newCartItem.CartItemId, cartId);
+                var newCartItem = await _cartItemService.AddCartItemAsync(userId, cartItem);
+                _logger.Information("Successfully added cart item with ID {CartItemId}", newCartItem.CartItemId);
                 return StatusCode(201, newCartItem);
             }
             catch (EntityNotFoundException ex)
             {
-                _logger.Warning("Cart with ID {CartId} not found", cartId);
+                _logger.Warning("Cart with ID {CartId} not found");
                 return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "An error occurred while adding cart item to cart with ID {CartId}", cartId);
+                _logger.Error(ex, "An error occurred while adding cart item");
                 return StatusCode(500, new { message = ex.Message });
             }
         }
 
         [HttpDelete("CartItems/{cartItemId}")]
-        public async Task<IActionResult> DeleteCartItemAsync(int cartId, int cartItemId)
+        public async Task<IActionResult> DeleteCartItemAsync( int cartItemId)
         {
-            _logger.Information("Deleting cart item with ID {CartItemId} from cart with ID {CartId}", cartItemId, cartId);
+            _logger.Information("Deleting cart item with ID {CartItemId}}", cartItemId);
             try
             {
-                await _cartItemService.DeleteCartItemAsync(cartId, cartItemId);
-                _logger.Information("Successfully deleted cart item with ID {CartItemId} from cart with ID {CartId}", cartItemId, cartId);
+                string userId = _userService.GetCurrentUserId();
+
+                await _cartItemService.DeleteCartItemAsync(userId, cartItemId);
+                _logger.Information("Successfully deleted cart item with ID {CartItemId", cartItemId);
                 return NoContent();
             }
             catch (EntityNotFoundException ex)
             {
-                _logger.Warning("Cart item with ID {CartItemId} not found in cart with ID {CartId}", cartItemId, cartId);
+                _logger.Warning("Cart item with ID {CartItemId} not found", cartItemId);
                 return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "An error occurred while deleting cart item with ID {CartItemId} from cart with ID {CartId}", cartItemId, cartId);
+                _logger.Error(ex, "An error occurred while deleting cart item with ID {CartItemId}", cartItemId);
                 return StatusCode(500, new { message = ex.Message });
             }
         }
 
-        [HttpGet("CartItems/{cartItemId}")]
+        [HttpGet("{cartId}/CartItems/{cartItemId}")]
         public async Task<IActionResult> GetCartItemByIdAsync(int cartId, int cartItemId)
         {
             _logger.Information("Fetching cart item with ID {CartItemId} from cart with ID {CartId}", cartItemId, cartId);
             try
             {
+                string userId = _userService.GetCurrentUserId();
+
                 var cartItem = await _cartItemService.GetCartItemByIdAsync(cartId, cartItemId);
                 _logger.Information("Successfully fetched cart item with ID {CartItemId} from cart with ID {CartId}", cartItemId, cartId);
                 return Ok(cartItem);
@@ -110,12 +114,14 @@ namespace TAABP.API.Controllers
             }
         }
 
-        [HttpGet("CartItems")]
+        [HttpGet("{cartId}/CartItems")]
         public async Task<IActionResult> GetCartItemsByCartIdAsync(int cartId)
         {
             _logger.Information("Fetching cart items from cart with ID {CartId}", cartId);
             try
             {
+                string userId = _userService.GetCurrentUserId();
+
                 var cartItems = await _cartItemService.GetCartItemsByCartIdAsync(cartId);
                 _logger.Information("Successfully fetched cart items from cart with ID {CartId}", cartId);
                 return Ok(cartItems);
@@ -132,12 +138,13 @@ namespace TAABP.API.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{cartId}")]
         public async Task<IActionResult> GetCartAsync(int cartId)
         {
             _logger.Information("Fetching cart with ID {CartId}", cartId);
             try
             {
+                string userId = _userService.GetCurrentUserId();
                 var cart = await _cartItemService.GetCartAsync(cartId);
                 _logger.Information("Successfully fetched cart with ID {CartId}", cartId);
                 return Ok(cart);
@@ -155,30 +162,27 @@ namespace TAABP.API.Controllers
         }
 
         [HttpPost("Payment/{paymentMethodId}/Confirm")]
-        public async Task<IActionResult> ConfirmCartAsync(int cartId, int paymentMethodId)
+        public async Task<IActionResult> ConfirmCartAsync(int paymentMethodId)
         {
-            _logger.Information("Confirming cart with ID {CartId} using payment method with ID {PaymentMethodId}", cartId, paymentMethodId);
+
             try
             {
-                var user = await _paymentMethodService.GetUserByPaymentMethodId(paymentMethodId);
-                if(user.Id != _userService.GetCurrentUserId())
-                {
-                    _logger.Warning("User with ID {UserId} is not authorized to confirm cart with ID {CartId} using payment method with ID {PaymentMethodId}", _userManager.GetUserId(User), cartId, paymentMethodId);
-                    return Unauthorized();
-                }
-                await _cartItemService.ConfirmCartAsync(cartId, paymentMethodId);
+                string userId = _userService.GetCurrentUserId();
+
+                await _cartItemService.ConfirmCartAsync(userId, paymentMethodId);
+                var user = await _userManager.FindByIdAsync(userId);
                 await _emailService.SendEmailAsync(user.Email, "Cart Confirmed", "Your cart has been confirmed.");
-                _logger.Information("Successfully confirmed cart with ID {CartId} using payment method with ID {PaymentMethodId}", cartId, paymentMethodId);
+                _logger.Information("Successfully confirmed cart with ID {CartId} using payment method with ID {PaymentMethodId}",  paymentMethodId);
                 return NoContent();
             }
             catch (EntityNotFoundException ex)
             {
-                _logger.Warning("Cart with ID {CartId} not found", cartId);
+                _logger.Warning("Cart with ID {CartId} not found");
                 return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "An error occurred while confirming cart with ID {CartId} using payment method with ID {PaymentMethodId}", cartId, paymentMethodId);
+                _logger.Error(ex, "An error occurred while confirming cart with ID using payment method with ID {PaymentMethodId}", paymentMethodId);
                 return StatusCode(500, new { message = ex.Message });
             }
         }

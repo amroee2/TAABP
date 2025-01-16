@@ -50,29 +50,24 @@ namespace TAABP.Application.Services
             return cartItems;
         }
 
-        public async Task<CartItemDto> AddCartItemAsync(CartItemDto cartItemDto)
+        public async Task<CartItemDto> AddCartItemAsync(string userId, CartItemDto cartItemDto)
         {
             var cartItem = new CartItem();
             _cartItemMapper.CartItemDtoToCartItem(cartItemDto, cartItem);
-            var cart = await _cartRepository.GetCartByIdAsync(cartItem.CartId);
+            var cart = await _cartRepository.GetUserRecentCartAsync(userId);
             if (cart == null)
             {
                 cart = new Cart();
+                cart.UserId = userId;
                 cart.CartStatus = CartStatus.Open;
                 await _cartRepository.AddCartAsync(cart);
-                cartItem.CartId = cart.CartId;
+                cartItemDto.CartId = cart.CartId;
             }
-
-            else if (cart.CartStatus == CartStatus.Closed)
-            {
-                throw new EntityCreationException("Cart is already closed");
-            }
-
-            else if (cart.CartItems.Contains(cartItem))
+            if (cart.CartItems.Contains(cartItem))
             {
                 throw new EntityCreationException("CartItem already exists in Cart");
             }
-            var room = await _roomRepository.GetRoomByIdAsync(cartItem.RoomId);
+            var room = await _roomRepository.GetRoomByIdAsync(cartItemDto.RoomId);
             if (room == null)
             {
                 throw new EntityNotFoundException("Room not found");
@@ -81,38 +76,36 @@ namespace TAABP.Application.Services
             {
                 throw new RoomAlreadyBookedException("Room is not available");
             }
-            if (await _cartRepository.IsRoomAlreadyInCart(cartItem.CartId, cartItem.RoomId))
+            if (await _cartRepository.IsRoomAlreadyInCart(cart.CartId, room.RoomId))
             {
-                throw new EntityCreationException("Room already in cart");
+                throw new EntityCreationException("Room is already in cart");
             }
-            cartItem.Price = (cartItem.EndDate - cartItem.StartDate).Days * room.PricePerNight;
-            if (cartItem.Price == 0)
-            {
-                cartItem.Price = room.PricePerNight;
-            }
-            cart.CartItems.Add(cartItem);
-            cart.AddToPrice(cartItem.Price);
+
+            cartItem.Price = await _reservationService.CalculateTotoalPriceAsync(room, cartItem.StartDate, cartItem.EndDate);
+            cartItem.CartId = cart.CartId; 
+            await _cartRepository.AddToTotalPriceAsync(cartItem.Price, cart.CartId);
             await _cartItemRepository.AddCartItemAsync(cartItem);
             return _cartItemMapper.CartItemToCartItemDto(cartItem);
         }
 
-        public async Task DeleteCartItemAsync(int cartId, int cartItemId)
+        public async Task DeleteCartItemAsync(string userId, int cartItemId)
         {
-            var cartItem = await _cartItemRepository.GetCartItemByIdAsync(cartId, cartItemId);
-            if (cartItem == null)
-            {
-                throw new EntityNotFoundException("CartItem not found");
-            }
-            var cart = await _cartRepository.GetCartByIdAsync(cartId);
+            var cart = await _cartRepository.GetUserRecentCartAsync(userId);
             if (cart == null)
             {
                 throw new EntityNotFoundException("Cart not found");
             }
+            var cartItem = await _cartItemRepository.GetCartItemByIdAsync(cart.CartId, cartItemId);
+            if (cartItem == null)
+            {
+                throw new EntityNotFoundException("CartItem not found");
+            }
+
             if (cart.CartStatus == CartStatus.Closed)
             {
                 throw new EntityCreationException("Cart is already closed");
             }
-            cart.RemoveFromPrice(cartItem.Price);
+            await _cartRepository.RemoveFromTotalPriceAsync(cartItem.Price, cart.CartId);
             await _cartItemRepository.DeleteCartItemAsync(cartItem);
             if (await _cartRepository.IsCartEmpty(cart.CartId))
             {
@@ -130,9 +123,9 @@ namespace TAABP.Application.Services
             return cart;
         }
 
-        public async Task<string> ConfirmCartAsync(int cartId, int paymentMethodId)
+        public async Task ConfirmCartAsync(string userId, int paymentMethodId)
         {
-            var cart = await _cartRepository.GetCartByIdAsync(cartId);
+            var cart = await _cartRepository.GetUserRecentCartAsync(userId);
             if (cart == null)
             {
                 throw new EntityNotFoundException("Cart not found");
@@ -141,24 +134,30 @@ namespace TAABP.Application.Services
             {
                 throw new EntityCreationException("Cart is already closed");
             }
-            var payment = await _paymentMethodRepository.GetPaymentMethodByIdAsync(paymentMethodId);
-            if (payment == null)
+            if (!cart.CartItems.Any())
             {
-                throw new EntityNotFoundException("Payment method not found");
+                throw new InvalidOperationException("Cart is empty");
             }
-            cart.PaymentMethodId = payment.PaymentMethodId;
-            cart.CartStatus = CartStatus.Closed;
-            var user = await _paymentMethodRepository.GetUserByPaymentMethodId(paymentMethodId);
-            foreach(var item in cart.CartItems)
+            var paymentMethod = await _paymentMethodRepository.GetPaymentMethodByIdAsync(paymentMethodId);
+            if (paymentMethod == null)
+            {
+                throw new EntityNotFoundException("PaymentMethod not found");
+            }
+            if(paymentMethod.UserId != userId)
+            {
+                throw new EntityCreationException("PaymentMethod does not belong to user");
+            }
+            //process payment
+            await _cartRepository.UpdateCartStatusAsync(cart.CartId, CartStatus.Closed);
+            foreach (var item in cart.CartItems)
             {
                 var reservationDto = new ReservationDto();
                 reservationDto.RoomId = item.RoomId;
-                reservationDto.UserId = user.Id;
+                reservationDto.UserId = userId;
                 reservationDto.StartDate = item.StartDate;
                 reservationDto.EndDate = item.EndDate;
                 await _reservationService.CreateReservationAsync(reservationDto);
             }
-            return user.Id;
         }
 
         public async Task<List<Cart>> GetUserCartsAsync(string userId)

@@ -7,10 +7,10 @@ namespace TAABP.Application.ServiceInterfaces
     {
         Task<CartItem> GetCartItemByIdAsync(int cartId, int cartItemId);
         Task<List<CartItem>> GetCartItemsByCartIdAsync(int cartId);
-        Task<CartItemDto> AddCartItemAsync(CartItemDto cartItem);
-        Task DeleteCartItemAsync(int cartId, int cartItemId);
+        Task<CartItemDto> AddCartItemAsync(string userId, CartItemDto cartItem);
+        Task DeleteCartItemAsync(string userId, int cartItemId);
         Task<Cart> GetCartAsync(int cartId);
-        Task<string> ConfirmCartAsync(int cartId, int paymentMethodId);
+        Task ConfirmCartAsync(string userId, int paymentMethodId);
         Task<List<Cart>> GetUserCartsAsync(string userId);
     }
 }
