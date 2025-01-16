@@ -9,7 +9,7 @@ using ILogger = Serilog.ILogger;
 
 namespace TAABP.API.Controllers
 {
-    [Route("api/Users/{userId}/Hotels/{hotelId}/Reviews")]
+    [Route("api/Users")]
     [ApiController]
     [Authorize]
     public class ReviewController : ControllerBase
@@ -26,17 +26,13 @@ namespace TAABP.API.Controllers
             _userService = userService;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddReviewAsync(string userId, int hotelId, ReviewDto reviewDto)
+        [HttpPost("Hotels/{hotelId}/Reviews")]
+        public async Task<IActionResult> AddReviewAsync( int hotelId, ReviewDto reviewDto)
         {
             _logger.Information("Adding review for hotel with ID {HotelId}", hotelId);
             try
             {
-                if(userId != _userService.GetCurrentUserId())
-                {
-                    _logger.Warning("Unauthorized access to add review for hotel with ID {HotelId}", hotelId);
-                    return Unauthorized();
-                }
+                var userId = _userService.GetCurrentUserId();
                 await _reviewValidator.ValidateAndThrowAsync(reviewDto);
                 reviewDto.UserId = userId;
                 reviewDto.HotelId = hotelId;
@@ -57,18 +53,14 @@ namespace TAABP.API.Controllers
             }
         }
 
-        [HttpPut("{reviewId}")]
-        public async Task<IActionResult> UpdateReviewAsync(int reviewId, int hotelId, string userId, ReviewDto reviewDto)
+        [HttpPut("Hotels/{hotelId}/Reviews/{reviewId}")]
+        public async Task<IActionResult> UpdateReviewAsync(int reviewId, int hotelId, ReviewDto reviewDto)
         {
             _logger.Information("Updating review with ID {ReviewId} for hotel with ID {HotelId}", reviewId, hotelId);
 
             try
             {
-                if (userId != _userService.GetCurrentUserId())
-                {
-                    _logger.Warning("Unauthorized access to update review with ID {ReviewId} for hotel with ID {HotelId}", reviewId, hotelId);
-                    return Unauthorized();
-                }
+                string userId = _userService.GetCurrentUserId();
                 await _reviewValidator.ValidateAndThrowAsync(reviewDto);
                 reviewDto.ReviewId = reviewId;
                 reviewDto.HotelId = hotelId;
@@ -89,17 +81,13 @@ namespace TAABP.API.Controllers
             }
         }
 
-        [HttpDelete("{reviewId}")]
-        public async Task<IActionResult> DeleteReviewAsync(int reviewId, int hotelId, string userId)
+        [HttpDelete("Hotels/{hotelId}/Reviews/{reviewId}")]
+        public async Task<IActionResult> DeleteReviewAsync(int reviewId, int hotelId)
         {
             _logger.Information("Deleting review with ID {ReviewId} for hotel with ID {HotelId}", reviewId, hotelId);
             try
             {
-                if (userId != _userService.GetCurrentUserId())
-                {
-                    _logger.Warning("Unauthorized access to delete review with ID {ReviewId} for hotel with ID {HotelId}", reviewId, hotelId);
-                    return Unauthorized();
-                }
+                string userId = _userService.GetCurrentUserId();
                 await _reviewService.DeleteReviewAsync(userId, hotelId, reviewId);
                 _logger.Information("Successfully deleted review with ID {ReviewId} for hotel with ID {HotelId}", reviewId, hotelId);
                 return NoContent();
@@ -116,7 +104,7 @@ namespace TAABP.API.Controllers
             }
         }
 
-        [HttpGet("{reviewId}")]
+        [HttpGet("Reviews/{reviewId}")]
         public async Task<IActionResult> GetReviewByIdAsync(int reviewId)
         {
             _logger.Information("Getting review with ID {ReviewId}", reviewId);
