@@ -10,8 +10,8 @@ namespace TAABP.Core.ShoppingEntities
         public int CartId { get; set; }
         public List<CartItem> CartItems { get; set; }
         public double TotalPrice { get; set; }
-        public int? PaymentMethodId { get; set; }
-        public PaymentMethod? PaymentMethod { get; set; }
+        public string UserId { get; set; }
+        public User User { get; set; }
         public CartStatus CartStatus { get; set; }
         public Cart()
         {
