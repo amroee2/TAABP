@@ -13,9 +13,9 @@ namespace TAABP.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<List<Reservation>> GetReservationsAsync()
+        public async Task<List<Reservation>> GetReservationsAsync(string userId)
         {
-            return await _context.Reservations.AsNoTracking().ToListAsync();
+            return await _context.Reservations.AsNoTracking().Where(r => r.UserId == userId).ToListAsync();
         }
 
         public async Task<Reservation> GetReservationByIdAsync(int id)
