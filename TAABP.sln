@@ -3,7 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35219.272
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TAABP.API", "TAABP.API\TAABP.API.csproj", "{0A2AC05A-74E8-4E77-8F8D-B25B44208D69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TAABP.API", "TAABP.API\TAABP.API.csproj", "{0A2AC05A-74E8-4E77-8F8D-B25B44208D69}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TAABP.Core", "TAABP.Core\TAABP.Core.csproj", "{9FEF7F1F-AD3C-4E02-B845-E92E9AEBE7B7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TAABP.Infrastructure", "TAABP.Infrastructure\TAABP.Infrastructure.csproj", "{A09688C3-529D-4645-9C2E-7240CE1339C3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TAABP.Application", "TAABP.Application\TAABP.Application.csproj", "{888ADB23-C7C5-4603-A390-B9E2808A1DF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TAABP.IntegrationTests", "TAABP.IntegrationTests\TAABP.IntegrationTests.csproj", "{4A0666C8-F61C-4FB0-BCB9-6346614F3946}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TAABP.UnitTests", "TAABP.UnitTests\TAABP.UnitTests.csproj", "{FDCC1D25-C764-4B46-AB4B-0BCD1BEF0DEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +25,26 @@ Global
 		{0A2AC05A-74E8-4E77-8F8D-B25B44208D69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A2AC05A-74E8-4E77-8F8D-B25B44208D69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A2AC05A-74E8-4E77-8F8D-B25B44208D69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FEF7F1F-AD3C-4E02-B845-E92E9AEBE7B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FEF7F1F-AD3C-4E02-B845-E92E9AEBE7B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FEF7F1F-AD3C-4E02-B845-E92E9AEBE7B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FEF7F1F-AD3C-4E02-B845-E92E9AEBE7B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A09688C3-529D-4645-9C2E-7240CE1339C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A09688C3-529D-4645-9C2E-7240CE1339C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A09688C3-529D-4645-9C2E-7240CE1339C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A09688C3-529D-4645-9C2E-7240CE1339C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{888ADB23-C7C5-4603-A390-B9E2808A1DF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{888ADB23-C7C5-4603-A390-B9E2808A1DF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{888ADB23-C7C5-4603-A390-B9E2808A1DF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{888ADB23-C7C5-4603-A390-B9E2808A1DF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A0666C8-F61C-4FB0-BCB9-6346614F3946}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A0666C8-F61C-4FB0-BCB9-6346614F3946}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A0666C8-F61C-4FB0-BCB9-6346614F3946}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A0666C8-F61C-4FB0-BCB9-6346614F3946}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDCC1D25-C764-4B46-AB4B-0BCD1BEF0DEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDCC1D25-C764-4B46-AB4B-0BCD1BEF0DEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDCC1D25-C764-4B46-AB4B-0BCD1BEF0DEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDCC1D25-C764-4B46-AB4B-0BCD1BEF0DEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

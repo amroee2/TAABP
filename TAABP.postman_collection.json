@@ -1,0 +1,1416 @@
+{
+	"info": {
+		"_postman_id": "e39253f3-1f7d-4e5c-9310-36ce114a0f4e",
+		"name": "TAABP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "36453885"
+	},
+	"item": [
+		{
+			"name": "User Operations",
+			"item": [
+				{
+					"name": "Register User Successfully",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"UserName\": \"amroee\",\r\n  \"Password\": \"StrongPassword123!\",\r\n  \"ConfirmPassword\": \"StrongPassword123!\",\r\n  \"PhoneNumber\": \"+972595521996\",\r\n  \"Email\": \"amru38472@gmail.com\",\r\n  \"Address\": \"123 Main St, Springfield, USA\",\r\n  \"FirstName\": \"amroee\",\r\n  \"LastName\": \"qadadha\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Account/register"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Email\": \"amru38472@gmail.com\",\r\n    \"Password\": \"Amru2002!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Account/login"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Users"
+					},
+					"response": []
+				},
+				{
+					"name": "Get a user by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Users/be4c1bfc-7f8e-4c32-83fc-402659d2ee5b"
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"UserName\": \"john_doe\",\r\n  \"PhoneNumber\": \"+972595521996\",\r\n  \"Address\": \"123 Main St, Springfield, USA\",\r\n  \"FirstName\": \"Amro\",\r\n  \"LastName\": \"Doe\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Users/be4c1bfc-7f8e-4c32-83fc-402659d2ee5b"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{url}}/api/Users/be4c1bfc-7f8e-4c32-83fc-402659d2ee5b"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Last Visited Hotels",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Users/HotelsVisited"
+					},
+					"response": []
+				},
+				{
+					"name": "Change Email",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"NewEmail\" : \"amru38472@gmail.com\",\r\n    \"Password\" : \"Amru2002!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Account/change-email"
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Email\" : \"amru38472@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Account/forgot-password"
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\" : \"eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImFtcnUzODQ3MkBnbWFpbC5jb20iLCJuYmYiOjE3MzcwNDA0OTIsImV4cCI6MTczNzEyNjg5MiwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzIxMCIsImF1ZCI6IlRBQUJQIn0.tOZAvriyDITRqkgkrINyrYKS84BHkRdgu3nSLYtPfy8\",\r\n    \"Password\" : \"Amru2005!\",\r\n    \"ConfirmPassword\" : \"Amru2005!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Account/reset-password"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Carts",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Users/Carts"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "City Operations",
+			"item": [
+				{
+					"name": "Create City - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"Name\": \"Paris\",\r\n  \"Country\": \"France\",\r\n  \"Thumbnail\": \"https://example.com/thumbnails/paris.jpg\",\r\n  \"Description\": \"Paris, the capital of France, is known for its art, fashion, and culture.\",\r\n  \"PostOffice\": \"75001\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Cities"
+					},
+					"response": []
+				},
+				{
+					"name": "Get City",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Cities/11"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cities",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Cities"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete City - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{url}}/api/Cities/11"
+					},
+					"response": []
+				},
+				{
+					"name": "Update City - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"Name\": \"Aatara\",\r\n  \"Country\": \"France\",\r\n  \"Thumbnail\": \"https://example.com/thumbnails/paris.jpg\",\r\n  \"Description\": \"Paris, the capital of France, is known for its art, fashion, and culture.\",\r\n  \"PostOffice\": \"75001\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Cities/10"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Top Cities",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Cities/TopCities"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Hotel Operations",
+			"item": [
+				{
+					"name": "Create Hotel - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Luxury Stay Hotel\",\r\n  \"address\": \"123 Main Street, Cityville\",\r\n  \"phoneNumber\": \"+123456789\",\r\n  \"description\": \"A luxurious hotel offering world-class amenities and services.\",\r\n  \"thumbnail\": \"https://example.com/images/hotel_thumbnail.jpg\",\r\n  \"owner\": \"John Doe\",\r\n  \"rating\": 5,\r\n  \"numberOfRooms\": 120\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Cities/1/Hotels"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Hotel",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Cities/1/Hotels/11"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Hotels",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Cities/1/Hotels"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Hotel - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Luxury Stay Hotel\",\r\n  \"address\": \"123 Main Street, Cityville\",\r\n  \"phoneNumber\": \"+123456789\",\r\n  \"description\": \"A luxurious hotel offering world-class amenities and services.\",\r\n  \"thumbnail\": \"https://example.com/images/hotel_thumbnail.jpg\",\r\n  \"owner\": \"John\",\r\n  \"rating\": 4,\r\n  \"numberOfRooms\": 120\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Cities/1/Hotels/11"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Hotel - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{url}}/api/Cities/1/Hotels/11"
+					},
+					"response": []
+				},
+				{
+					"name": "Search Hotels",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"PriceRange\": [100, 500],\r\n    \"StarRating\": [3, 5],\r\n    \"Amenities\": [\"Free WiFi\", \"Swimming Pool\", \"Parking\"],\r\n    \"RoomType\": \"Suite\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/search/search"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "HotelImage Operations",
+			"item": [
+				{
+					"name": "Create New Hotel Image - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ImageUrl\" : \"image\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Hotels/9/HotelImages"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Hotel Images",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Hotels/9/HotelImages"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Hotel Image",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Hotels/9/HotelImages/17"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Hotel Image - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{url}}/api/Hotels/9/HotelImages/17"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Hotel Image - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ImageUrl\": \"amro\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Hotels/9/HotelImages/17"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Room Operations",
+			"item": [
+				{
+					"name": "Create Room - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Deluxe Suite\",\r\n  \"description\": \"A spacious room with a king-size bed and a beautiful view.\",\r\n  \"thumbnail\": \"https://example.com/images/room1.jpg\",\r\n  \"adultsCapacity\": 2,\r\n  \"childrenCapacity\": 1,\r\n  \"pricePerNight\": 150.00,\r\n  \"isAvailable\": true,\r\n  \"roomNumber\": 205,\r\n  \"type\": \"Suite\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Hotels/1/Rooms"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Hotel Rooms",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Hotels/1/Rooms"
+					},
+					"response": []
+				},
+				{
+					"name": "Get a hotel room by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Hotels/1/Rooms/1"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Room - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{url}}/api/Hotels/1/Rooms/11"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Room - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Deluxe Suite\",\r\n  \"description\": \"A spacious room with a king-size bed and a beautiful view.\",\r\n  \"thumbnail\": \"https://example.com/images/room1.jpg\",\r\n  \"adultsCapacity\": 2,\r\n  \"childrenCapacity\": 1,\r\n  \"pricePerNight\": 150.00,\r\n  \"isAvailable\": true,\r\n  \"roomNumber\": 210,\r\n  \"type\": \"Suite\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Hotels/1/Rooms/1"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RoomImage Operations",
+			"item": [
+				{
+					"name": "Create Room Image - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ImageUrl\" :\"image\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Rooms/1/RoomImages"
+					},
+					"response": []
+				},
+				{
+					"name": "Get a Room Image by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Rooms/1/RoomImages/15"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Room Images",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Rooms/1/RoomImages"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Room Image - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{url}}/api/Rooms/1/RoomImages/15"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Amenity Operations",
+			"item": [
+				{
+					"name": "Create new Amenity - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Free WiFi\",\r\n  \"description\": \"An outdoor swimming pool available for all guests.\",\r\n  \"imageUrl\": \"https://example.com/images/pool.jpg\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Hotels/1/Amenities"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Hotel Amenities",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Hotels/1/Amenities"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Hotel Amenity by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Hotels/1/Amenities/16"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Hotel Amenity - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{url}}/api/Hotels/1/Amenities/16"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Hotel Amenity - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Wedding Venue\",\r\n  \"description\": \"An outdoor swimming pool available for all guests.\",\r\n  \"imageUrl\": \"https://example.com/images/pool.jpg\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Hotels/1/Amenities/16"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reservation Operations",
+			"item": [
+				{
+					"name": "Get Reservation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Users/Reservations/33"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Reservations",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Users/Reservations"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Reservation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{url}}/api/Users/Reservations/33"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Reservation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"startDate\": \"2025-1-29T14:00:00\",\r\n  \"endDate\": \"2025-3-1T20:00:00\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Users/Reservations/33"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Review Operations",
+			"item": [
+				{
+					"name": "Create new Review",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Comment\" : \"comment\",\r\n    \"Rating\" :5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Users/Hotels/1/Reviews"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Review",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Comment\":\"qadadha\",\r\n    \"Rating\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Users/Hotels/1/Reviews/10"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Review",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Users/Reviews/10"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Hotel Reviews",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Cities/1/Hotels/1/Reviews"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Reviews",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Users/dee9f914-7727-4016-8c25-608a28c6ecc4/Reviews"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Review",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{url}}/api/Users/Hotels/1/Reviews/12"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CreditCard Operations",
+			"item": [
+				{
+					"name": "UpdateCard",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"cardHolderName\": \"Amro\",\r\n  \"cardNumber\": \"4111111111111111\",\r\n  \"ExpirationDate\": \"12/25\",\r\n  \"cvv\": \"123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Users/dee9f914-7727-4016-8c25-608a28c6ecc4/CreditCards/16"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Card",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"cardHolderName\": \"John Doe\",\r\n  \"cardNumber\": \"4111111111111111\",\r\n  \"expirationDate\": \"2025-12-31T00:00:00\",\r\n  \"cvv\": \"123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Users/fa1ec42b-2f3e-46b7-b3a9-cbeadb02a695/CreditCards"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Card",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{url}}/api/Users/dee9f914-7727-4016-8c25-608a28c6ecc4/CreditCards/16"
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllPayments",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Users/dee9f914-7727-4016-8c25-608a28c6ecc4/Payments"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Card",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Users/dee9f914-7727-4016-8c25-608a28c6ecc4/CreditCards/16"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PayPal Operations",
+			"item": [
+				{
+					"name": "Create PayPal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"PayPalEmail\" : \"amroqadadha@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Users/dee9f914-7727-4016-8c25-608a28c6ecc4/PayPals"
+					},
+					"response": []
+				},
+				{
+					"name": "Update PayPal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"PayPalEmail\" : \"amroqadadha2@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}api/Users/dee9f914-7727-4016-8c25-608a28c6ecc4/PayPals/4"
+					},
+					"response": []
+				},
+				{
+					"name": "Get PayPal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Users/dee9f914-7727-4016-8c25-608a28c6ecc4/PayPals/4"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete PayPal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{url}}/api/Users/dee9f914-7727-4016-8c25-608a28c6ecc4/PayPals/4"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CartItems Operations",
+			"item": [
+				{
+					"name": "Create new CartItem",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"StartDate\": \"2025-11-30T00:00:00\",\r\n    \"EndDate\":  \"2025-12-31T00:00:00\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/Users/Carts/Rooms/6/CartItems"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete CartItem",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{url}}/api/Users/Carts/CartItems/72"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cartitem",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Users/Carts/36/CartItems/69"
+					},
+					"response": []
+				},
+				{
+					"name": "Get items by cart id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Users/Carts/36/CartItems"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/Users/Carts/36"
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm Payment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"url": "{{url}}/api/Users/Carts/Payment/23/Confirm"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "FeaturedDeal Operations",
+			"item": [
+				{
+					"name": "Create new FeaturedDeal - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Winter Getaway Deal\",\r\n  \"description\": \"Enjoy a cozy winter retreat with a special discount.\",\r\n  \"discount\": 20.5,\r\n  \"startDate\": \"2025-01-15T00:00:00\",\r\n  \"endDate\": \"2025-02-15T23:59:59\",\r\n  \"isActive\": true\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/FeaturedDeals/Room/1"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Deals",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/FeaturedDeals"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Deal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}/api/FeaturedDeal/4"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Deal - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Winter Amro Deal\",\r\n  \"description\": \"Enjoy a cozy winter retreat with a special discount.\",\r\n  \"discount\": 20.5,\r\n  \"startDate\": \"2025-01-15T00:00:00\",\r\n  \"endDate\": \"2025-02-15T23:59:59\",\r\n  \"isActive\": true\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}/api/FeaturedDeal/4"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Deal - AdminOnly",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{url}}/api/FeaturedDeal/4"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
