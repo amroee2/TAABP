@@ -16,12 +16,10 @@ namespace TAABP.API.Controllers
     {
         private readonly IHotelService _hotelService;
         private readonly ILogger _logger;
-        private readonly IValidator<HotelImageDto> _hotelImageValidator;
-        public HotelImageController(IHotelService hotelService, IValidator<HotelImageDto> validator)
+        public HotelImageController(IHotelService hotelService)
         {
             _hotelService = hotelService;
             _logger = Log.ForContext<HotelImageController>();
-            _hotelImageValidator = validator;
         }
 
         [HttpPost]
@@ -31,7 +29,6 @@ namespace TAABP.API.Controllers
             _logger.Information("Creating a new image for hotel with ID {HotelId}", hotelId);
             try
             {
-                await _hotelImageValidator.ValidateAndThrowAsync(image);
                 var imageId = await _hotelService.CreateNewHotelImageAsync(hotelId, image);
                 var hotelImage = await _hotelService.GetHotelImageByIdAsync(hotelId, imageId);
                 _logger.Information("Successfully created image with ID {ImageId} for hotel with ID {HotelId}", imageId, hotelId);
@@ -123,7 +120,6 @@ namespace TAABP.API.Controllers
             _logger.Information("Updating image with ID {ImageId} for hotel with ID {HotelId}", imageId, hotelId);
             try
             {
-                await _hotelImageValidator.ValidateAndThrowAsync(imageUrl);
                 imageUrl.HotelImageId = imageId;
                 await _hotelService.UpdateHotelImageAsync(hotelId, imageId, imageUrl);
                 _logger.Information("Successfully updated image with ID {ImageId} for hotel with ID {HotelId}", imageId, hotelId);
