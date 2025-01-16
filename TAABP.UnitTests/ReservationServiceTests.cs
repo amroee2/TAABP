@@ -17,6 +17,7 @@ namespace TAABP.UnitTests
         private readonly Mock<IUserRepository> _userRepositoryMock;
         private readonly Mock<IHotelRepository> _hotelRepositoryMock;
         private readonly Mock<ICityRepository> _cityRepositoryMock;
+        private readonly Mock<IFeaturedDealRepository> _featuredDealRepositoryMock;
         private readonly ReservationService _reservationService;
         private readonly Fixture _fixture;
 
@@ -28,14 +29,15 @@ namespace TAABP.UnitTests
             _userRepositoryMock = new Mock<IUserRepository>();
             _hotelRepositoryMock = new Mock<IHotelRepository>();
             _cityRepositoryMock = new Mock<ICityRepository>();
-
+            _featuredDealRepositoryMock = new Mock<IFeaturedDealRepository>();
             _reservationService = new ReservationService(
                 _reservationRepositoryMock.Object,
                 _reservationMapperMock.Object,
                 _roomRepositoryMock.Object,
                 _userRepositoryMock.Object,
                 _hotelRepositoryMock.Object,
-                _cityRepositoryMock.Object
+                _cityRepositoryMock.Object,
+                _featuredDealRepositoryMock.Object
             );
 
             _fixture = new Fixture();
@@ -149,7 +151,7 @@ namespace TAABP.UnitTests
 
             // Assert
             Assert.Equal(reservation.ReservationId, result);
-            Assert.Equal(200, reservation.Price);
+            Assert.Equal(300, reservation.Price);
             _roomRepositoryMock.Verify(repo => repo.BookRoomAsync(room.RoomId), Times.Once);
             _hotelRepositoryMock.Verify(repo => repo.IncrementNumberOfVisitsAsync(room.HotelId), Times.Once);
             _cityRepositoryMock.Verify(repo => repo.IncrementNumberOfVisitsAsync(hotel.CityId), Times.Once);
@@ -299,5 +301,96 @@ namespace TAABP.UnitTests
             // Act & Assert
             await Assert.ThrowsAsync<EntityNotFoundException>(() => _reservationService.DeleteReservationAsync(reservationId));
         }
+
+        [Fact]
+        public async Task CalculateTotoalPriceAsync_ShouldReturnCorrectTotalPrice_WhenNoFeaturedDealExists()
+        {
+            // Arrange
+            var room = new Room { RoomId = 1, PricePerNight = 100 };
+            var startDate = new DateTime(2025, 1, 1);
+            var endDate = new DateTime(2025, 1, 3);
+
+            _featuredDealRepositoryMock
+                .Setup(r => r.GetActiveFeaturedDealByRoomIdAsync(room.RoomId))
+                .ReturnsAsync((FeaturedDeal)null);
+
+            // Act
+            var result = await _reservationService.CalculateTotoalPriceAsync(room, startDate, endDate);
+
+            // Assert
+            Assert.Equal(300, result); // 100 * 3 nights
+        }
+
+        [Fact]
+        public async Task CalculateTotoalPriceAsync_ShouldReturnCorrectTotalPrice_WhenDatesAreWithinFeaturedDealPeriod()
+        {
+            // Arrange
+            var room = new Room { RoomId = 1, PricePerNight = 100 };
+            var startDate = new DateTime(2025, 1, 2);
+            var endDate = new DateTime(2025, 1, 3);
+            var featuredDeal = new FeaturedDeal
+            {
+                RoomId = room.RoomId,
+                StartDate = new DateTime(2025, 1, 1),
+                EndDate = new DateTime(2025, 1, 3),
+                Discount = 80
+            };
+
+            _featuredDealRepositoryMock
+                .Setup(r => r.GetActiveFeaturedDealByRoomIdAsync(room.RoomId))
+                .ReturnsAsync(featuredDeal);
+
+            // Act
+            var result = await _reservationService.CalculateTotoalPriceAsync(room, startDate, endDate);
+
+            // Assert
+            Assert.Equal(160, result);
+        }
+
+        [Fact]
+        public async Task CalculateTotoalPriceAsync_ShouldReturnCorrectTotalPrice_WhenEndDateBeforeStartDate()
+        {
+            // Arrange
+            var room = new Room { RoomId = 1, PricePerNight = 100 };
+            var startDate = new DateTime(2025, 1, 3);
+            var endDate = new DateTime(2025, 1, 1);
+
+            _featuredDealRepositoryMock
+                .Setup(r => r.GetActiveFeaturedDealByRoomIdAsync(room.RoomId))
+                .ReturnsAsync((FeaturedDeal)null);
+
+            // Act
+            var result = await _reservationService.CalculateTotoalPriceAsync(room, startDate, endDate);
+
+            // Assert
+            Assert.Equal(0, result);
+        }
+
+        [Fact]
+        public async Task CalculateTotoalPriceAsync_ShouldReturnCorrectTotalPrice_WhenFeaturedDealDoesNotCoverAllDates()
+        {
+            // Arrange
+            var room = new Room { RoomId =1, PricePerNight = 100 };
+            var startDate = new DateTime(2025, 1, 1);
+            var endDate = new DateTime(2025, 1, 4);
+            var featuredDeal = new FeaturedDeal
+            {
+                RoomId = room.RoomId,
+                StartDate = new DateTime(2025, 1, 2),
+                EndDate = new DateTime(2025, 1, 3),
+                Discount = 80
+            };
+
+            _featuredDealRepositoryMock
+                .Setup(r => r.GetActiveFeaturedDealByRoomIdAsync(room.RoomId))
+                .ReturnsAsync(featuredDeal);
+
+            // Act
+            var result = await _reservationService.CalculateTotoalPriceAsync(room, startDate, endDate);
+
+            // Assert
+            Assert.Equal(360, result);
+        }
+
     }
 }
