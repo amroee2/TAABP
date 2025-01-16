@@ -5,8 +5,10 @@ Travel and Accommodation booking platform serves as the final project at my inte
 ## Features
 
 - User Management through ASP.Net Identity
-
-Users can register and will recieve a confirmation link to their submitted email
+- Unit testing and Integration testing through xUnit
+- Api Testing through Postman
+- Email service through SMTP
+- MemoryCache utilization
 
 ### Provides:
 
