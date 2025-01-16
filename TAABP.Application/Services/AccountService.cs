@@ -38,9 +38,9 @@ namespace TAABP.Application.Services
             var user = _userMapper.RegisterDtoToUser(registerDto);
             user.UserName = registerDto.UserName;
             user.EmailConfirmed = true;
-            var isCreated = await _userRepository.CreateUserAsync(user, registerDto.Password);
+            var result = await _userRepository.CreateUserAsync(user, registerDto.Password);
 
-            if (!isCreated)
+            if (result.Succeeded==false)
             {
                 throw new EntityCreationException("User Creation Failed");
             }
@@ -113,6 +113,11 @@ namespace TAABP.Application.Services
             {
                 throw new Exception("Failed to reset password: " + string.Join(", ", resetPasswordResult.Errors.Select(e => e.Description)));
             }
+        }
+
+        public async Task<bool> CheckIfUserNameExists(string name)
+        {
+            return await _userRepository.CheckIfUserNameExists(name);
         }
     }
 }

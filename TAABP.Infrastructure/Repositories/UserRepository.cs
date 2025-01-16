@@ -15,10 +15,10 @@ namespace TAABP.Infrastructure.Repositories
             _userManager = userManager;
         }
 
-        public async Task<bool> CreateUserAsync(User user, string password)
+        public async Task<IdentityResult> CreateUserAsync(User user, string password)
         {
             var result = await _userManager.CreateAsync(user, password);
-            return result.Succeeded;
+            return result;
         }
 
         public async Task<bool> CheckEmailAsync(string email)
@@ -63,6 +63,11 @@ namespace TAABP.Infrastructure.Repositories
                 .Select(r => r.Room.Hotel)
                 .Where(h => h != null).Take(5)
                 .ToList();
+        }
+
+        public async Task<bool> CheckIfUserNameExists(string name)
+        {
+            return await _context.Users.AnyAsync(u => u.UserName == name);
         }
     }
 }
