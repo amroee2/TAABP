@@ -60,6 +60,10 @@ namespace TAABP.API.Controllers
                 {
                     return Conflict(new { message = "Email already exists" });
                 }
+                if(await _accountService.CheckIfUserNameExists(registerDto.UserName))
+                {
+                    return Conflict(new { message = "Username already exists" });
+                }
                 var token = _tokenGenerator.GenerateToken(registerDto.Email);
 
                 await _storageService.StoreUserAsync(token, registerDto);
