@@ -7,7 +7,7 @@ using ILogger = Serilog.ILogger;
 
 namespace TAABP.API.Controllers
 {
-    [Route("api/Payments")]
+    [Route("api/Users/{userId}/Payments")]
     [ApiController]
     [Authorize]
     public class PaymentController : ControllerBase
@@ -22,7 +22,7 @@ namespace TAABP.API.Controllers
             _userService = userService;
         }
 
-        [HttpGet("user/{userId}")]
+        [HttpGet]
         public async Task<IActionResult> GetUserPaymentOptions(string userId)
         {
             _logger.Information("Fetching payment options for user with ID {UserId}", userId);
