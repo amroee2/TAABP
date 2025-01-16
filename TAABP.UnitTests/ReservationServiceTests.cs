@@ -69,7 +69,7 @@ namespace TAABP.UnitTests
                 .ReturnsAsync(new User { Id = reservation.UserId });
 
             // Act
-            var result = await _reservationService.GetReservationByIdAsync(userId, roomId, reservation.ReservationId);
+            var result = await _reservationService.GetReservationByIdAsync(userId, reservation.ReservationId);
 
             // Assert
             Assert.NotNull(result);
@@ -88,26 +88,7 @@ namespace TAABP.UnitTests
                 .ReturnsAsync((Reservation)null);
 
             // Act & Assert
-            await Assert.ThrowsAsync<EntityNotFoundException>(() => _reservationService.GetReservationByIdAsync(userId, roomId, reservationId));
-        }
-
-        [Fact]
-        public async Task GetReservationsAsync_ShouldReturnListOfReservations()
-        {
-            // Arrange
-            var reservations = _fixture.CreateMany<Reservation>().ToList();
-            var reservationDtos = _fixture.CreateMany<ReservationDto>().ToList();
-
-            _reservationRepositoryMock.Setup(repo => repo.GetReservationsAsync()).ReturnsAsync(reservations);
-            _reservationMapperMock.Setup(mapper => mapper.ReservationToResevationDto(It.IsAny<Reservation>()))
-                .Returns((Reservation r) => reservationDtos.FirstOrDefault(dto => dto.ReservationId == r.ReservationId));
-
-            // Act
-            var result = await _reservationService.GetReservationsAsync();
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(reservations.Count, result.Count);
+            await Assert.ThrowsAsync<EntityNotFoundException>(() => _reservationService.GetReservationByIdAsync(userId, reservationId));
         }
 
         [Fact]

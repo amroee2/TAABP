@@ -61,27 +61,16 @@ namespace TAABP.IntegrationTests
         public async Task GetReservationsAsync_ShouldReturnAllReservationsAsync()
         {
             // Arrange
-            var reservations = _fixture.CreateMany<Reservation>().ToList();
-            await _context.Reservations.AddRangeAsync(reservations);
-            await _context.SaveChangesAsync();
-
-            // Act
-            var result = await _reservationRepository.GetReservationsAsync();
-
-            // Assert
-            Assert.Equal(reservations.Count, result.Count);
-        }
-
-        [Fact]
-        public async Task GetReservationsByUserIdAsync_ShouldReturnReservationsByUserIdAsync()
-        {
-            // Arrange
+            var user = _fixture.Create<User>();
+            await _context.AddAsync(user);
+            _context.SaveChanges();
+            _fixture.Customize<Reservation>(c => c.With(r => r.UserId, user.Id));
             var reservations = _fixture.CreateMany<Reservation>(3).ToList();
             await _context.Reservations.AddRangeAsync(reservations);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _reservationRepository.GetReservationsAsync();
+            var result = await _reservationRepository.GetReservationsAsync(user.Id);
 
             // Assert
             Assert.Equal(reservations.Count, result.Count);

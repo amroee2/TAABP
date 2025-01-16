@@ -29,7 +29,7 @@ namespace TAABP.Application.Services
             _featuredDealRepository = featuredDealRepository;
         }
 
-        public async Task<ReservationDto> GetReservationByIdAsync(string userId, int roomId, int id)
+        public async Task<ReservationDto> GetReservationByIdAsync(string userId, int id)
         {
             var reservation = await _reservationRepository.GetReservationByIdAsync(id);
             if (reservation == null)
@@ -46,16 +46,21 @@ namespace TAABP.Application.Services
             {
                 throw new EntityNotFoundException("User not found");
             }
-            if (reservation.UserId != userId || reservation.RoomId != roomId)
+            if (reservation.UserId != userId || reservation.RoomId != room.RoomId)
             {
                 throw new EntityNotFoundException("Reservation does not belong to user or room");
             }
             return _reservationMapper.ReservationToResevationDto(reservation);
         }
 
-        public async Task<List<ReservationDto>> GetReservationsAsync()
+        public async Task<List<ReservationDto>> GetReservationsAsync(string userId)
         {
-            var reservations = await _reservationRepository.GetReservationsAsync();
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                throw new EntityNotFoundException("User not found");
+            }
+            var reservations = await _reservationRepository.GetReservationsAsync(userId);
             return reservations.Select(r => _reservationMapper.ReservationToResevationDto(r)).ToList();
         }
 
@@ -112,7 +117,7 @@ namespace TAABP.Application.Services
             var reservation = _reservationMapper.ReservationDtoToReservation(reservationDto);
             if (reservation.StartDate != targetReservation.StartDate || reservation.EndDate != targetReservation.EndDate)
             {
-                var room = await _roomRepository.GetRoomByIdAsync(reservation.RoomId);
+                var room = await _roomRepository.GetRoomByIdAsync(targetReservation.RoomId);
                 if (room == null)
                 {
                     throw new EntityNotFoundException("Room not found");
@@ -126,6 +131,7 @@ namespace TAABP.Application.Services
             {
                 reservation.Price = targetReservation.Price;
             }
+            reservation.RoomId = targetReservation.RoomId;
             await _reservationRepository.UpdateReservationAsync(reservation);
         }
 

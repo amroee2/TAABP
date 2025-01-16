@@ -9,7 +9,7 @@ using ILogger = Serilog.ILogger;
 
 namespace TAABP.API.Controllers
 {
-    [Route("api/Users/{userId}/Rooms/{roomId}/Reservations")]
+    [Route("api/Users/Reservations")]
     [ApiController]
     [Authorize]
     public class ReservationController : ControllerBase
@@ -29,17 +29,13 @@ namespace TAABP.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ReservationDto>>> GetReservations(string userId)
+        public async Task<ActionResult<List<ReservationDto>>> GetReservations()
         {
             _logger.Information("Fetching all reservations");
             try
             {
-                if(userId != _userService.GetCurrentUserId())
-                {
-                    _logger.Warning("Unauthorized access to all reservations");
-                    return Unauthorized();
-                }
-                var reservations = await _reservationService.GetReservationsAsync();
+                var userId = _userService.GetCurrentUserId();
+                var reservations = await _reservationService.GetReservationsAsync(userId);
                 _logger.Information("Successfully fetched all reservations");
                 return Ok(reservations);
             }
@@ -56,17 +52,13 @@ namespace TAABP.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ReservationDto>> GetReservation(string userId, int roomId, int id)
+        public async Task<ActionResult<ReservationDto>> GetReservation(int id)
         {
             _logger.Information("Fetching reservation with ID {ReservationId}", id);
             try
             {
-                if (userId != _userService.GetCurrentUserId())
-                {
-                    _logger.Warning("Unauthorized access to reservation with ID {ReservationId}", id);
-                    return Unauthorized();
-                }
-                var reservation = await _reservationService.GetReservationByIdAsync(userId, roomId, id);
+                var userId = _userService.GetCurrentUserId();
+                var reservation = await _reservationService.GetReservationByIdAsync(userId, id);
                 _logger.Information("Successfully fetched reservation with ID {ReservationId}", id);
                 return Ok(reservation);
             }
@@ -82,81 +74,41 @@ namespace TAABP.API.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<ActionResult> CreateReservation(string userId, int roomId, ReservationDto reservationDto)
-        {
-            _logger.Information("Creating a new reservation for user with ID {UserId} and room with ID {RoomId}", userId, roomId);
-            try
-            {
-                if(userId != _userService.GetCurrentUserId())
-                {
-                    _logger.Warning("Unauthorized access to create a new reservation for user with ID {UserId} and room with ID {RoomId}", userId, roomId);
-                    return Unauthorized();
-                }
-                await _reservationValidator.ValidateAndThrowAsync(reservationDto);
-                reservationDto.UserId = userId;
-                reservationDto.RoomId = roomId;
-                var reservationId = await _reservationService.CreateReservationAsync(reservationDto);
-                var reservation = await _reservationService.GetReservationByIdAsync(userId, roomId, reservationId);
-                _logger.Information("Successfully created a new reservation with ID {ReservationId} for user with ID {UserId} and room with ID {RoomId}", reservationId, userId, roomId);
-                return StatusCode(201, reservation);
-            }
-            catch (EntityNotFoundException ex)
-            {
-                _logger.Warning("User with ID {UserId} or room with ID {RoomId} not found", userId, roomId);
-                return NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.Warning("Failed to create a new reservation for user with ID {UserId} and room with ID {RoomId}", userId, roomId);
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "An error occurred while creating a new reservation for user with ID {UserId} and room with ID {RoomId}", userId, roomId);
-                return StatusCode(500, new { message = ex.Message });
-            }
-        }
-
         [HttpPut("{reservationId}")]
-        public async Task<ActionResult> UpdateReservation(int reservationId, string userId, int roomId, ReservationDto reservationDto)
+        public async Task<ActionResult> UpdateReservation(int reservationId, ReservationDto reservationDto)
         {
-            _logger.Information("Updating reservation with ID {ReservationId} for user with ID {UserId} and room with ID {RoomId}", reservationId, userId, roomId);
+            var userId = _userService.GetCurrentUserId();
+            _logger.Information("Updating reservation with ID {ReservationId} for user with ID {UserId}", reservationId, userId);
             try
             {
-                if (userId != _userService.GetCurrentUserId())
-                {
-                    _logger.Warning("Unauthorized access to update reservation with ID {ReservationId} for user with ID {UserId} and room with ID {RoomId}", reservationId, userId, roomId);
-                    return Unauthorized();
-                }
                 await _reservationValidator.ValidateAndThrowAsync(reservationDto);
                 reservationDto.ReservationId = reservationId;
                 reservationDto.UserId = userId;
-                reservationDto.RoomId = roomId;
                 await _reservationService.UpdateReservationAsync(reservationDto);
-                _logger.Information("Successfully updated reservation with ID {ReservationId} for user with ID {UserId} and room with ID {RoomId}", reservationId, userId, roomId);
+                _logger.Information("Successfully updated reservation with ID {ReservationId} for user with ID {UserId} ", reservationId, userId);
                 return NoContent();
             }
             catch (EntityNotFoundException ex)
             {
-                _logger.Warning("Reservation with ID {ReservationId} for user with ID {UserId} and room with ID {RoomId} not found", reservationId, userId, roomId);
+                _logger.Warning("Reservation with ID {ReservationId} for user with ID {UserId}", reservationId, userId);
                 return NotFound(ex.Message);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Warning("Failed to update reservation with ID {ReservationId} for user with ID {UserId} and room with ID {RoomId}", reservationId, userId, roomId);
+                _logger.Warning("Failed to update reservation with ID {ReservationId} for user with ID {UserId} ", reservationId, userId);
                 return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "An error occurred while updating reservation with ID {ReservationId} for user with ID {UserId} and room with ID {RoomId}", reservationId, userId, roomId);
+                _logger.Error(ex, "An error occurred while updating reservation with ID {ReservationId} for user with ID {UserId}", reservationId, userId);
                 return StatusCode(500, ex.Message);
             }
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteReservation(string userId, int id)
+        public async Task<ActionResult> DeleteReservation(int id)
         {
+            var userId = _userService.GetCurrentUserId();
             _logger.Information("Deleting reservation with ID {ReservationId}", id);
             try
             {
