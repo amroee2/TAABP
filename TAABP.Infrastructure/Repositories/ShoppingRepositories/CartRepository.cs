@@ -37,6 +37,7 @@ namespace TAABP.Infrastructure.Repositories.ShoppingRepositories
         {
             var userCarts = await _context.Carts
                 .Include(pm => pm.User)
+                .Where(c=>c.UserId==userId)
                 .ToListAsync();
             return userCarts;
         }
