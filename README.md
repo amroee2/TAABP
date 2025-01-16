@@ -2,6 +2,40 @@
 
 Travel and Accommodation booking platform serves as the final project at my internship in **Foothill Technology Solutions**.
 
+## Features
+
+- User Management through ASP.Net Identity
+
+Users can register and will recieve a confirmation link to their submitted email
+
+### Provides:
+
+- Email, password and other attributes validations
+- Password Hashing
+- Required Email Confirmation
+- Email Changing
+- Password Changing
+- User personal information (address, phone number...) update.
+- JWT Token generation and validation
+- Api end points to see user last hotels visited, reviews, carts and payments
+- Logging using Serilogger
+
+### City, Hotel, Room, Amentiy, Featured Deals crud operations.
+
+- Access control through authorization attributes
+- City, hotel, room, amenity and featured deals creation, update and delete are done by admins.
+- Top Visited Cities
+- Hotel average reviews calculation based on user reviews
+- Increment and decrement number of rooms for hotels after creation
+- Increment and decrement number of hotels for cities after creation
+- Hotel searching based on various fields
+
+### User reservation and reviews
+
+- User reviews on hotels with comments and rating that reflect on the overall rating of the hotel
+- credit card and paypal payment options
+- email confirmation after reservation
+
 ## Domain Models
 
 ERD diagram
